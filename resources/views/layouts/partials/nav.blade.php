@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="padding:10px;">
-        <img alt="Brand" style="height:30px" class="img-responsive" src="https://d.zmtcdn.com/images/logo/zlogo4r.png">
+        <img alt="Brand" style="height:30px" class="img-responsive" src="/img/logo.png">
       </a>
 
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse-1">
