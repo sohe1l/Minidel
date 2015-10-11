@@ -2,6 +2,14 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li class="active">General</li>
+</ol>
+
+
 <div class="row">
   <div class="col-md-3">
   @include('manage.nav', array('active'=>'general'))

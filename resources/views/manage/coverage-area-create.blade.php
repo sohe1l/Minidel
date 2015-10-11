@@ -1,19 +1,28 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-            <h2>New Coverage Area<br>
-                <small>By addding an area, automatically all the buildings in that area will be included.</small>
-            </h2>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/coverage">Coverage</a></li>
+  <li class="active">New Area</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'coverage'))
+  </div>
+  <div class="col-md-9">
+    <h3>New Coverage Area<br> <small>By addding an area, automatically all the buildings in that area will be included.</small></h3>
+
+
+
+
 
             @include('errors.list')
 
-            <div class="panel panel-default">
-                <div class="panel-heading">Location</div>
-                <div class="panel-body">
                     {!! Form::open(array('url' => '/manage/'.$store->slug.'/coverage/area', 'class'=>'form-horizontal' ) ) !!}
 
 
@@ -73,10 +82,7 @@
                         </div>
                     </div>
                 {!! Form::close() !!}
-                </div>
-            </div>
 
-        </div>
     </div>
 </div>
 

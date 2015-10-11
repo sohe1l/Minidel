@@ -1,5 +1,12 @@
 @extends('layouts.default')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/dashboard/">Dashboard</a></li>
+  <li class="active">Order</li>
+</ol>
+
+
 @section('content')
 <div class="row">
   <div class="col-md-3">

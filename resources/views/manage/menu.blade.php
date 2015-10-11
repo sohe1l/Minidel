@@ -2,6 +2,12 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li class="active">Menu</li>
+</ol>
 
 <div class="row">
   <div class="col-md-3">
@@ -17,14 +23,14 @@
 
 
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-md-6">
         <a href="/manage/{{$store->slug}}/menu/item/create" class="btn btn-default">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
           New Menu Item
         </a>
       </div><!-- /.col-lg-6 -->
 
-      <div class="col-lg-6">
+      <div class="col-md-6">
         {!! Form::open(array('url'=>'/manage/'.$store->slug.'/menu/section')) !!}
         <div class="input-group">
           <input type="text" name="title" class="form-control" placeholder="New Menu Section">

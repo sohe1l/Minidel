@@ -1,6 +1,14 @@
 @extends('layouts.default')
 
 @section('content')
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li class="active">New Store</li>
+</ol>
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">

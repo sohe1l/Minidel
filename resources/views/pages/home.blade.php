@@ -12,29 +12,7 @@
     </div>
 
     <div>
-    <h3>Notes</h3>
 
-    !! MINIDELIVERY  !!
-
-
-do print for order page
-
-
-
-food next door
-
-mini-delivery.com
-
-minivery.com
-
-No minimum order
-
-No delivery charge
-
-
-http://minids.com/
-
-http://minivery.com
 
 
     </div>

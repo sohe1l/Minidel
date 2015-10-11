@@ -24,12 +24,13 @@ class MakeStoresTable extends Migration
             $table->string('phone');
             $table->string('email');
             $table->integer('comission')->default(10);
-            $table->string('status_listing')->default(0);
+            $table->enum('status_listing', ['published', 'draft', 'review'])->default('draft');
             $table->enum('status_working', ['open', 'close', 'busy'])->default('open');
             $table->text('info')->nullable();
             $table->text('coordinate')->nullable();
             $table->string('logo')->nullable();
             $table->string('cover')->nullable();
+            $table->timestamp('last_check')->default(0);
             $table->timestamps();
 
             //$table->foreign('city_id')->references('id')->on('cities');

@@ -2,6 +2,13 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li class="active">Coverage</li>
+</ol>
+
 
 <div class="row">
   <div class="col-md-3">

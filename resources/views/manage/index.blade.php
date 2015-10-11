@@ -2,6 +2,11 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">Manage</li>
+</ol>
+
 
 <h2>Manage Stores<br>
     <small>Here you can manage your stores or add new ones.</small>
@@ -33,7 +38,7 @@
             <div class="col-sm-10">
               <div><h3>{{$store->name}}</h3></div>
               <div><a href="/manage/{{$store->slug}}">Orders</a></div>
-              <div><a href="/manage/{{$store->slug}}/general/">Reports</a></div>
+              <div><a href="/manage/{{$store->slug}}/reports/">Reports</a></div>
               <div><a href="/manage/{{$store->slug}}/general/">Manage</a></div>
             </div>
         </div>

@@ -1,18 +1,27 @@
 @extends('layouts.default')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-            <h2>New Address<br>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/dashboard/">Dashboard</a></li>
+  <li><a href="/dashboard/address">Address</a></li>
+  <li class="active">Create Address</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('dashboard.nav', array('active'=>'address'))
+  </div>
+  <div class="col-md-9">
+
+            <h3>New Address<br>
                 <small>Save a new address to order easily.</small>
-            </h2>
+            </h3>
 
             @include('errors.list')
 
-            <div class="panel panel-default">
-                <div class="panel-heading">Location</div>
-                <div class="panel-body">
+
                     {!! Form::open(array('url' => '/dashboard/address', 'class'=>'form-horizontal' ) ) !!}
 
 
@@ -80,8 +89,6 @@
                         </div>
                     </div>
                 {!! Form::close() !!}
-                </div>
-            </div>
 
         </div>
     </div>

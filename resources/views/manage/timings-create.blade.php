@@ -1,18 +1,24 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-        <h2>Create new timing record<br>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/timings">Timings</a></li>
+  <li class="active">New Timing</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'timings'))
+  </div>
+  <div class="col-md-9">
+        <h3>Create new timing record<br>
             <small>During the specified timing the customers can place orders.</small>
-        </h2>
+        </h3>
 
-
-            <div class="panel panel-default">
-                <div class="panel-heading">Create new menu option</div>
-                <div class="panel-body">
 
                     @include('errors.list')
 
@@ -54,9 +60,7 @@
                             </div>
                         </div>
                     {!! Form::close() !!}
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 

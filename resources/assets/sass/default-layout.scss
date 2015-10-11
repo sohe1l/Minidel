@@ -1,0 +1,100 @@
+html{
+    background-color:#FAFAFA !important;
+}
+
+
+.glyphicon-star       { color: #FDB235; }
+.glyphicon-star-empty { color: #FFCC78; }
+
+.breadcrumb {
+    padding-left: 0px !important;
+    background-color: initial !important;
+    font-size: 90% !important;
+}
+
+
+.storeListing{
+    padding:1em;
+    border-bottom: 1px solid #e7e7e7;
+}
+.storeListing .title{
+    font-size:120%;
+    font-weight: bold;
+}
+
+
+
+#custom-search-input {
+    margin:0;
+    padding: 0;
+}
+
+#custom-search-input .search-query {
+    padding-right: 3px;
+    padding-right: 4px \9;
+    padding-left: 3px;
+    padding-left: 4px \9;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#custom-search-input button {
+    border: 0;
+    background: none;
+    /** belows styles are working good */
+    padding: 2px 5px;
+    margin-top: 2px;
+    position: relative;
+    left: -28px;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color:#D9230F;
+    box-shadow: none;
+}
+
+.search-query:focus + button {
+    z-index: 3;   
+}
+
+
+@media(max-width:767px){
+
+}
+@media(min-width:768px){
+}
+@media(min-width:992px){
+
+}
+@media(min-width:1200px){
+}
+
+
+
+
+.footerLinks {
+    background-color: #F5F5F5;
+    text-align: center;
+    padding:1em 0;
+    margin-top:100px;
+}
+.footerLinks ul { 
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+ }
+
+.footerRow{
+    background-color: #FAFAFA;
+    border-top:1px solid #F0F0F0;
+    padding:10px;
+    font-size: 80%;
+    color: #8E8F92;
+}
+

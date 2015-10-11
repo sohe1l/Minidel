@@ -12,9 +12,8 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass(['app.scss']).styles(['touchspin.css']);
-
-    mix.scripts(['touchspin.js']);
-
+    mix.sass(['app.scss'])
+    .styles(['bootflat.css','select2.css'])
+    .scripts(['jquery.js','bootstrap.js','select2.js','vue.js']);
 
 });

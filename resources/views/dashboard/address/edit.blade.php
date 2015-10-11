@@ -1,18 +1,26 @@
 @extends('layouts.default')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-            <h2>Edit Address<br>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/dashboard/">Dashboard</a></li>
+  <li><a href="/dashboard/address">Address</a></li>
+  <li class="active">Edit Address</li>
+</ol>
+
+
+<div class="row">
+  <div class="col-md-3">
+  @include('dashboard.nav', array('active'=>'address'))
+  </div>
+  <div class="col-md-9">
+            <h3>Edit Address<br>
                 <small>Use the below form to edit your address easily.</small>
-            </h2>
+            </h3>
 
             @include('errors.list')
 
-            <div class="panel panel-default">
-                <div class="panel-heading">Location</div>
-                <div class="panel-body">
 
                     {!! Form::model($address, array('class'=>'form-horizontal',
                                                 'method' => 'put',
@@ -29,14 +37,14 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">City</label>
                         <div class="col-md-6">
-                            {!! Form::select('city_id',[],null,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
+                            {!! Form::select('city_id', \App\City::listByCountrySelect('AE') ,null,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-md-4 control-label">Area</label>
                         <div class="col-md-6">
-                            {!! Form::select('area_id',[],null,$attributes=array('class'=>'form-control','id'=>'area') ); !!}
+                            {!! Form::select('area_id',\App\Area::listByCitySelect($address->city_id),null,$attributes=array('class'=>'form-control','id'=>'area') ); !!}
                         </div>
                     </div>
 
@@ -44,7 +52,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Building</label>
                         <div class="col-md-6">
-                            {!! Form::select('building_id',[],null,$attributes=array('class'=>'form-control','id'=>'building') ); !!}
+                            {!! Form::select('building_id',\App\Building::listByAreaSelect($address->area_id),null,$attributes=array('class'=>'form-control','id'=>'building') ); !!}
                         </div>
                     </div>
 
@@ -83,8 +91,7 @@
                         </div>
                     </div>
                 {!! Form::close() !!}
-                </div>
-            </div>
+
 
         </div>
     </div>
@@ -165,8 +172,6 @@
         $('#city').select2().on("change", update_area);
         $('#area').select2().on("change", update_building);
         $('#building').select2();
-
-        update_city();
 
     </script>
 @endsection

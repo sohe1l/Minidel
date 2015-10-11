@@ -4,44 +4,17 @@
 
 @section('head')
 
+<meta name="csrf-token" content="{{ csrf_token() }}" />
+
+
 <style type="text/css">
-
-.listing{
-    padding:1em;
-    border-bottom: 1px solid #e7e7e7;
-}
-.listing img{
-}
-.listing .title{
-    font-size:120%;
-    font-weight: bold;
-}
-
 .quickOrder{
     padding:1em;
     border-bottom: 1px solid #e7e7e7;
 }
-
-
-
-
-
-@media(max-width:767px){
-
+.quickOrder:first-child{
+    padding-top:0em;
 }
-@media(min-width:768px){
-}
-@media(min-width:992px){
-
-}
-@media(min-width:1200px){
-}
-
-
-
-
-
-
 </style>
 
 
@@ -52,57 +25,73 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">Dashboard</li>
+</ol>
+
+
+
 <div class="row">
-  <div class="col-md-3">
-    <h3>Quick Order</h3>
-        <div class="quickOrder">
-            2 Lattee FROM Mensch Cafe DELIVER Home <br>
-            <button type="button" class="btn btn-primary btn-xs">Order</button>
-        </div>
-        
-        <div class="quickOrder">
-            2 Lattee FROM Mensch Cafe DELIVER Home <br>
-            <button type="button" class="btn btn-primary btn-xs">Order</button>
-        </div>
-
-        <div class="quickOrder">
-            2 Lattee FROM Mensch Cafe DELIVER Home <br>
-            <button type="button" class="btn btn-primary btn-xs">Order</button>
-        </div>
-  </div>
-  <div class="col-md-9">
-    <h2>Stores that serve you</h2>
+  <div class="col-sm-4">
 
 
-    @if(!$user->hasAddresses())
-        <div class="alert alert-warning" role="alert">You need to add your address to be able to make an order.</div>
-        <a href="/dashboard/address/create" class="btn btn-default">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          New Address
+    <h4>Make New Order</h4>
+
+    <div class="btn-group" role="group" style="width: 100%;">
+
+        <a href="/dashboard/order/?type=mini" class="btn btn-primary btn-lg" style="width:50%">
+          <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Mini
         </a>
-    @endif
-
-    @foreach($merged as $store)
-        <div class="listing clearfix">
-            <div class="col-sm-2">
-                <img src="/img/logo/{{ $store->logo or 'placeholder.svg' }}" class="img-responsive hidden-xs">
-                <img src="/img/cover/{{ $store->cover or 'placeholder.svg' }}" class="img-responsive visible-xs">
-            </div>
-            <div class="col-sm-10">
-                <div class="title"><a href="/store/{{$store->city->slug}}/{{$store->area->slug}}/{{$store->slug}}">{{ $store->name }}</a></div>
-                <div>
-                    <span class="label label-info">{{ $store->isOpenNow('Normal Openning') == 'true'?'Open Now':''  }}</span>
-                    <span class="label label-danger">{{ $store->isOpenNow('Normal Openning') == 'false'?'Closed Now':''  }}</span>
-                    <span class="label label-success">{{ $store->isOpenNow('Building Delivery') == 'true'?'Deliveres Now':''  }}</span>
-                </div>
-                <div>{{ $store->info }}</div>
+        <?php /*
+        <a href="/dashboard/order/?type=delivery" class="btn btn-default btn-block btn-lg">
+          <span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Delivery
+        </a>
+        */ ?>
+        <a href="/dashboard/order/?type=pickup" class="btn btn-default btn-lg" style="width:50%">
+          <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
+        </a>
+    </div>
 
 
-            </div>
+    <br><br>
 
 
 
+    <h4>Recent Resturants</h4>
+    <form method="GET" action="/search/">
+   <div id="custom-search-input">
+        <div class="input-group col-md-12">
+            <input type="text" class="search-query form-control" name="q" placeholder="Search" />
+            <span class="input-group-btn">
+                <button class="btn btn-danger" type="button">
+                    <span class=" glyphicon glyphicon-search"></span>
+                </button>
+            </span>
         </div>
+    </div>
+    </form>
+
+
+    @foreach($recent as $order)
+      
+
+      <div class="media">
+        <div class="media-left">
+          <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}">
+            <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
+          </a>
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}">
+              {{ $order->store->name }}
+            </a>
+          </h4>
+          {{ $order->store->info }}
+        </div>
+      </div>
+
     @endforeach
 
 
@@ -114,9 +103,114 @@
 
 
 
+
+
+
+
+  </div>
+  <div class="col-sm-5">
+
+
+
+
+
+
+
+
+
+
+
+<h4>Quick Order</h4>
+
+<div>    
+    @forelse($user->orders()->where('status','delivered')->get() as $order)
+        <div class="quickOrder">
+          [ {{ $order->type }} ]
+          @foreach(json_decode($order->cart) as $item)
+            {{ $item->quan }} <small><b>X</b></small> {{ $item->title }} 
+            
+            @if(property_exists($item,'options') && is_array($item->options) && count($item->options)>0)
+            [
+                @foreach($item->options as $option)
+                    {{ $option->name }}: 
+                    <span style="font-style: italic">
+                        @foreach($option->selects  as $subOption) {{ $subOption->name }} @endforeach
+                    </span>
+                @endforeach
+            ]
+            @endif
+          @endforeach
+
+        <div>from <b>{{ $order->store->name }}</b></div>
+        <div>{{ $order->instructions }}</div>
+        <button type="button" class="btn btn-primary btn-xs" v-on="click: placeRegular({{ $order->id }})">Order</button>
+      </div>
+    @empty
+      <div style="font-style: italic">You did not make any orders yet.</div>
+    @endforelse
+
+</div>
+
+
+
+
+
+
+  </div>
+  <div class="col-sm-3">
+
+
+
+    <h4>Your Addresses <a style="float:right" href="/dashboard/address/"><span class="glyphicon glyphicon-edit"></span></a></h4>
+
+
+    @forelse($user->addresses as $address)
+        <div><b>{{ $address->name }}</b></div>
+        <div>{{ $address->city->name }}, {{ $address->area->name }}, {{ $address->building->name }}</div>
+        <div>{{ $address->unit }}, {{ $address->info }}</div>
+        <div>&nbsp;</div>
+    @empty
+        No address. <a href="/dashboard/address/create">Add Address</a>
+    @endforelse
+
+
   </div>
 </div>
 
 
 
+@stop
+
+@section('footer')
+<script type="text/javascript">
+  
+  var vm = new Vue({
+    el: '#defaultMainContainer',
+    methods:{
+      placeRegular: function(id){
+        $.ajax({
+          type: "POST",
+          url: "/dashboard/regular",
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          data: {
+            order: id,
+            timeout: 15000,
+            dataType: 'json'
+          }
+        })
+        .done(function(data) {
+          if(data["error"]==1){
+            alert(data["message"]);
+          }else{
+            alert("done");
+          }
+        })
+        .fail( function(xhr, status, error) {
+          alert("Some Error Occured!");
+        });
+      } // place order
+    }
+  });
+
+</script>
 @stop

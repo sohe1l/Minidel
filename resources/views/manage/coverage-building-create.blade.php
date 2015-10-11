@@ -1,19 +1,26 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-            <h2>New Coverage Building<br>
-                <small>Addding an building, will override area min delivery and delivery fees.</small>
-            </h2>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/coverage">Coverage</a></li>
+  <li class="active">New Building</li>
+</ol>
+
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'coverage'))
+  </div>
+  <div class="col-md-9">
+    <h3>New Coverage Building<br> <small>Addding an building will override area min delivery and delivery fees.</small></h3>
+
+
 
             @include('errors.list')
-
-            <div class="panel panel-default">
-                <div class="panel-heading">Location</div>
-                <div class="panel-body">
                     {!! Form::open(array('url' => '/manage/'.$store->slug.'/coverage/building', 'class'=>'form-horizontal' ) ) !!}
 
 
@@ -46,6 +53,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-4 control-label"></label>
+                        <div class="col-md-6">
+                            <b>Delivery for buildings have no minimum delivery and no delivery charge</b>
+                        </div>
+                    </div>
+
+
+<?php /*
+                    <div class="form-group">
                         <label class="col-md-4 control-label">Min Order</label>
                         <div class="col-md-6">
                             {!! Form::text('min', 0, $attributes=array('class'=>'form-control')); !!}
@@ -72,6 +88,7 @@
                             {!! Form::text('feebelowmin', 0, $attributes=array('class'=>'form-control', 'id'=>'textAccept', 'readonly')); !!}
                         </div>
                     </div>
+*/ ?>
 
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">
@@ -79,10 +96,7 @@
                         </div>
                     </div>
                 {!! Form::close() !!}
-                </div>
-            </div>
 
-        </div>
     </div>
 </div>
 

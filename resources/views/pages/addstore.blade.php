@@ -1,6 +1,13 @@
 @extends('layouts.default')
 
 @section('content')
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">Add Store</li>
+</ol>
+
+
     <div class="jumbotron">
         <h1>How to add your store to recieve orders?</h1>
 

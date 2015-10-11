@@ -70,7 +70,7 @@ class ManageController extends Controller
         $store->save();
 
         // add the role for the user
-        $role = \App\Role::whereName('store_admin')->first();
+        $role = \App\Role::whereName('store_owner')->first();
         $role->users()->attach($request->user()->id, ['store_id'=>$store->id]);
 
         return redirect('/manage/');
@@ -87,10 +87,71 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store->userRole($request->user()->id)==null) abort(403);
 
         return view('manage.show',compact('store'));
     }
+
+
+
+
+    public function submitReview(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $store->status_listing = 'review';
+        $store->save();
+
+        return redirect()->back();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function reports(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        return view('manage.reports',compact('store'));
+    }
+
+
+
+    public function reportsOrderShow(Request $request, $storeSlug, $orderId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $order = $store->orders()->find($orderId);
+        if(!$order) abort(404);
+
+
+        return view('manage.reports-order',compact('store', 'order'));
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -100,7 +161,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
         
 
         $countries = \Countries::getList('en', 'php', 'cldr');
@@ -111,7 +172,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -131,7 +192,7 @@ class ManageController extends Controller
         $store->save();
 
         flash('Store information updated successfully.');
-        return redirect('/manage/' . $storeSlug );
+        return redirect('/manage/' . $storeSlug . '/general');
     }
 
 
@@ -142,7 +203,7 @@ class ManageController extends Controller
     {        
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -173,14 +234,14 @@ class ManageController extends Controller
         $store->save();
 
         flash('Logo update successfully.');
-        return redirect('/manage/' . $storeSlug );
+        return redirect('/manage/' . $storeSlug . '/general');
     }
 
    public function coverStore(Request $request, $storeSlug)
     {        
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -207,7 +268,7 @@ class ManageController extends Controller
         $store->save();
 
         flash('Cover update successfully.');
-        return redirect('/manage/' . $storeSlug );
+        return redirect('/manage/' . $storeSlug . '/general' );
     }
 
 
@@ -221,7 +282,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -239,7 +300,7 @@ class ManageController extends Controller
         $store->save();
 
         flash('Store location updated successfully.');
-        return redirect('/manage/' . $storeSlug );
+        return redirect('/manage/' . $storeSlug . '/general');
     }
 
 
@@ -256,7 +317,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         return view('manage.menu',compact('store'));
     }
@@ -265,7 +326,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -282,7 +343,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $section = \App\menuSection::findOrFail($sectionId);
 
@@ -305,7 +366,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         return view('manage.menu-item',compact('store'));
     }
@@ -314,7 +375,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -342,7 +403,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $item = \App\menuItem::findOrFail($itemId);
 
@@ -363,7 +424,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $item = \App\menuItem::findOrFail($itemId);
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
@@ -378,7 +439,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
         
         $item = \App\menuItem::findOrFail($itemId);
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
@@ -436,7 +497,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
         
         $item = \App\menuItem::findOrFail($itemId);
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
@@ -465,7 +526,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
         
         $item = \App\menuItem::findOrFail($itemId);
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
@@ -512,7 +573,7 @@ class ManageController extends Controller
     {        
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         return view('manage.options',compact('store'));
     }
@@ -522,7 +583,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         return view('manage.options-create',compact('store'));
     }
@@ -532,7 +593,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         //validate request
         $this->validate($request, [
@@ -580,7 +641,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $option = \App\menuOption::findOrFail($optionId);
 
@@ -598,7 +659,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $option = \App\menuOption::findOrFail($optionId);
 
@@ -612,7 +673,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $option = \App\menuOption::findOrFail($optionId);
 
@@ -666,7 +727,9 @@ class ManageController extends Controller
     public function coverage(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         return view('manage.coverage',compact('store'));
     }
@@ -678,7 +741,9 @@ class ManageController extends Controller
         $countries = \Countries::getList('en', 'php', 'cldr');
 
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         return view('manage.coverage-area-create',compact('store','countries'));
     }
@@ -686,7 +751,8 @@ class ManageController extends Controller
     public function coverageAreaStore(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $this->validate($request, [
             'country' => 'required|string',
@@ -711,7 +777,9 @@ class ManageController extends Controller
     public function coverageAreaDestroy(Request $request, $storeSlug, $areaId)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $store->coverageAreas()->detach($areaId);
 
@@ -727,7 +795,9 @@ class ManageController extends Controller
         $countries = \Countries::getList('en', 'php', 'cldr');
 
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         return view('manage.coverage-building-create',compact('store','countries'));
     }
@@ -735,16 +805,18 @@ class ManageController extends Controller
     public function coverageBuildingStore(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $this->validate($request, [
             'country' => 'required|string',
             'city_id' => 'required|integer',
             'area_id' => 'required|integer',
             'building_id' => 'required|integer',
-            'min' => 'required|integer',
-            'fee' => 'required|integer',
-            'feebelowmin' => 'required|integer'
+        //    'min' => 'required|integer',
+        //    'fee' => 'required|integer',
+        //    'feebelowmin' => 'required|integer'
         ]);
 
         if ($store->coverageBuildings->contains($request->building_id)) {
@@ -753,7 +825,8 @@ class ManageController extends Controller
         }else{
             flash('Building added successfully.');
         }
-        $store->coverageBuildings()->attach($request->building_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin));
+        // $store->coverageBuildings()->attach($request->building_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin));
+        $store->coverageBuildings()->attach($request->building_id, array('min' => 0, 'fee' => 0, 'feebelowmin' => 0));
 
         return redirect('/manage/' . $storeSlug . '/coverage' );
     }
@@ -761,7 +834,9 @@ class ManageController extends Controller
     public function coverageBuildingDestroy(Request $request, $storeSlug, $areaId)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $store->coverageBuildings()->detach($areaId);
 
@@ -787,7 +862,9 @@ class ManageController extends Controller
     public function timings(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $workmodes = \App\Workmode::all();
 
@@ -798,7 +875,9 @@ class ManageController extends Controller
     public function timingsCreate(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $workmodes = \App\Workmode::all();
         $workmodes_list = array();
@@ -812,7 +891,9 @@ class ManageController extends Controller
     public function timingsStore(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
 
         $this->validate($request, [
             'workmode_id' => 'required|integer',
@@ -825,11 +906,11 @@ class ManageController extends Controller
         $start = date_create_from_format('H:i:s', $request->start);
         $end = date_create_from_format('H:i:s', $request->end);
         if($start > $end){
-            $temp = $request->start;
-            $request->start = $request->end;
-            $request->end = $temp;
+            return back()
+            ->withInput()
+            ->withErrors("Start timing cannot be before end timing.")
+            ->withInput();
         }
-
 
 
         //check that interval is not interfearing with another timings in the same mode
@@ -841,8 +922,10 @@ class ManageController extends Controller
         })->get();
 
         if($timing->count() != 0){
-            flash('Timing could not be created due to an conflict with your current timings.');
-            return redirect('/manage/' . $storeSlug . '/timings' );
+            return back()
+            ->withInput()
+            ->withErrors("Timing could not be created due to an conflict with your current timings.")
+            ->withInput();
         }
 
 
@@ -854,7 +937,8 @@ class ManageController extends Controller
     public function timingsDestroy(Request $request, $storeSlug, $timingId)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) ==null) abort(403);
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         $timing = $store->timings()->where('id',$timingId)->delete();
 
@@ -871,7 +955,7 @@ class ManageController extends Controller
     {
 
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if($store->userRole($request->user()->id) != 'store_owner') abort(403);
 
         $roles = \App\Role::where('name', 'LIKE', 'store_%')->get();
         $roles_list = array();
@@ -884,7 +968,7 @@ class ManageController extends Controller
     public function usersCreate(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if($store->userRole($request->user()->id) != 'store_owner') abort(403);
 
         $roles = \App\Role::where('name', 'LIKE', 'store_%')->get();
         $roles_list = array();
@@ -895,14 +979,10 @@ class ManageController extends Controller
     }
 
 
-
-/*
-prevent admin from removing his role
-*/
     public function usersStore(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if($store->userRole($request->user()->id) != 'store_owner') abort(403);
 
         $this->validate($request, [
             'email' => 'required|email|exists:users,email',
@@ -930,6 +1010,82 @@ prevent admin from removing his role
     }
 
 
+    public function usersDestroy(Request $request, $storeSlug, $userId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store->userRole($request->user()->id) != 'store_owner') abort(403);
+
+        $user = \App\User::find($userId);
+        if(!$user){
+            flash("User does not exists.");
+            return redirect('/manage/' . $storeSlug . '/users' );
+        }
+
+        //check if current user id return
+        if($user->id == $request->user()->id){
+            flash("You cannot delete your own role.");
+            return redirect('/manage/' . $storeSlug . '/users' );
+        }
+
+        $roles = $store->users()->detach($user->id);
+
+        flash('User deleted successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/users' );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //tags
+    public function tags(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        
+        $tagslist = $store->tags->lists('id')->toArray();
+
+        // dd($tagslist);
+
+        return view('manage.tags',compact('store','tagslist'));
+    }
+
+
+
+    //tags
+    public function tagsStore(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        
+        $store->tags()->sync($request->tags);
+
+        flash('Tags updated successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/tags' );
+    }
+
+
 
 
 
@@ -941,13 +1097,17 @@ prevent admin from removing his role
     public function getorders(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if($store == null ) abort(404);
+        if($store->userRole($request->user()->id)==null) abort(403);
+
+        $store->updateLastCheck();
 
         $orders = \App\Order::where('store_id',$store->id)->where('hidden_store',0)->with('user','userAddress','userAddress.area','userAddress.building')->get();
 
         $returnData = array(
             'error' => 0,
-            'orders' => $orders
+            'orders' => $orders,
+            'status_working' => $store->status_working
         );
         return response()->json($returnData);
     }
@@ -955,7 +1115,8 @@ prevent admin from removing his role
     public function orderUpdateStatus(Request $request, $storeSlug, $orderId)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
-        if($store->userRole($request->user()->id) != 'store_admin') abort(403);
+        if($store == null ) abort(404);
+        if($store->userRole($request->user()->id)==null) abort(403);
 
         $order = \App\Order::find($orderId);
 
@@ -982,14 +1143,35 @@ prevent admin from removing his role
     }
 
 
+    public function updateStatusWorking(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if($store->userRole($request->user()->id)==null) abort(403);
 
+        if(!in_array($request->status_working, ['open','busy','close']))
+            return jsonOut(1,'Invalid status');
 
-    private function jsonOut($error, $msg){
-        $returnData = array(
-            'error' => $error,
-            'message' => $msg
-        );
-        return response()->json($returnData);
+        $store->status_working = $request->status_working;
+        $store->save();
+
+        return jsonOut(0,'ok');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

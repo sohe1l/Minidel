@@ -1,18 +1,25 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-        <h2>Create new menu option <br>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/options">Options</a></li>
+  <li class="active">New Option</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'options'))
+  </div>
+  <div class="col-md-9">
+
+        <h3>Create new menu option <br>
             <small>Options will attach to your menu items and allow your customers to select different options such as sizes, topppings, and etc...</small>
-        </h2>
+        </h3>
 
-
-            <div class="panel panel-default">
-                <div class="panel-heading">Create new menu option</div>
-                <div class="panel-body">
 
                     @include('errors.list')
 
@@ -95,9 +102,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

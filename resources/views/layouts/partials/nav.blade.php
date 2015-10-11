@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#" style="padding:10px;">
+      <a class="navbar-brand" href="/">
         <img alt="Brand" style="height:30px" class="img-responsive" src="/img/logo.png">
       </a>
 
@@ -22,20 +22,30 @@
             @if (\Auth::user())
 
                 @if(\Session::get('hasRole', false) == true)
-                    <button onclick="location.href='/manage';" type="button" class="btn btn-warning navbar-btn">Manage Store</button>
+                <li class="visible-xs"><a href="/manage/">Manage Stores</a></li>
+                @endif
+                <li class="visible-xs"><a href="/dashboard/order/">Order</a></li>
+                <li class="visible-xs"><a href="/dashboard/orders">Orders</a></li>
+                <li class="visible-xs"><a href="/dashboard/address">Your Address</a></li>
+                <li class="visible-xs"><a href="/auth/logout/">Logout</a></li>
+                
+
+
+                @if(\Session::get('hasRole', false) == true)
+                    <li class="hidden-xs"><button onclick="location.href='/manage';" type="button" class="btn btn-warning navbar-btn">Manage Store</button></li>
                 @endif
 
-                <button onclick="location.href='/dashboard';" type="button" class="btn btn-danger navbar-btn">Order</button>
+                <li class="hidden-xs"><button onclick="location.href='/dashboard';" type="button" class="btn btn-danger navbar-btn">Order</button></li>
 
-                <li class="dropdown navbar-right" >
+                <li class="dropdown" class="hidden-xs">
 
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding:10px;">
+                    <a href="#" class="dropdown-toggle hidden-xs" data-toggle="dropdown">
                         <img class="nav-gravatar" src="/img/user/{{ (\Auth::user()->gender=='F')?'female':'male' }}.jpg">
 
                         {{ \Auth::user()->name }} <span class="caret"></span>
                     </a>
 
-                    <ul class="dropdown-menu" role="menu">
+                    <ul class="dropdown-menu hidden-xs" role="menu">
                         <li><a href="/dashboard/">Dashboard</a></li>
                         <li class="divider"></li>
                         <li><a href="/dashboard/orders">Orders</a></li>

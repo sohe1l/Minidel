@@ -19,5 +19,10 @@ class UserAddress extends Model
         return $this->belongsTo('\App\Area'); //->withTimestamps();
     }
 
+    public function city()
+    {
+        return $this->belongsTo('\App\City'); //->withTimestamps();
+    }
+
 
 }

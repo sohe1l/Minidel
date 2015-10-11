@@ -8,6 +8,14 @@ class Store extends Model
 {
     // protected $fillable = ['name', 'phone', 'country', 'city', 'area', 'building'];
 
+    protected $appends = ['is_open','is_deliver_building','is_deliver_area'];
+
+
+    public function scopeListed($query)
+    {
+        return $query->where('status_listing', 'published');
+    }
+
     // not working ?
     public function userRole($user_id){
         $user = $this->users->where('id',$user_id)->first();
@@ -110,5 +118,29 @@ class Store extends Model
         return $this->hasMany('\App\Order');
     }
 
+    public function getIsOpenAttribute(){
+        return $this->isOpenNow('Normal Openning');
+    }
+    public function getIsDeliverBuildingAttribute(){
+        return $this->isOpenNow('Building Delivery');
+    }
+    public function getIsDeliverAreaAttribute(){
+        return $this->isOpenNow('Area Delivery');
+    }
 
+
+    public function updateLastCheck(){
+        $this->last_check = date('Y-m-d H:i:s');
+        $this->save();
+    }
+
+
+
+    public function tags(){
+        return $this->belongsToMany('\App\Tag');
+    }
+
+    public function ratings(){
+        return $this->hasMany('\App\Rating');
+    }
 }

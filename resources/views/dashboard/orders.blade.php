@@ -8,17 +8,24 @@
     .cart-row {border-bottom: 1px solid #848484;     padding: 7px 0;}
     .cart-title, .cart-price {font-weight: bold; font-size: 1.1em;}
     .cart-right {float:right;}
+    .btn-warning a {color:white !important;}
   </style>
 @endsection
 
-
 @section('content')
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/dashboard/">Dashboard</a></li>
+  <li class="active">Orders</li>
+</ol>
+
 
 <div class="row" id="ordersDiv">
   <div class="col-md-3 hidden-print">
     <div style="height:20px">&nbsp;</div>
     <ul class="nav nav-pills nav-stacked">
-      <li v-repeat="orders" role="presentation" v-class="btn-danger:status == 'pending', active: selectedId==id"><a v-on="click: selectedId=id">@{{ store.name }}</a></li>
+      <li v-repeat="orders" role="presentation" v-class="btn-warning:status == 'pending', active: selectedId==id"><a v-on="click: selectedId=id">@{{ store.name }}</a></li>
 
 
 
@@ -59,16 +66,27 @@
 
             <tr v-repeat="item: cart">
               <td>@{{item.title}}
-                <div v-show="item.options"><span class="cart-options" v-repeat="item.options"><b>@{{name}}:</b> @{{selects}} </span></div>
+                <div v-show="item.options">
+                  <span class="cart-options" v-repeat="item.options">
+                    <b>@{{name}}:</b>
+                    <span class="cart-options" v-repeat="selects">@{{name}} </span> 
+                  </span>
+                </div>
               </td>
               <td>@{{item.quan}}</td>
               <td>@{{item.quan * item.price}}</td>
             </tr>
 
+            <tr v-show="orders[selectedIndex].fee != 0">
+              <td>Delivery Fee</td>
+              <td></td>
+              <td>@{{ orders[selectedIndex].fee }}</td>
+            </tr>
+
             <tr>
               <td></td>
               <td></td>
-              <td><b>@{{ orders[selectedIndex].price }}</b></td>
+              <td><b>@{{ (orders[selectedIndex].price*100 + orders[selectedIndex].fee *100)/100 }}</b></td>
 
             </tr>
 
@@ -92,18 +110,48 @@
           </blockquote>
 
 
+          <div style="font-size: 1.8em">
+            <span v-class="label:true, 
+                          label-default:orders[selectedIndex].status != 'pending', 
+                          label-warning:orders[selectedIndex].status == 'pending'">Pending
+            </span>
+            &nbsp;
+            <span v-class="label:true, 
+                          label-default:orders[selectedIndex].status != 'accepted', 
+                          label-success:orders[selectedIndex].status == 'accepted'">Accepted
+            </span>
+            &nbsp;
+            <span v-class="label:true, 
+                          label-default:orders[selectedIndex].status != 'delivering', 
+                          label-success:orders[selectedIndex].status == 'delivering'">Delivering
+            </span>&nbsp;
+
+            <span v-class="label:true, 
+                          label-default:orders[selectedIndex].status != 'delivered', 
+                          label-success:orders[selectedIndex].status == 'delivered'">Delivered
+            </span>&nbsp;
+
+            <span v-show="orders[selectedIndex].status == 'canceled'" class="label label-danger">Canceled</span>&nbsp;
+            <span v-show="orders[selectedIndex].status == 'rejected'" class="label label-danger">Rejected</span>&nbsp;
+            <span v-show="orders[selectedIndex].callback == 1" class="label label-danger">Callback Requested</span>
+          </div>
+
+
 
           <div style="text-align: right">
+            <?php /*
             <span v-class="label:true,label-default:orders[selectedIndex].status != 'pending' ,label-danger:orders[selectedIndex].status == 'pending'" 
                 style="float:left; text-transform: capitalize; font-weight: bold">
               Current Status: @{{ orders[selectedIndex].status }}
             </span>
 
             <span style="float:left;">&nbsp;&nbsp;</span>
+
             
             <span v-show="orders[selectedIndex].callback == 1" class="label label-danger" style="float:left; font-weight: bold">
               Callback Requested
             </span>
+            */ ?>
 
 
             <span v-show="orders[selectedIndex].status == 'pending'">

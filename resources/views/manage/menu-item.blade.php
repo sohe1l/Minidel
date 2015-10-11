@@ -1,12 +1,24 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">New menu item</div>
-                <div class="panel-body">
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/menu">Menu</a></li>
+  <li class="active">New Menu Item</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'menu'))
+  </div>
+  <div class="col-md-9">
+    <h3>New Menu Item <br> <small>Use the following form to add a new Item to your menu.</small></h3>
+
+
+
                  
                     @include('errors.list')
 
@@ -61,13 +73,9 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
-
-
 
 
 @endsection

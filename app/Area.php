@@ -20,12 +20,26 @@ class Area extends Model
 
     public function stores()
     {
-        return $this->hasMany('\App\Store'); //->withTimestamps();
+        return $this->hasMany('\App\Store')->listed(); //->withTimestamps();
+    }
+
+    public function storesWith($with)
+    {
+        return $this->hasMany('\App\Store')->with($with)->listed(); //->withTimestamps();
     }
 
     public function coverageStores(){
-        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin');;
+        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin')->listed();
     }
     
+
+    static function listByCitySelect($city)
+    {
+        $areas = \App\Area::where('city_id',$city)->get();
+        $arr = array();
+        foreach($areas as $area)
+            $arr[$area->id] = $area->name;
+        return ($arr);
+    }
 
 }

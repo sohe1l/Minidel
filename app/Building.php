@@ -19,7 +19,17 @@ class Building extends Model
     }
 
     public function coverageStores(){
-        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin');;
+        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin')->listed();
     }
+
+    static function listByAreaSelect($area)
+    {
+        $blds = \App\Building::where('area_id',$area)->get();
+        $arr = array();
+        foreach($blds as $bld)
+            $arr[$bld->id] = $bld->name;
+        return ($arr);
+    }
+
 
 }

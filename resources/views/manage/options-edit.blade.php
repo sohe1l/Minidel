@@ -1,18 +1,23 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
 
-        <h2>Edit a menu option <br>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li><a href="/manage/{{$store->slug}}/options">Options</a></li>
+  <li class="active">Edit Option</li>
+</ol>
+
+<div class="row">
+  <div class="col-md-3">
+  @include('manage.nav', array('active'=>'options'))
+  </div>
+  <div class="col-md-9">
+        <h3>Edit a menu option <br>
             <small>Options can attach to your menu items to [allow your customers to select different options such as sizes, topppings, and etc...</small>
-        </h2>
-
-
-            <div class="panel panel-default">
-                <div class="panel-heading">Create new menu option</div>
-                <div class="panel-body">
+        </h3>
 
                     @include('errors.list')
 
@@ -86,18 +91,6 @@
                         @endfor
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                         <div class="form-group">
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary" style="float:right">
@@ -106,9 +99,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

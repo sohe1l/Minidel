@@ -76,6 +76,10 @@ class User extends Model implements AuthenticatableContract,
         return $this->hasMany('\App\UserAddress');
     }
 
+    public function orders(){
+        return $this->hasMany('\App\Order');
+    }
+
     public function hasAddresses(){
         if($this->addresses->count() != 0 ) return true;
         return false;

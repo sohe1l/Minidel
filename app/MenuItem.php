@@ -62,6 +62,17 @@ class menuItem extends Model
         // return $this->menuSection->items->sortBy('order')->last()->order;
     }
 
+    static function priceArray($idArr){
+        $out = [];
+        $products = \App\menuItem::whereIn('id', $idArr)->select('id', 'price')->get();
+        foreach($products as $p){
+            $out[$p->id] = $p->price;
+        }
+        return $out;
+    }
+
+
+
 /*
     //set the order to the last item in that section
     public function setOrderAttribute($order='')

@@ -2,6 +2,12 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li class="active">Users</li>
+</ol>
 
 <div class="row">
   <div class="col-md-3">
@@ -21,7 +27,7 @@
       <div class="col-lg-6" style="text-align:right">
         <a href="/manage/{{$store->slug}}/users/create" class="btn btn-default">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          New User
+          Add New User
         </a>
       </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
@@ -56,13 +62,53 @@
     </div>
 
 
+<br><br><bR>
+      <table class="table">
+        <tr>
+          <th>Role</th>
+          <th>Take Order</th>
+          <th>Manage Setting</th>
+          <th>Add/Remove Users*</th>
+        </tr>
+        <tr>
+          <td>Store Owner</td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr>
+          <td>Store Manager</td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Store Staff</td>
+          <td><span class="glyphicon glyphicon-ok"></span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <small style="font-weight: bold; text-align: right">* Including other owners</small>
   </div>
 
 </div>
 
+<div id="insert"></div>
 
 
 @endsection
 
+
 @section('footer')
+  <script type="text/javascript">
+      function deleteUser(id){
+        var r = confirm("You are about to delete a user role. Are you sure?");
+        if (r == true) {
+          $('#insert').html('<form action="/manage/{{$store->slug}}/users/'+id+'" method="post"><input type="hidden" name="_method" value="DELETE" />{!!Form::token()!!}</form>'); 
+          $( "#insert form" ).submit();
+        }
+      }
+  </script>
+
 @endsection

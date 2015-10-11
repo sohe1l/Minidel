@@ -1,6 +1,6 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+@import "default-layout";
 
-body {
+@import "index";
 
-}
+@import "store";

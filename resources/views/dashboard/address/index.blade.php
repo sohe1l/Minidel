@@ -2,6 +2,11 @@
 
 @section('content')
 
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/dashboard/">Dashboard</a></li>
+  <li class="active">Address</li>
+</ol>
 
 <div class="row">
   <div class="col-md-3">
@@ -32,32 +37,24 @@
     <br>
  
     @forelse ($user->addresses as $address)
-
-          
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                          {{ $address->name }}
-
-                        <span style="float:right">
-                            <a href="/dashboard/address/{{$address->id}}/edit" title="Edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                           </a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                          <a href="javascript:deleteAddress({{ $address->id }})">
-                            <span class="glyphicon glyphicon-remove"></span>
-                          </a>
-                          
-
-                        </span>
-
-                        </div>
-                        <table class="table">
-                        
-
-                        </table>
-
-                         
-                    </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            {{ $address->name }}
+            <span style="float:right">
+                <a href="/dashboard/address/{{$address->id}}/edit" title="Edit">
+                    <span class="glyphicon glyphicon-pencil"></span>
+               </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="javascript:deleteAddress({{ $address->id }})">
+                <span class="glyphicon glyphicon-remove"></span>
+              </a>
+            </span>
+        </div>
+        <div class="panel-body">
+            {{ $address->city->name }}, {{ $address->area->name }}, {{ $address->building->name }},
+            {{ $address->unit }}, {{ $address->info }}
+        </div>
+      </div>
     @empty
       <h4 style="text-align: center">To begin add a new address to your account!</h4>
     @endforelse

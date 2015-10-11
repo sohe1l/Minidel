@@ -40,6 +40,10 @@ Route::group(['prefix' => 'superadmin' , 'middleware' => 'auth.superadmin'], fun
 
 /* Pages */
 Route::get('pages/addstore','PagesController@addStore');
+Route::get('pages/contact','PagesController@contact');
+Route::get('pages/privacy','PagesController@privacy');
+Route::get('pages/terms','PagesController@terms');
+Route::get('pages/about','PagesController@about');
 
 
 
@@ -49,6 +53,10 @@ Route::get('pages/addstore','PagesController@addStore');
 // Dashboard
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/', 'DashboardController@index');
+    Route::post('regular', 'DashboardController@orderRegular');
+
+    Route::get('order', 'DashboardController@order');
+    Route::post('order/stores', 'DashboardController@orderStores');
 
     Route::get('orders', 'DashboardController@orders');
     Route::post('orders/getorders', 'DashboardController@getorders');
@@ -79,6 +87,16 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     //api
     Route::post('{store}/getorders','ManageController@getorders'); // get list of orders
     Route::post('{store}/order/{id}/updateStatus','ManageController@orderUpdateStatus');
+    Route::post('{store}/updateStatusWorking','ManageController@updateStatusWorking');
+
+    Route::post('{store}/submitReview','ManageController@submitReview');
+
+
+
+    Route::get('{store}/reports','ManageController@reports');
+    Route::get('{store}/reports/order/{id}','ManageController@reportsOrderShow');
+
+
 
 
     Route::get('{store}/general','ManageController@general');
@@ -133,6 +151,11 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::get('{store}/users','ManageController@users');
     Route::get('{store}/users/create','ManageController@usersCreate');
     Route::post('{store}/users','ManageController@usersStore');
+    Route::delete('{store}/users/{id}','ManageController@usersDestroy');
+
+    // tags
+    Route::get('{store}/tags','ManageController@tags');
+    Route::post('{store}/tags','ManageController@tagsStore');
 });
 
 
@@ -166,7 +189,13 @@ Route::group(['prefix' => 'api/v1/'], function () {
 
 //store page
 Route::get('store/{city}/{area}/{store}','BrowseController@store');
-Route::post('store/{city}/{area}/{store}','BrowseController@storeOrder'); // save orders for a store
+
+Route::get('store/{city}/{area}/{store}/order','BrowseController@storeOrder'); // save orders for a store
+Route::post('store/{city}/{area}/{store}/order','BrowseController@storeOrderStore'); // save orders for a store
+
+Route::get('store/{city}/{area}/{store}/reviews','BrowseController@storeReviews');
+Route::post('store/{city}/{area}/{store}/reviews','BrowseController@storeReviewsStore');
+
 
 
 
@@ -179,3 +208,6 @@ Route::get('delivery/{city}/{area}/{building}','BrowseController@deliveryBuildin
 Route::get('browse/{city}','BrowseController@city');
 Route::get('browse/{city}/{area}','BrowseController@area');
 Route::get('browse/{city}/{area}/{building}','BrowseController@building');
+
+Route::get('search','BrowseController@search');
+Route::post('search','BrowseController@searchPost');

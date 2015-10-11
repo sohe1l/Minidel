@@ -27,6 +27,7 @@ class MakeOrdersTable extends Migration
             $table->text('cart')->nullable();
             $table->text('reason')->nullable();
             $table->decimal('price', 10, 2);
+            $table->decimal('fee', 10, 2)->default(0);
             $table->timestamps();
         });
     }

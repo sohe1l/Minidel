@@ -12,7 +12,7 @@ class FillInitialData extends Migration
      */
     public function up()
     {
-        DB::table('roles')->insert(array( 'name' => 'store_admin'));
+        DB::table('roles')->insert(array( 'name' => 'store_owner'));
         DB::table('roles')->insert(array( 'name' => 'store_manager'));
         DB::table('roles')->insert(array( 'name' => 'store_staff'));
 
