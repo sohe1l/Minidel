@@ -1,6 +1,6 @@
-<div class="container-fluid">
+<div class="container-fluid hidden-xs">
 
-  <div class="row footerLinks hidden-xs">
+  <div class="row footerLinks">
     <div class="col-sm-3">
       <ul>
           <li><a href="/pages/about">About</a></li>

@@ -2,14 +2,14 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li><a href="/dashboard/">Dashboard</a></li>
   <li class="active">Address</li>
 </ol>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-3 hidden-xs">
   @include('dashboard.nav', array('active'=>'address'))
   </div>
   <div class="col-md-9">

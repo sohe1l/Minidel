@@ -25,18 +25,39 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li class="active">Dashboard</li>
 </ol>
 
+@if ($user->addresses->count() == 0)
+  <div class="jumbotron visible-xs" style="text-align:center">
+    <h4><a href="/dashboard/address/create/">Add an Address to be able to make orders</a></h4>
+  </div>
+@endif
 
+<?php /* 
+<div class="visible-xs" style="margin-bottom:20px;">
+  <form method="GET" action="/search/">
+    <div id="custom-search-input">
+        <div class="input-group col-md-12">
+            <input type="text" class="search-query form-control" name="q" placeholder="Search" />
+            <span class="input-group-btn">
+                <button class="btn btn-danger" type="button">
+                    <span class=" glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+  </form>
+</div>
+*/ ?>
 
 <div class="row">
   <div class="col-sm-4">
 
 
-    <h4>Make New Order</h4>
+    <h4 class="hidden-xs">Make New Order</h4>
 
     <div class="btn-group" role="group" style="width: 100%;">
 
@@ -57,10 +78,11 @@
     <br><br>
 
 
-
+    <div class="hidden-xs">
     <h4>Recent Resturants</h4>
+
     <form method="GET" action="/search/">
-   <div id="custom-search-input">
+    <div id="custom-search-input">
         <div class="input-group col-md-12">
             <input type="text" class="search-query form-control" name="q" placeholder="Search" />
             <span class="input-group-btn">
@@ -70,8 +92,7 @@
             </span>
         </div>
     </div>
-    </form>
-
+  </form>
 
     @foreach($recent as $order)
       
@@ -93,6 +114,7 @@
       </div>
 
     @endforeach
+    </div>
 
 
 
@@ -157,9 +179,7 @@
 
 
   </div>
-  <div class="col-sm-3">
-
-
+  <div class="col-sm-3 hidden-xs">
 
     <h4>Your Addresses <a style="float:right" href="/dashboard/address/"><span class="glyphicon glyphicon-edit"></span></a></h4>
 

@@ -1,6 +1,9 @@
 html {
   background-color: #FAFAFA !important; }
 
+h1, .h1, h2, .h2, h3, .h3 {
+  margin-top: 0 !important; }
+
 .glyphicon-star {
   color: #FDB235; }
 
@@ -13,7 +16,6 @@ html {
   font-size: 90% !important; }
 
 .storeListing {
-  padding: 1em;
   border-bottom: 1px solid #e7e7e7; }
 
 .storeListing .title {
@@ -199,7 +201,7 @@ html {
   .affix {
     position: static; }
   #headingSmall {
-    font-size: 0.5em; }
+    font-size: 0.6em; }
   #cartContainer {
     width: 100%; }
   .container {

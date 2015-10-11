@@ -3,12 +3,13 @@
 @section('content')
 
 
-<h2 style="margin-top: 0;">{{ $store->name }} 
+<h3 style="margin-top: 0;">{{ $store->name }} 
     <small id="headingSmall">
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
     {{ $store->building->name }} - {{ $area->name }}
     </small>
-</h2>
+</h3>
+
 
 <div class="row">
 

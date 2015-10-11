@@ -333,8 +333,12 @@ class ManageController extends Controller
             'title' => 'required|max:100'
         ]);
 
-        $store->sections()->create($request->all());
-
+        $section = new \App\menuSection;
+        $section->store_id = $store->id;
+        $section->title = $request->title;
+        $section->order = $store->lastSectionOrder() + 1;
+        $section->save();
+        
         flash('Menu section created successfully.');
         return redirect('/manage/' . $storeSlug . '/menu' );
     }
@@ -362,6 +366,98 @@ class ManageController extends Controller
 
 
 
+    public function menuSectionUp(Request $request, $storeSlug, $sectionId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $item = \App\menuSection::findOrFail($sectionId);
+        if($store->id != $item->store_id) abort(403); // item belongs to someone else
+
+        if($item->order != 0){
+            $item->order = $item->order - 1;
+
+            $item2 = \App\menuSection::where('order', $item->order)->first();
+
+            if($item2  != null){
+                $item2->order = $item2->order + 1;
+                $item2->save();
+            }
+
+            $item->save();
+        }
+        
+
+        flash('Menu section updated successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu' );
+    }
+
+    public function menuSectionDown(Request $request, $storeSlug, $sectionId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $item = \App\menuSection::findOrFail($sectionId);
+        if($store->id != $item->store_id) abort(403); // item belongs to someone else
+
+
+        if($item->order != $store->lastSectionOrder()){
+            $item->order = $item->order + 1;
+
+            $item2 = \App\menuSection::where('order', $item->order)->first();
+                                  
+            if($item2  != null){
+                $item2->order = $item2->order - 1;
+                $item2->save();
+            }
+
+            $item->save();
+        }
+        
+
+        flash('Menu section updated successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu' );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function menuItemCreate(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
@@ -381,8 +477,9 @@ class ManageController extends Controller
         $this->validate($request, [
             'menu_section_id' => 'required|integer',
             'title' => 'required|max:30',
-            'info' => 'required|max:200',
+            'info' => 'max:200',
             'price' => 'required|numeric',
+            'imagefile' => 'mimes:jpg,jpeg,png,bmp'
         ]);
 
         //dd($_POST['options']);
@@ -394,6 +491,23 @@ class ManageController extends Controller
         $item = $section->items()->create($request->all());
 
         if(is_array($request->options)) $item->options()->sync($request->options);
+
+        //handle image
+        $file = $request->file('imagefile');
+        if($file){
+            //delete the old picture
+            //if($item->photo) \File::delete($this->menuBase.$item->photo);
+
+            //store the new image
+            $photoFileName = time() . '-' . $file->getClientOriginalName();
+            $image = \Image::make($file->getRealPath());
+            $image->fit(150,150)->save($this->menuBase.$photoFileName);
+
+            //update db
+            $item->photo = $photoFileName;
+            $item->save();
+        }
+
 
         flash('Item created successfully.');
         return redirect('/manage/' . $storeSlug . '/menu' );
@@ -448,7 +562,7 @@ class ManageController extends Controller
         $this->validate($request, [
             'menu_section_id' => 'required|integer',
             'title' => 'required|max:30',
-            'info' => 'required|max:200',
+            'info' => 'max:200',
             'price' => 'required|numeric',
             'imagefile' => 'mimes:jpg,jpeg,png,bmp'
         ]);

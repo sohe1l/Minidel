@@ -32,10 +32,10 @@
 
 
                 @if(\Session::get('hasRole', false) == true)
-                    <li class="hidden-xs"><button onclick="location.href='/manage';" type="button" class="btn btn-warning navbar-btn">Manage Store</button></li>
+                    <li class="hidden-xs"><a href="/manage" style="padding:6px 12px; color:white; margin-right: 5px;" class="btn btn-warning navbar-btn">Manage Store</a></li>
                 @endif
 
-                <li class="hidden-xs"><button onclick="location.href='/dashboard';" type="button" class="btn btn-danger navbar-btn">Order</button></li>
+                <li class="hidden-xs"><a href="/dashboard/order" style="padding:6px 12px; color:white; margin-right: 5px;" class="btn btn-danger navbar-btn">Order</a></li>
 
                 <li class="dropdown" class="hidden-xs">
 

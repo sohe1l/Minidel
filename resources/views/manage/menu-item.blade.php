@@ -22,8 +22,8 @@
                  
                     @include('errors.list')
 
-                    <form class="form-horizontal" role="form" method="POST" action="/manage/{{ $store->slug }}/menu/item">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    {!! Form::open(['class'=>'form-horizontal', 'files' => true,
+                            'url' => '/manage/'.$store->slug.'/menu/item/']) !!}
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Section</label>
@@ -66,13 +66,20 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-md-4 control-label">Image</label>
+                            <div class="col-md-6">
+                                {!! Form::file('imagefile', $attributes=array('class'=>'')); !!}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
                                     Create
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    {!! form::close() !!}
 
     </div>
 </div>

@@ -68,6 +68,7 @@ class BrowseController extends Controller
 
         $user_addresses = array();
         foreach($user->addresses as $address){
+            $type = "";
             if($store->coverageBuildings->contains('id', $address->building_id)){
                 $item = $store->coverageBuildings->where('id',$address->building_id)->first();
                 $type = "mini";

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li><a href="/dashboard/">Dashboard</a></li>
   <li><a href="/dashboard/address">Address</a></li>
@@ -10,7 +10,7 @@
 </ol>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-3 hidden-xs">
   @include('dashboard.nav', array('active'=>'address'))
   </div>
   <div class="col-md-9">
@@ -35,7 +35,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">City</label>
                         <div class="col-md-6">
-                            {!! Form::select('city_id',[],null,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
+                            {!!  Form::select('city_id',['4'=>'Dubai'],4,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
                         </div>
                     </div>
 
@@ -84,10 +84,11 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="col-md-6 col-md-offset-4">
+                        <div class="col-md-6 col-md-offset-4" style="text-align: right">
                             {!! Form::submit('Add Address!', $attributes=array('class'=>'btn btn-primary')); !!}
                         </div>
                     </div>
+
                 {!! Form::close() !!}
 
         </div>
@@ -165,12 +166,12 @@
             $(input).html(' ');
         }
 
-        $('#country').select2().on("change", update_city);
-        $('#city').select2().on("change", update_area);
+        //$('#country').select2().on("change", update_city);
+        //$('#city').select2().on("change", update_area);
         $('#area').select2().on("change", update_building);
         $('#building').select2();
 
-        update_city();
+        update_area();
 
     </script>
 @endsection

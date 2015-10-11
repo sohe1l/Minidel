@@ -14,7 +14,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li><a href="/dashboard/">Dashboard</a></li>
   <li class="active">Orders</li>
@@ -271,7 +271,7 @@
             orderid = this.orders[this.selectedIndex].id;
             var reason = "";
             if(status == "canceled"){
-              var reason = prompt("Please enter the reason. The reason will be shown to the customer.", "");
+              var reason = prompt("Please enter the reason for cancelling the order.", "");
               if (reason == null || reason == '') {
                 alert("You must specify a reason.");
                 return false;

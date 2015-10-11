@@ -22,7 +22,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li><a href="/dashboard/">Dashboard</a></li>
   <li class="active">Order</li>
@@ -123,7 +123,7 @@
 
 
 <div style="text-align: right;">
-    <button type="button" class="btn btn-default" v-on="click: updateStores">Update</button>
+    <button type="button" class="btn btn-primary" v-on="click: updateStores">Update</button>
 </div>
 
 
@@ -178,7 +178,6 @@
 </div>
 
 
-@{{ options | json}}
 @stop
 
 @section('footer')

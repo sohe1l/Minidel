@@ -1,5 +1,3 @@
-<div style="height:20px">&nbsp;</div>
-
 <ul class="nav nav-pills nav-stacked">
   <li role="presentation" {!! ($active=='general')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/general">General</a></li>
   <li role="presentation" {!! ($active=='menu')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/menu/">Menu Items</a></li>

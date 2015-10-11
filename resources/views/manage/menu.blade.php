@@ -44,15 +44,28 @@
 
     <br>
  
-    @forelse ($store->sections as $section)
+
+
+    @forelse ($store->sections->sortBy('order') as $section)
 
           
                     <div class="panel panel-default">
                         <div class="panel-heading">
                           {{ $section->title }}
-                          <a href="javascript:deleteSection({{ $section->id }})">
-                            <span class="glyphicon glyphicon-remove" style="float:right"></span>
-                          </a>
+                          <span style="float:right">
+
+                            <a href="/manage/{{$store->slug}}/menu/section/{{ $section->id }}/up" title="Move up">
+                                <span class="glyphicon glyphicon-arrow-up"></span>
+                            </a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="/manage/{{$store->slug}}/menu/section/{{ $section->id }}/down" title="Move down">
+                              <span class="glyphicon glyphicon-arrow-down"></span>
+                            </a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="javascript:deleteSection({{ $section->id }})">
+                              <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </span>
                         </div>
                         <table class="table">
                         @forelse ($section->items->sortBy('order') as $item)

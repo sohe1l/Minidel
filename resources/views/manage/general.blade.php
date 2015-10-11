@@ -28,9 +28,10 @@
         <div class="panel-body">
 
             {!! Form::model($store, array('class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/general' )) !!}
-            <div class="form-group">
+            
+            <div class="form-group clearfix">
                 <label class="col-md-4 control-label">Status</label>
-                <div class="col-md-6">
+                <div class="col-md-8">
                         <label class="radio-inline">
                             {!! Form::radio('status_working', 'open') !!} Open
                         </label>
@@ -46,7 +47,7 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label">Name</label>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     {!! Form::text('name' , $value = null, $attributes=array('class'=>'form-control') ) !!}
                 </div>
             </div>
@@ -54,14 +55,14 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label">Store Phone</label>
-                <div class="col-md-6">
+                <div class="col-md-8">
                 {!! Form::text('phone' , $value = null, $attributes=array('class'=>'form-control') ) !!}
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label">Store Email</label>
-                <div class="col-md-6">
+                <div class="col-md-8">
                 {!! Form::text('email' , $value = null, $attributes=array('class'=>'form-control') ) !!}
                 </div>
             </div>
@@ -69,13 +70,13 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label">Info</label>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     {!! Form::textarea('info' , $value = null, $attributes=array('class'=>'form-control') ) !!}
                 </div>
             </div>
 
             <div class="form-group">
-                <div class="col-md-6 col-md-offset-4">
+                <div class="col-md-8 col-md-offset-4">
                     {!! Form::submit('Update Information!', $attributes=array('class'=>'btn btn-primary')); !!}
                 </div>
             </div>

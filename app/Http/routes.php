@@ -113,6 +113,8 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
 
     Route::post('{store}/menu/section','ManageController@menuSectionStore');
     Route::delete('{store}/menu/section/{sectionId}','ManageController@menuSectionDelete');
+    Route::get('{store}/menu/section/{sectionId}/up','ManageController@menuSectionUp');
+    Route::get('{store}/menu/section/{sectionId}/down','ManageController@menuSectionDown');
 
     // resource menu/item
     Route::get('{store}/menu/item/create','ManageController@menuItemCreate');

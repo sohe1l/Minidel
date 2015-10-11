@@ -2,7 +2,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-xs">
   <li><a href="/">Home</a></li>
   <li><a href="/dashboard/">Dashboard</a></li>
   <li><a href="/dashboard/address">Address</a></li>
@@ -11,7 +11,7 @@
 
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-3 hidden-xs">
   @include('dashboard.nav', array('active'=>'address'))
   </div>
   <div class="col-md-9">
@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="col-md-6 col-md-offset-4">
+                        <div class="col-md-6 col-md-offset-4" style="text-align: right">
                             {!! Form::submit('Edit Address!', $attributes=array('class'=>'btn btn-primary')); !!}
                         </div>
                     </div>

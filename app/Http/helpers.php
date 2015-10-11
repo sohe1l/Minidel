@@ -107,9 +107,9 @@
             $array_products[] = $item->id;
             if(isset($item->options) && is_array($item->options)){
                 foreach($item->options as $option){
-                    if(is_array($option['selects'])){
-                        foreach($option['selects'] as $select){
-                            $array_options[] = $select['id'];
+                    if(is_array($option->selects)){
+                        foreach($option->selects as $select){
+                            $array_options[] = $select->id;
                         }
                     }
                 }
@@ -125,9 +125,9 @@
             $total_price += $priceProduct[$item->id] * $item->quan;
             if(isset($item->options) && is_array($item->options)){
                 foreach($item->options as $option){
-                    if(is_array($option['selects'])){
-                        foreach($option['selects'] as $select){
-                            $total_price += $priceOption[$select['id']] * $item->quan;
+                    if(is_array($option->selects)){
+                        foreach($option->selects as $select){
+                            $total_price += $priceOption[$select->id] * $item->quan;
                         }
                     }
                 }

@@ -106,7 +106,7 @@ class Store extends Model
     public function isOpenNow($workmode_name){
         $day = strtolower(date("D"));
         $time = date("H:i:s");
-        
+
         return $this->isOpenAt($workmode_name, $day, $time);
     }
 
@@ -143,4 +143,14 @@ class Store extends Model
     public function ratings(){
         return $this->hasMany('\App\Rating');
     }
+
+
+    public function lastSectionOrder()
+    {
+        if($this->sections()->count() == 0) return -1;
+        $section = $this->sections()->orderBy('order','desc')->first();
+        return $section->order;
+    }
+
+
 }

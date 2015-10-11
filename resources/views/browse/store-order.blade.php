@@ -48,15 +48,15 @@ footer { padding: 30px 0;}
 
 <button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button>
 
-<h2 style="margin-top: 0;">{{ $store->name }} 
+<h3 style="margin-top: 0;">{{ $store->name }} 
 
   <span v-show="{{ $store->status_working!='open'?'true':'false' }}" class="label label-danger">{{ $store->status_working  }}</span>&nbsp;
 
   <small id="headingSmall">
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
-    {{ $store->building->name }} - {{ $area->name }}
+    <div>{{ $store->building->name }} - {{ $area->name }}</div>
   </small>
-</h2>
+</h3>
 
 <div class="row row-offcanvas row-offcanvas-right">
 
@@ -589,7 +589,7 @@ footer { padding: 30px 0;}
 
             }
           });
-          if(selectedVals != []) selectedOptions.push({id:suboption.id, name:suboption.name, selects:selectedVals});
+          if(selectedVals.length != 0) selectedOptions.push({id:suboption.id, name:suboption.name, selects:selectedVals});
         });
 
 
@@ -691,7 +691,7 @@ footer { padding: 30px 0;}
         },
         methods:{
           validiate: function(){
-            if(this.numSelected() >= this.min && this.numSelected() <= this.max)
+            if(this.numSelected() >= this.min && (this.numSelected() <= this.max || this.max == 0 ))
               this.isValid = true;
             else
               this.isValid = false;
@@ -718,7 +718,7 @@ footer { padding: 30px 0;}
             option.isSelected  = isSelected;
             that = this;
 
-            if(this.numSelected() > this.max){
+            if(this.numSelected() > this.max && this.max != 0){
               if(this.max==1 && this.min==1){
                 this.uncheckAll(option.id)
               }else{ // undo

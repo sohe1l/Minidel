@@ -40,7 +40,7 @@
                             </div>
 
                             <div class="col-md-4">
-                                enter 0 if optional 
+                                enter 0 if optional
                             </div>
                         </div>
                         
@@ -51,7 +51,7 @@
                             </div>
 
                             <div class="col-md-4">
-                                enter 0 if optional 
+                                enter 0 if no maximum
                             </div>
                         </div>
 

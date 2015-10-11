@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="larabook">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>minidel.com</title>
@@ -26,7 +26,35 @@
 
     @include('layouts.partials.footer')
 
+
+    <div class="visible-xs">
+        <div id="fakeloaderEnter"></div>
+        <div id="fakeloaderExit"></div>
+    </div>
+
     <script src="/js/all.js"></script>
+    <script type="text/javascript">
+        window.onbeforeunload = function(){ 
+            $("#fakeloaderExit").fakeLoader({
+                        timeToHide:1000,
+                        bgColor: "rgba(250, 165, 20, 1)",
+                        spinner:"spinner5"
+            });
+        }
+
+        $(document).ready(function(){
+
+            $("#fakeloaderEnter").fakeLoader({
+                        timeToHide:1000,
+                        bgColor: "rgba(250, 165, 20, 1)",
+                        spinner:"spinner5"
+            });
+
+
+            
+        });
+
+    </script>
 
     @yield('footer')
 </body>
