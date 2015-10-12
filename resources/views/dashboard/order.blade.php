@@ -75,7 +75,10 @@
 <div style="width: 100%; margin-bottom: 20px;"  v-show="selected.type=='pickup'">
 
     <div style="margin-bottom:15px;">
-        {!!  Form::select('city', \App\City::listByCountry('AE') , '1', ['id'=>'city', 'class'=>'form-control', 'v-model'=>'selected.city', 'style'=>'width:100%']); !!}
+     <?php /*   {!!  Form::select('city', \App\City::listByCountry('AE') , '1', ['id'=>'city', 'class'=>'form-control', 'v-model'=>'selected.city', 'style'=>'width:100%']); !!}
+     */ ?>
+     {!!  Form::select('city', [4=>'Dubai'] , '4', ['id'=>'city', 'class'=>'form-control', 'v-model'=>'selected.city', 'style'=>'width:100%']); !!}
+
     </div>
     
     <select style="width:100%" name="area" id="area" v-model="selected.area"></select> @{{selected.area}}
@@ -166,7 +169,9 @@
 
     <div style="padding: 2em;font-style: italic;" v-show="stores.length == 0">No stores matches your criteria.</div>
 
-    @include('browse._store', array('vRepeat' => "stores | filterBy searchText"))
+    <div style="padding-top: 4em; text-align: center" v-show="loading"><img src="/img/ajax-loader.gif"></div>
+
+    <div v-show="!loading">@include('browse._store', array('vRepeat' => "stores | filterBy searchText"))</div>
 
 
 
@@ -208,7 +213,7 @@
             $(input).html(' ');
         }
 
-        $('#city').select2().on("change", update_area);
+        //$('#city').select2().on("change", update_area);
         $('#area').select2();
 
         update_area();
@@ -234,7 +239,8 @@
         userAddresses: {!! json_encode($user->listAddresses()) !!},
         selected:{'type':'mini', 'address':'', 'time':'now', 'cusine':'', 'city':'', 'area':''},
         stores: [],
-        error_message : ''
+        error_message : '',
+        loading : false,
     },
 
     ready: function(){
@@ -292,6 +298,7 @@
 
     methods:{
       updateStores: function(){
+        this.loading = true;
         var that = this;
         $.ajax({
             type: "POST",
@@ -313,9 +320,11 @@
             }else{
               that.error_message = data['message'];
             }
+            that.loading = false;
         })
         .fail( function(xhr, status, error) {
             that.error_message = "Some network error occured while trying to update the stores list.";
+            that.loading = false;
         });
 
 

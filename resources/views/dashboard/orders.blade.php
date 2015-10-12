@@ -52,7 +52,8 @@
 
           <h3>
             <span class="label label-primary">@{{ orders[selectedIndex].type }}</span>
-            <span class="label label-warning">@{{ orders[selectedIndex].schedule }}</span>
+            <span class="label label-default">@{{ 'Created: ' + orders[selectedIndex].created_at }}</span>
+            <span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span>
           </h3>
 
           <br>
@@ -90,6 +91,17 @@
 
             </tr>
 
+            <tr v-if="orders[selectedIndex].discount != 0">
+              <td></td>
+              <td>@{{ orders[selectedIndex].discount }} % discount</td>
+              <td><b>@{{ Math.round(orders[selectedIndex].discount/100 * orders[selectedIndex].price*100)/100    }}</b></td>
+            </tr>
+            <tr v-if="orders[selectedIndex].discount != 0">
+              <td></td>
+              <td><b>Payable</b></td>
+              <td><b>@{{ (orders[selectedIndex].price*100 + orders[selectedIndex].fee *100)/100 - Math.round(orders[selectedIndex].discount/100 * orders[selectedIndex].price*100)/100    }}</b></td>
+            </tr>
+
           </table>
 
           <blockquote v-show="orders[selectedIndex].user_address">
@@ -113,23 +125,19 @@
           <div style="font-size: 1.8em">
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'pending', 
-                          label-warning:orders[selectedIndex].status == 'pending'">Pending
-            </span>
+                          label-warning:orders[selectedIndex].status == 'pending'">Pending</span>
             &nbsp;
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'accepted', 
-                          label-success:orders[selectedIndex].status == 'accepted'">Accepted
-            </span>
+                          label-success:orders[selectedIndex].status == 'accepted'">Accepted</span>
             &nbsp;
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'delivering', 
-                          label-success:orders[selectedIndex].status == 'delivering'">Delivering
-            </span>&nbsp;
+                          label-success:orders[selectedIndex].status == 'delivering'">Delivering</span>&nbsp;
 
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'delivered', 
-                          label-success:orders[selectedIndex].status == 'delivered'">Delivered
-            </span>&nbsp;
+                          label-success:orders[selectedIndex].status == 'delivered'">Delivered</span>&nbsp;
 
             <span v-show="orders[selectedIndex].status == 'canceled'" class="label label-danger">Canceled</span>&nbsp;
             <span v-show="orders[selectedIndex].status == 'rejected'" class="label label-danger">Rejected</span>&nbsp;

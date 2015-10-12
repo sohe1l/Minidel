@@ -15,7 +15,7 @@
   @include('manage.nav', array('active'=>'coverage'))
   </div>
   <div class="col-md-9">
-    <h3>New Coverage Area<br> <small>By addding an area, automatically all the buildings in that area will be included.</small></h3>
+    <h3>New Coverage Area <br> <small>By addding an area, automatically all the buildings in that area will be included.</small></h3>
 
 
 
@@ -76,6 +76,14 @@
                         </div>
                     </div>
 
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Discount %</label>
+                        <div class="col-md-6">
+                            {!! Form::select('discount', \Config::get('vars.discounts'), 0, $attributes=array('class'=>'form-control')); !!}
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">
                             {!! Form::submit('Add Area!', $attributes=array('class'=>'btn btn-primary')); !!}
@@ -126,7 +134,6 @@
                     }else{
                         $('#area').select2({data: data});
                     }
-                    update_building();
                    },
                   error: function(e) { alert("Some error occurred. Please try again."); }
                 });

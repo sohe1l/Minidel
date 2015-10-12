@@ -9,6 +9,11 @@ use App\Http\Controllers\Controller;
 
 class BrowseController extends Controller
 {
+
+    var $store_columns = ['stores.name','stores.slug','stores.country','stores.area_id','stores.city_id',
+                        'stores.building_id','stores.status_working','stores.info',
+                        'stores.logo','stores.cover']; // used in dashbaord.orderStores / browse.search
+
     public function city($citySlug)
     {
         $city = \App\City::where('slug',$citySlug)->firstOrFail();
@@ -85,6 +90,7 @@ class BrowseController extends Controller
                     "fee"           => $item->pivot->fee,
                     "min"           => $item->pivot->min,
                     "feebelowmin"   => $item->pivot->feebelowmin,
+                    "discount"      => $item->pivot->discount,
                     "type"          => $type);
                 $type = "";
             }
@@ -171,7 +177,7 @@ class BrowseController extends Controller
         $searchTerms = explode(' ', $searchQuery);
         $stores = new \App\Store;
         foreach($searchTerms as $term) $stores = $stores->orWhere('name', 'LIKE', '%'. $term .'%');
-        $stores = $stores->with('city','area')->get();
+        $stores = $stores->with('city','area')->select($this->store_columns)->get();
 
         return view('browse.search', compact('stores','searchQuery'));
     }
@@ -201,7 +207,7 @@ class BrowseController extends Controller
             }
         });
 
-        $stores = $stores->with('city','area')->get();
+        $stores = $stores->with('city','area')->select($this->store_columns)->get();
         
         $returnData = array(
             'error' => 0,

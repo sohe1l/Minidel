@@ -1,7 +1,7 @@
 <div class="listing storeListing clearfix" v-repeat="{{$vRepeat}}">
     <div class="col-sm-2">
         <img v-attr="src: logo?'/img/logo/'+logo:'/img/logo/placeholder.svg'" class="img-responsive hidden-xs">
-        <img v-attr="src: cover?'/img/cover/'+cover:'/img/logo/placeholder.svg'" class="img-responsive visible-xs">
+        <img v-attr="src: cover?'/img/cover/'+cover:'/img/cover/placeholder.svg'" class="img-responsive visible-xs">
     </div>
     <div class="col-sm-10">
         <div class="title"><a href="/store/@{{city.slug}}/@{{area.slug}}/@{{slug}}/order">@{{ name }}</a></div>
@@ -12,6 +12,7 @@
             <span v-if="pivot.min && pivot.min!=0" class="label label-info">Minimum Delivery @{{ pivot.min }}</span>
             <span v-if="pivot.fee && pivot.fee!=0" class="label label-info">Delivery Fee @{{ pivot.fee }}</span>
             <span v-if="pivot.feebelowmin && pivot.feebelowmin!=0" class="label label-info">Delivery Free (below minimum) @{{ pivot.feebelowmin }}</span>
+            <span v-if="pivot.discount && pivot.discount!=0"  class="label label-warning">@{{ pivot.discount }}% Discount</span>
         </div>
         <div>@{{ info }}</div>
     </div>

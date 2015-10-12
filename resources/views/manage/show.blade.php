@@ -16,7 +16,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
+<ol class="breadcrumb hidden-print">
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
   <li class="active">{{ $store->name }}</li>
@@ -79,7 +79,8 @@
 
           <h3>
             <span class="label label-primary">@{{ orders[selectedIndex].type }}</span>
-            <span class="label label-warning">@{{ orders[selectedIndex].schedule }}</span>
+            <span class="label label-default">@{{ 'Created: ' + orders[selectedIndex].created_at }}</span>
+            <span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span>
           </h3>
 
           <br>
@@ -108,7 +109,17 @@
               <td></td>
               <td></td>
               <td><b>@{{ orders[selectedIndex].price }}</b></td>
+            </tr>
 
+            <tr v-if="orders[selectedIndex].discount != 0">
+              <td></td>
+              <td>@{{ orders[selectedIndex].discount }} % discount</td>
+              <td><b>@{{ Math.round(orders[selectedIndex].discount/100 * orders[selectedIndex].price*100)/100    }}</b></td>
+            </tr>
+            <tr v-if="orders[selectedIndex].discount != 0">
+              <td></td>
+              <td><b>Payable</b></td>
+              <td><b>@{{ (orders[selectedIndex].price*100 + orders[selectedIndex].fee *100)/100 - Math.round(orders[selectedIndex].discount/100 * orders[selectedIndex].price*100)/100    }}</b></td>
             </tr>
 
           </table>
@@ -131,26 +142,22 @@
 
 
 
-          <div style="font-size: 1.8em">
+          <div style="font-size: 1.8em" class="hidden-print">
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'pending', 
-                          label-warning:orders[selectedIndex].status == 'pending'">Pending
-            </span>
+                          label-warning:orders[selectedIndex].status == 'pending'">Pending</span>
             &nbsp;
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'accepted', 
-                          label-success:orders[selectedIndex].status == 'accepted'">Accepted
-            </span>
+                          label-success:orders[selectedIndex].status == 'accepted'">Accepted</span>
             &nbsp;
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'delivering', 
-                          label-success:orders[selectedIndex].status == 'delivering'">Delivering
-            </span>&nbsp;
+                          label-success:orders[selectedIndex].status == 'delivering'">Delivering</span>&nbsp;
 
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'delivered', 
-                          label-success:orders[selectedIndex].status == 'delivered'">Delivered
-            </span>&nbsp;
+                          label-success:orders[selectedIndex].status == 'delivered'">Delivered</span>&nbsp;
 
             <span v-show="orders[selectedIndex].status == 'canceled'" class="label label-danger">Canceled</span>&nbsp;
             <span v-show="orders[selectedIndex].status == 'rejected'" class="label label-danger">Rejected</span>&nbsp;
@@ -159,7 +166,7 @@
 
 
 
-          <div style="text-align: right">
+          <div style="text-align: right;" class="hidden-print">
 
             <?php /*
             <span v-class="label:true,label-default:orders[selectedIndex].status != 'pending' ,label-danger:orders[selectedIndex].status == 'pending'" 

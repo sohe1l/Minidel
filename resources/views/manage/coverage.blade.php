@@ -31,10 +31,11 @@
           @forelse ($store->coverageAreas as $area)
             <tr>
               <td><b>{{ $area->name }}</b></td>
-              <td style="width:150px">Min Delivery: {{$area->pivot->min}}</td>
-              <td style="width:150px">Delivery Fee: {{$area->pivot->fee}}</td>
-              <td style="width:150px">Below Min Fee: {{$area->pivot->feebelowmin}}</td>
-              <td style="width:50px">
+              <td>Min: {{$area->pivot->min}}</td>
+              <td>Fee: {{$area->pivot->fee}}</td>
+              <td>Below Min Fee: {{$area->pivot->feebelowmin}}</td>
+              <td>Discount: {{$area->pivot->discount}}</td>
+              <td>
                 <a href="javascript:deleteArea({{ $area->id }})" title="Delete">
                   <span class="glyphicon glyphicon-remove"></span>
                 </a>
@@ -58,10 +59,11 @@
           @forelse ($store->coverageBuildings as $building)
             <tr>
               <td><b>{{ $building->name }}</b></td>
-              <td style="width:150px">Min Delivery: {{$building->pivot->min}}</td>
-              <td style="width:150px">Delivery Fee: {{$building->pivot->fee}}</td>
-              <td style="width:150px">Below Min Fee: {{$building->pivot->feebelowmin}}</td>
-              <td style="width:50px">
+              <td>Min Delivery: {{$building->pivot->min}}</td>
+              <td>Delivery Fee: {{$building->pivot->fee}}</td>
+              <td>Below Min Fee: {{$building->pivot->feebelowmin}}</td>
+              <td>Discount: {{$building->pivot->discount}}</td>
+              <td>
                 <a href="javascript:deleteBuilding({{ $building->id }})" title="Delete">
                   <span class="glyphicon glyphicon-remove"></span>
                 </a>

@@ -60,6 +60,14 @@
                     </div>
 
 
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Discount %</label>
+                        <div class="col-md-6">
+                            {!! Form::select('discount', \Config::get('vars.discounts'), 0, $attributes=array('class'=>'form-control')); !!}
+                        </div>
+                    </div>
+
+
 <?php /*
                     <div class="form-group">
                         <label class="col-md-4 control-label">Min Order</label>

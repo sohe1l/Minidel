@@ -67,11 +67,31 @@
             @endforeach
 
             <tr>
+              <td>{{  $order->fee!=0?$order->fee.' fee':''}}</td>
               <td></td>
-              <td></td>
-              <td><b>{{ $order->price }}</b></td>
-
+              <td><b>{{ $order->price + $order->fee }}</b></td>
             </tr>
+
+
+            @if($order->discount != 0)
+            <tr>
+              <td></td>
+              <td>{{ $order->discount }} % discount</td>
+              <td><b>{{ round($order->price * $order->discount / 100 ,2) }}</b></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><b>Payable</b></td>
+              <td><b>{{ $order->price + $order->fee - round($order->price * $order->discount / 100 ,2)    }}</b></td>
+            </tr>
+            @endif
+
+
+
+
+
+
+
 
           </table>
 

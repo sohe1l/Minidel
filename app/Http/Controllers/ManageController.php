@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 class ManageController extends Controller
 {
 
+
     protected $menuBase = 'img/menu/';
     protected $logoBase = 'img/logo/';
     protected $coverBase = 'img/cover/';
@@ -72,6 +73,8 @@ class ManageController extends Controller
         // add the role for the user
         $role = \App\Role::whereName('store_owner')->first();
         $role->users()->attach($request->user()->id, ['store_id'=>$store->id]);
+
+        \Session::put('hasRole', true);
 
         return redirect('/manage/');
     }
@@ -143,6 +146,14 @@ class ManageController extends Controller
     }
 
 
+    public function billing(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        return view('manage.billing',compact('store'));
+    }
 
 
 
@@ -874,7 +885,8 @@ class ManageController extends Controller
             'area_id' => 'required|integer',
             'min' => 'required|integer',
             'fee' => 'required|integer',
-            'feebelowmin' => 'required|integer'
+            'feebelowmin' => 'required|integer',
+            'discount' => 'required|integer|between:0,100'
         ]);
 
         if ($store->coverageAreas->contains($request->area_id)) {
@@ -883,7 +895,7 @@ class ManageController extends Controller
         }else{
             flash('Area added successfully.');
         }
-        $store->coverageAreas()->attach($request->area_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin));
+        $store->coverageAreas()->attach($request->area_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin, 'discount' => $request->discount));
 
         return redirect('/manage/' . $storeSlug . '/coverage' );
     }
@@ -931,6 +943,7 @@ class ManageController extends Controller
         //    'min' => 'required|integer',
         //    'fee' => 'required|integer',
         //    'feebelowmin' => 'required|integer'
+            'discount' => 'required|integer|between:0,100'
         ]);
 
         if ($store->coverageBuildings->contains($request->building_id)) {
@@ -940,7 +953,7 @@ class ManageController extends Controller
             flash('Building added successfully.');
         }
         // $store->coverageBuildings()->attach($request->building_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin));
-        $store->coverageBuildings()->attach($request->building_id, array('min' => 0, 'fee' => 0, 'feebelowmin' => 0));
+        $store->coverageBuildings()->attach($request->building_id, array('min' => 0, 'fee' => 0, 'feebelowmin' => 0, 'discount' => $request->discount));
 
         return redirect('/manage/' . $storeSlug . '/coverage' );
     }
@@ -1237,6 +1250,17 @@ class ManageController extends Controller
         if($order == null) return $this->jsonOut('order_not_found','The order does not exists in our system.');
 
         if($order->store_id != $store->id) return $this->jsonOut('order_denied','The order does not belong to this store.');
+
+        // check if delivered add comission
+        if($order->status != 'delivered' && $request->status == 'delivered'){
+            $tran = new \App\Transaction;
+            $tran->user_id = $request->user()->id;
+            $tran->store_id = $store->id;
+            $tran->amount = round($order->price * $store->comission / 100, 2);
+            $tran->type = 'credit';
+            $tran->reference = 'Regarding order id ' . $order->id ;
+            $tran->save();
+        }
 
         if($request->hide == 1) $order->hidden_store = 1;
         if($request->reason != "") $order->reason = $request->reason;

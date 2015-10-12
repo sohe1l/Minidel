@@ -28,6 +28,8 @@ class MakeOrdersTable extends Migration
             $table->text('reason')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('fee', 10, 2)->default(0);
+            $table->integer('discount')->unsigned();
+            $table->enum('discount_type', ['percent', 'amount'])->default('percent');
             $table->timestamps();
         });
     }

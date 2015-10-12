@@ -59,6 +59,8 @@
                 $order->fee = $coverage->pivot->fee;
             }
 
+            $order->discount =  $coverage->pivot->discount;
+
             if($fee!=$order->fee) return 'Delivery fee is changed please order again';
 
         }else{

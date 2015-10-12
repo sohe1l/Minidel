@@ -9,9 +9,16 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
+
+    var $store_columns = ['stores.name','stores.slug','stores.country','stores.area_id','stores.city_id',
+                            'stores.building_id','stores.status_working','stores.info',
+                            'stores.logo','stores.cover']; // used in dashbaord.orderStores / browse.search
+
     public function index()
     {
         $user = \Auth::user();
+
+        if ($user->addresses->count() == 0) return redirect('/dashboard/address/create/');
         
         $merged = new \Illuminate\Database\Eloquent\Collection;
 
@@ -80,13 +87,13 @@ class DashboardController extends Controller
 
         switch($request->type){
             case 'mini':
-                $stores_building = $address->building->coverageStores()->with('city','area')->get();
+                $stores_building = $address->building->coverageStores()->with('city','area')->select($this->store_columns)->get();
                 if($request->time == 'now')
                     $stores_building = $stores_building->where('is_deliver_building','true');
                 
 
                 $stores_area = $address->area->coverageStores()
-                                ->where('fee',0)->where('min',0)->where('feebelowmin',0)->with('city','area')->get();
+                                ->where('fee',0)->where('min',0)->where('feebelowmin',0)->with('city','area')->select($this->store_columns)->get();
 
                 if($request->time == 'now')
                     $stores_area = $stores_area->where('is_deliver_area','true');
@@ -103,7 +110,7 @@ class DashboardController extends Controller
 
             case 'delivery': // this will never happen until adding the delivery for all areas
                 $stores = $address->building->coverageStores()->with('city','area')->get();
-                $stores = $stores->merge($address->area->coverageStores()->with('city','area')->get());
+                $stores = $stores->merge($address->area->coverageStores()->with('city','area')->select($this->store_columns)->get());
 
                 if($request->time == 'now'){
                     $stores = $stores->filter(function ($item) {
@@ -118,7 +125,7 @@ class DashboardController extends Controller
                 $area = \App\Area::find($request->area);
                 if(!$area) return jsonOut(1,'Invalid area for pickup.');
 
-                $stores = $area->stores()->with('city','area')->get();
+                $stores = $area->stores()->with('city','area')->select($this->store_columns)->get();
 
                 if($request->time == 'now'){
                     $stores = $stores->filter(function ($item) {

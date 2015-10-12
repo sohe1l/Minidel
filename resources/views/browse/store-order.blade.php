@@ -176,8 +176,15 @@ footer { padding: 30px 0;}
 
 
         <div v-show="cart.length > 0">
-          <div style="text-align: right" v-show="deliveryFee!=0 && dorp=='delivery'">Delivery Fee: Dhs @{{ deliveryFee }} dhs</div>    
-          <div style="text-align: right; font-weight: bold">Total: Dhs @{{ totalPrice + deliveryFee  }} dhs</div>    
+          <div style="text-align: right" v-show="deliveryFee!=0 && dorp=='delivery'">Delivery Fee: Dhs @{{ deliveryFee }} dhs</div>     
+          
+          <div style="text-align: right; font-weight: bold">Total: Dhs @{{ totalPrice + deliveryFee  }} dhs</div>   
+
+          <div style="text-align: right; font-weight: bold" v-show="dorp=='delivery' && addressObj.discount!=0">
+          Discount: @{{ discountAmount }} dhs
+            <Br>
+          Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
+          </div>  
 
 
           <div class="form-horizontal">
@@ -264,7 +271,10 @@ footer { padding: 30px 0;}
 
 
   <div style="line-height: 30px;" v-show="dorp == 'delivery'">
-    <span v-if="addressObj.min && addressObj.min!=0" class="label label-info">Minimum Delivery @{{ addressObj.min }}</span>&nbsp;<span v-if="addressObj.fee && addressObj.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.fee }}</span>&nbsp;<span v-if="addressObj.feebelowmin && addressObj.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.feebelowmin }}</span>
+    <span v-if="addressObj.min && addressObj.min!=0" class="label label-info">Minimum Delivery @{{ addressObj.min }}</span>&nbsp;
+    <span v-if="addressObj.fee && addressObj.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.fee }}</span>&nbsp;
+    <span v-if="addressObj.feebelowmin && addressObj.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.feebelowmin }}</span>
+    <span v-if="addressObj.discount && addressObj.discount!=0" class="label label-info">Discount @{{ addressObj.discount }} %</span>&nbsp;
   </div>
 
   <div style="line-height: 30px;">
@@ -456,6 +466,12 @@ footer { padding: 30px 0;}
         }else{
           return this.addressObj.fee
         }
+      },
+      
+      discountAmount: function(){
+        if(this.dorp == 'pickup') return 0;
+        if(this.addressObj.discount == 0) return 0;
+        return Math.round(this.addressObj.discount/100*this.totalPrice*100)/100
       },
       totalPrice: function(){
         var total = 0;
@@ -665,7 +681,9 @@ footer { padding: 30px 0;}
             time:this.deliveryTime,
             address: this.selectedAddress,
             totalPrice: this.totalPrice,
-            fee: this.deliveryFee },
+            fee: this.deliveryFee,
+            discountAmount: this.discountAmount
+            },
           timeout: 15000,
           dataType: 'json'
         })
@@ -674,7 +692,7 @@ footer { padding: 30px 0;}
             alert(data["message"]);
           }else{
             that.orderComplete = true;
-            setTimeout(function(){location.href="/dashboard/orders/"} , 2000);   
+            setTimeout(function(){location.href="/dashboard/orders/"} , 100);   
           }
         })
         .fail( function(xhr, status, error) {

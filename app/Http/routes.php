@@ -95,6 +95,7 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
 
     Route::get('{store}/reports','ManageController@reports');
     Route::get('{store}/reports/order/{id}','ManageController@reportsOrderShow');
+    Route::get('{store}/billing','ManageController@billing');
 
 
 

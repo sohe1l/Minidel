@@ -23,9 +23,9 @@
 
 @if ($store->status_listing == 'draft' )
 <div style="margin-top:50px;">
-  <form action="/manage/{{$store->slug}}/submitReview" method="POST">
-  <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-  <button class="btn btn-info btn-block">Submit to Review</button>
+  {!! Form::open(array('url' => '/manage/'.$store->slug.'/submitReview', 'class'=>'' ) ) !!}
+    <button class="btn btn-info btn-block">Submit to Review</button>
+  {!! Form::close() !!}
 </div>
 <div style="text-align:center; color:#47B7D9; margin:10px 0;">
   Your store is not published yet! After updating all of its information you have to submit it for review.

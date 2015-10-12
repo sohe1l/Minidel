@@ -72,7 +72,7 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">Mobile</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="mobile" value="{{ old('mobile') }}">
+                                <input type="text" class="form-control" name="mobile" placeholder="Ex. 0501234567" value="{{ old('mobile') }}">
                             </div>
                         </div>
 

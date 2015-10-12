@@ -79,41 +79,41 @@
 
 
     <div class="hidden-xs">
-    <h4>Recent Resturants</h4>
+      <h4>Recent Resturants</h4>
 
-    <form method="GET" action="/search/">
-    <div id="custom-search-input">
-        <div class="input-group col-md-12">
-            <input type="text" class="search-query form-control" name="q" placeholder="Search" />
-            <span class="input-group-btn">
-                <button class="btn btn-danger" type="button">
-                    <span class=" glyphicon glyphicon-search"></span>
-                </button>
-            </span>
-        </div>
-    </div>
-  </form>
-
-    @foreach($recent as $order)
-      
-
-      <div class="media">
-        <div class="media-left">
-          <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}">
-            <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
-          </a>
-        </div>
-        <div class="media-body">
-          <h4 class="media-heading">
-            <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}">
-              {{ $order->store->name }}
-            </a>
-          </h4>
-          {{ $order->store->info }}
-        </div>
+      <form method="GET" action="/search/">
+      <div id="custom-search-input">
+          <div class="input-group col-md-12">
+              <input type="text" class="search-query form-control" name="q" placeholder="Search" />
+              <span class="input-group-btn">
+                  <button class="btn btn-danger" type="button">
+                      <span class=" glyphicon glyphicon-search"></span>
+                  </button>
+              </span>
+          </div>
       </div>
+    </form>
 
-    @endforeach
+      @foreach($recent as $order)
+        
+
+        <div class="media">
+          <div class="media-left">
+            <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}/order/">
+              <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">
+              <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}/order/">
+                {{ $order->store->name }}
+              </a>
+            </h4>
+            {{ $order->store->info }}
+          </div>
+        </div>
+
+      @endforeach
     </div>
 
 
@@ -144,8 +144,11 @@
 
 <h4>Quick Order</h4>
 
-<div>    
-    @forelse($user->orders()->where('status','delivered')->get() as $order)
+<div v-show="orderComplete" class="alert alert-success" role="alert" style="margin-top:10px;">
+  Order recieved successfully.
+</div>
+<div v-show="!orderComplete">    
+    @forelse($user->orders()->where('status','delivered')->orderBy('id','desc')->take(3)->get() as $order)
         <div class="quickOrder">
           [ {{ $order->type }} ]
           @foreach(json_decode($order->cart) as $item)
@@ -206,8 +209,12 @@
   
   var vm = new Vue({
     el: '#defaultMainContainer',
+    data:{
+      orderComplete : false,
+    },
     methods:{
       placeRegular: function(id){
+        var that = this;
         $.ajax({
           type: "POST",
           url: "/dashboard/regular",
@@ -222,7 +229,8 @@
           if(data["error"]==1){
             alert(data["message"]);
           }else{
-            alert("done");
+            that.orderComplete = true;
+            setTimeout(function(){location.href="/dashboard/orders/"} , 100); 
           }
         })
         .fail( function(xhr, status, error) {

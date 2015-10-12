@@ -15,7 +15,7 @@
 
         @if (\Auth::user())
 
-           <div class="panel panel-default" id="firstPageLogin" style="margin-top:4em; margin-bottom:4em;">
+           <div class="panel panel-default" id="firstPageLogin">
                 <div class="panel-body">
                     <div style="font-size:2em; margin-bottom: 10px;">Welcome {{ \Auth::user()->name }}!</div>
                     

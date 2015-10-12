@@ -29,7 +29,7 @@ class Area extends Model
     }
 
     public function coverageStores(){
-        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin')->listed();
+        return $this->belongsToMany('\App\Store')->withPivot('min','fee','feebelowmin','discount')->listed();
     }
     
 

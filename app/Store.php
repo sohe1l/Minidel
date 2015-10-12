@@ -68,11 +68,11 @@ class Store extends Model
     }
 
     public function coverageAreas(){
-        return $this->belongsToMany('\App\Area')->withPivot('min','fee','feebelowmin');
+        return $this->belongsToMany('\App\Area')->withPivot('min','fee','feebelowmin','discount');
     }
 
     public function coverageBuildings(){
-        return $this->belongsToMany('\App\Building')->withPivot('min','fee','feebelowmin');;
+        return $this->belongsToMany('\App\Building')->withPivot('min','fee','feebelowmin','discount');;
     }
 
     public function timings(){
@@ -152,5 +152,8 @@ class Store extends Model
         return $section->order;
     }
 
+    public function transactions(){
+        return $this->hasMany('\App\Transaction');
+    }
 
 }
