@@ -1,7 +1,3 @@
-html{
-    background-color:#FAFAFA !important;
-}
-
 h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 0 !important;
 }
@@ -68,10 +64,21 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 
 @media(max-width:767px){
+    html{
+        background-color:#FFDC7B !important;
+    }
 
 }
+
+
 @media(min-width:768px){
+
+    html{
+        background-color:#FAFAFA !important;
+    }
 }
+
+
 @media(min-width:992px){
 
 }

@@ -1,23 +1,30 @@
+<form method="GET" action="/search" accept-charset="UTF-8" class="collapse" id="globalSearch">
+    <input autocomplete="off" placeholder="Search..." name="q" type="search">
+</form>
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand" href="/" style="padding: 10px;">
         <img alt="Brand" style="height:30px" class="img-responsive" src="/img/logo.png">
       </a>
 
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse-1">
+      <button class="navbar-toggle" type="button"  data-toggle="collapse" data-target="#collapse-1">
         <span class="sr-only">Navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
 
+      <button class="navbar-toggle" type="button"  data-toggle="collapse" data-target="#globalSearch" style="padding: 6px 10px;">
+        <span class="glyphicon glyphicon-search"></span>
+      </button>
+
+
     </div>
 
 
-    
-
     <div class="collapse navbar-collapse" id="collapse-1">
+
         <ul class="nav navbar-nav navbar-right">
             @if (\Auth::user())
 
@@ -37,9 +44,11 @@
 
                 <li class="hidden-xs"><a href="/dashboard/order" style="padding:6px 12px; color:white; margin-right: 5px;" class="btn btn-danger navbar-btn">Order</a></li>
 
+                <li class="hidden-xs"><a data-toggle="collapse" data-target="#globalSearch"><span class="glyphicon glyphicon-search"></span></a></li>
+
                 <li class="dropdown" class="hidden-xs">
 
-                    <a href="#" class="dropdown-toggle hidden-xs" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle hidden-xs" data-toggle="dropdown" style="padding:10px">
                         <img class="nav-gravatar" src="/img/user/{{ (\Auth::user()->gender=='F')?'female':'male' }}.jpg">
 
                         {{ \Auth::user()->name }} <span class="caret"></span>
@@ -61,10 +70,29 @@
             @endif
         </ul>
     </div>
-
-
   </div>
 </nav>
+
+
+
+
+<style>
+#globalSearch input[type=search] {
+    width: 100%;
+    background: #e12f33;
+    border: none;
+    padding: .4em 1em;
+    font-size: 20px;
+    color: #FFFFFF;
+}
+</style>
+
+
+
+
+
+
+
 
 
 

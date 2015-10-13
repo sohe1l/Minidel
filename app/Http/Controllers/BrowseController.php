@@ -72,27 +72,29 @@ class BrowseController extends Controller
         // get delivery days / time / min /...  PER LOCATION
 
         $user_addresses = array();
-        foreach($user->addresses as $address){
-            $type = "";
-            if($store->coverageBuildings->contains('id', $address->building_id)){
-                $item = $store->coverageBuildings->where('id',$address->building_id)->first();
-                $type = "mini";
-            }else if($store->coverageAreas->contains('id', $address->area_id)){
-                $item = $store->coverageAreas->where('id',$address->area_id)->first();
-                $type = "delivery";
-
-            }
-
-            if($type != ""){
-                $user_addresses[] =  array(
-                    "text"          => $address->name ,
-                    "value"         => $address->id,
-                    "fee"           => $item->pivot->fee,
-                    "min"           => $item->pivot->min,
-                    "feebelowmin"   => $item->pivot->feebelowmin,
-                    "discount"      => $item->pivot->discount,
-                    "type"          => $type);
+        if($user){
+            foreach($user->addresses as $address){
                 $type = "";
+                if($store->coverageBuildings->contains('id', $address->building_id)){
+                    $item = $store->coverageBuildings->where('id',$address->building_id)->first();
+                    $type = "mini";
+                }else if($store->coverageAreas->contains('id', $address->area_id)){
+                    $item = $store->coverageAreas->where('id',$address->area_id)->first();
+                    $type = "delivery";
+
+                }
+
+                if($type != ""){
+                    $user_addresses[] =  array(
+                        "text"          => $address->name ,
+                        "value"         => $address->id,
+                        "fee"           => $item->pivot->fee,
+                        "min"           => $item->pivot->min,
+                        "feebelowmin"   => $item->pivot->feebelowmin,
+                        "discount"      => $item->pivot->discount,
+                        "type"          => $type);
+                    $type = "";
+                }
             }
         }
 

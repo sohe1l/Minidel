@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Phone</label>
+                        <label class="col-md-4 control-label">Phone (optional)</label>
                         <div class="col-md-6">
                             {!! Form::text('phone', null, $attributes=array('class'=>'form-control')); !!}
                         </div>

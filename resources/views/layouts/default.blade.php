@@ -15,8 +15,6 @@
 
     @include('layouts.partials.nav')
 
-
-
     <div class="container" id="defaultMainContainer">
         @include('flash::message')
 
@@ -25,7 +23,6 @@
 
 
     @include('layouts.partials.footer')
-
 
     <div class="visible-xs">
         <div id="fakeloaderEnter"></div>

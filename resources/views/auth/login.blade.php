@@ -20,7 +20,7 @@
 
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="redirect" value="{{ Request::input("redirect") }}">
+                        <input type="hidden" name="redirect" value="{{ Request::input("redirect")==''?'dashboard':Request::input("redirect") }}">
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Email</label>
