@@ -10,6 +10,7 @@ class AppMailer{
     protected $mailer;
     protected $from = 'hello@minidel.com';
     protected $to;
+    protected $subject;
     protected $view;
     protected $data = [];
 
@@ -21,7 +22,8 @@ class AppMailer{
     {
         $this->mailer->send($this->view, $this->data, function ($message){
             $message->from($this->from, 'Minidel')
-                    ->to($this->to);
+                    ->to($this->to)
+                    ->subject($this->subject);
 
         });
     }
