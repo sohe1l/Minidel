@@ -20,7 +20,7 @@ class AppMailer{
     public function deliver()
     {
         $this->mailer->send($this->view, $this->data, function ($message){
-            $message->from($this->from, 'Administrator')
+            $message->from($this->from, 'Minidel')
                     ->to($this->to);
 
         });
@@ -30,6 +30,7 @@ class AppMailer{
     {
         $this->to = $user->email;
         $this->view = 'emails.confirm';
+        $this->subject = 'Welcome to Minidel';
         $this->data = compact('user');
         $this->deliver();
     }
