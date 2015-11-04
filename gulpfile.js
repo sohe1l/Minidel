@@ -13,7 +13,27 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.sass(['app.scss'])
-    .styles(['bootstrap.css','select2.css','fakeLoader.css']) // 'bootflat.css',
-    .scripts(['jquery.js','bootstrap.js','select2.js','vue.js','fakeLoader.min.js']);
+    
+    .styles([
+
+                'bootstrap.css',
+                'select2.css',
+                'fakeLoader.css',
+                'lity.css'
+
+            ]) // 'bootflat.css',
+
+
+    .scripts([
+
+        'jquery.js',
+        'bootstrap.js',
+        'select2.js',
+        'vue.js',
+        'fakeLoader.min.js',
+        'lity.js'
+
+
+        ]);
 
 });

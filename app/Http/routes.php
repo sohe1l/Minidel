@@ -14,6 +14,9 @@
 
 
 
+      //  \DB::connection()->enableQueryLog();
+
+
 
 
 /* Super Admin */
@@ -62,6 +65,15 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::post('orders/getorders', 'DashboardController@getorders');
     Route::post('orders/{id}/updateStatus', 'DashboardController@orderUpdateStatus');
 
+    //general
+    Route::get('general','DashboardController@generalIndex');
+    Route::post('general','DashboardController@generalStore');
+    Route::post('dp','DashboardController@dpStore');
+
+    //password
+    Route::get('password','DashboardController@passwordIndex');
+    Route::post('password','DashboardController@passwordStore');
+
     // resource address
     Route::get('address','DashboardController@addressIndex');
     Route::get('address/create','DashboardController@addressCreate');
@@ -104,9 +116,10 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::post('{store}/general','ManageController@generalStore'); // save general store information
     Route::post('{store}/logo','ManageController@logoStore'); // save store logo
     Route::post('{store}/cover','ManageController@coverStore'); // save store cover
-    
 
+    Route::get('{store}/location','ManageController@location');
     Route::post('{store}/location','ManageController@locationStore');
+    Route::post('{store}/location/marker','ManageController@locationMarkerStore');
     
 
 
@@ -116,6 +129,7 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::delete('{store}/menu/section/{sectionId}','ManageController@menuSectionDelete');
     Route::get('{store}/menu/section/{sectionId}/up','ManageController@menuSectionUp');
     Route::get('{store}/menu/section/{sectionId}/down','ManageController@menuSectionDown');
+    Route::put('{store}/menu/section/{sectionId}/available','ManageController@menuSectionUpdateAvailable');
 
     // resource menu/item
     Route::get('{store}/menu/item/create','ManageController@menuItemCreate');
@@ -125,6 +139,7 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::put('{store}/menu/item/{itemId}','ManageController@menuItemUpdate');
     Route::get('{store}/menu/item/{itemId}/up','ManageController@menuItemUp');
     Route::get('{store}/menu/item/{itemId}/down','ManageController@menuItemDown');
+    Route::put('{store}/menu/item/{itemId}/available','ManageController@menuItemUpdateAvailable');
 
     // resource menu/options
     Route::get('{store}/options','ManageController@options');
@@ -133,6 +148,8 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::delete('{store}/options/{optionId}','ManageController@optionsDestroy');
     Route::get('{store}/options/{optionId}/edit','ManageController@optionsEdit');
     Route::put('{store}/options/{optionId}','ManageController@optionsUpdate');
+    Route::put('{store}/options/{optionId}/available','ManageController@optionsUpdateAvailable');
+
 
 
     //coverage
@@ -159,6 +176,21 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     // tags
     Route::get('{store}/tags','ManageController@tags');
     Route::post('{store}/tags','ManageController@tagsStore');
+
+    // Photo
+    Route::get('{store}/menu/photos','ManageController@menuphotos');
+    Route::post('{store}/menu/photos','ManageController@menuphotosStore');
+    Route::get('{store}/menu/photo/{photoId}/up','ManageController@menuphotoUp');
+    Route::get('{store}/menu/photo/{photoId}/down','ManageController@menuphotoDown');
+    Route::delete('{store}/menu/photo/{id}','ManageController@menuphotoDestroy');
+    Route::get('{store}/menu/photo/{id}/edit','ManageController@menuphotoEdit');
+    Route::put('{store}/menu/photo/{id}','ManageController@menuphotoUpdate');
+
+
+
+    // payments
+    Route::get('{store}/payments','ManageController@payments');
+    Route::post('{store}/payments','ManageController@paymentsStore');
 });
 
 
@@ -168,10 +200,10 @@ Route::get('/', function () {
 
 
 
-/*
-Route::get('auth/github', 'Auth\AuthController@redirectToProvider');
-Route::get('auth/github/callback', 'Auth\AuthController@handleProviderCallback');
-*/
+
+Route::get('auth/facebook', 'Auth\AuthController@redirectToProvider');
+Route::get('auth/facebook/callback', 'Auth\AuthController@handleProviderCallback');
+
 
 Route::get('auth/confirm/{token}','Auth\AuthController@confrimEmail');
 
@@ -190,27 +222,53 @@ Route::group(['prefix' => 'api/v1/'], function () {
 });
 
 
-//store page
-Route::get('store/{city}/{area}/{store}','BrowseController@store');
-
-Route::get('store/{city}/{area}/{store}/order','BrowseController@storeOrder'); // save orders for a store
-Route::post('store/{city}/{area}/{store}/order','BrowseController@storeOrderStore'); // save orders for a store
-
-Route::get('store/{city}/{area}/{store}/reviews','BrowseController@storeReviews');
-Route::post('store/{city}/{area}/{store}/reviews','BrowseController@storeReviewsStore');
 
 
 
 
+/*
 //browse by where they delivery to
 Route::get('delivery/{city}','BrowseController@deliveryCity');
 Route::get('delivery/{city}/{area}','BrowseController@deliveryArea');
 Route::get('delivery/{city}/{area}/{building}','BrowseController@deliveryBuilding');
+*/
+
 
 //browse by location
+Route::get('browse','BrowseController@browseIndex');
 Route::get('browse/{city}','BrowseController@city');
 Route::get('browse/{city}/{area}','BrowseController@area');
 Route::get('browse/{city}/{area}/{building}','BrowseController@building');
 
+/*
+
+//store page
+Route::get('{city}/{area}/{store}','BrowseController@store');
+Route::post('{city}/{area}/{store}/photo','BrowseController@storePhoto');
+Route::get('{city}/{area}/{store}/order','BrowseController@storeOrder'); // save orders for a store
+Route::post('{city}/{area}/{store}/order','BrowseController@storeOrderStore'); // save orders for a store
+Route::get('{city}/{area}/{store}/reviews','BrowseController@storeReviews');
+Route::post('{city}/{area}/{store}/reviews','BrowseController@storeReviewsStore');
+*/
+
+//////////////// DOUPLICATES
+/*
+Route::group(['middleware' => 'auth'], function () {
+
+
+});
+*/
+Route::post('{store}/photo','BrowseController@storePhoto');
+Route::post('{store}/reviews','BrowseController@storeReviewsStore');
+
+Route::get('{store}/order','BrowseController@storeOrder'); // save orders for a store
+Route::post('{store}/order','BrowseController@storeOrderStore'); // save orders for a store
+Route::get('{store}/reviews','BrowseController@storeReviews');
+
+//////////////// DOUPLICATES
+
 Route::get('search','BrowseController@search');
 Route::post('search','BrowseController@searchPost');
+
+
+Route::get('{usernameOrStore}','BrowseController@profileOrStore');

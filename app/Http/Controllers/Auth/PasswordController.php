@@ -29,4 +29,14 @@ class PasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+
+    protected function resetPassword($user, $password)
+    {
+        $user->password = $password;
+
+        $user->save();
+
+        \Auth::login($user);
+    }
 }

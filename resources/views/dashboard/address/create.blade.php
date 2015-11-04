@@ -1,23 +1,29 @@
 @extends('layouts.default')
 
+@section('breadcrumb')
+    <ol class="breadcrumb hidden-xs">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard/">Dashboard</a></li>
+      <li><a href="/dashboard/address">Address</a></li>
+      <li class="active">Create Address</li>
+    </ol>
+@endsection
+
 @section('content')
 
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li><a href="/dashboard/address">Address</a></li>
-  <li class="active">Create Address</li>
-</ol>
+
 
 <div class="row">
   <div class="col-md-3 hidden-xs">
   @include('dashboard.nav', array('active'=>'address'))
   </div>
   <div class="col-md-9">
-
-            <h3>New Address<br>
+              <h3>New Address<br>
                 <small>Save a new address to order easily.</small>
             </h3>
+            
+    <div class="panel panel-default">
+    <div class="panel-body">
 
             @include('errors.list')
 
@@ -90,7 +96,8 @@
                     </div>
 
                 {!! Form::close() !!}
-
+            </div>
+        </div>
         </div>
     </div>
 

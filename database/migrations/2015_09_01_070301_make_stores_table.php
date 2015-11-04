@@ -15,11 +15,12 @@ class MakeStoresTable extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique()->index();
+            $table->enum('type', ['Food','Groceries','Laundry','Pharmacy','Flower'])->default('Food');
             $table->string('country')->nullable();
-            $table->integer('city_id')->unsigned()->nullable();
-            $table->integer('area_id')->unsigned()->nullable();
-            $table->integer('building_id')->unsigned()->nullable();
+            $table->integer('city_id')->unsigned()->nullable()->index();
+            $table->integer('area_id')->unsigned()->nullable()->index();
+            $table->integer('building_id')->unsigned()->nullable()->index();
             $table->text('address')->nullable();
             $table->string('phone');
             $table->string('email');
@@ -30,8 +31,11 @@ class MakeStoresTable extends Migration
             $table->text('coordinate')->nullable();
             $table->string('logo')->nullable();
             $table->string('cover')->nullable();
+            $table->integer('chain_id')->nullable();
             $table->timestamp('last_check')->default(0);
             $table->timestamps();
+
+            //$table->unique( array('slug','area_id') );
 
             //$table->foreign('city_id')->references('id')->on('cities');
             //$table->foreign('area_id')->references('id')->on('areas');

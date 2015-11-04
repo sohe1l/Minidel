@@ -87,7 +87,7 @@ class AuthController extends Controller
 
     public function confrimEmail($token){
         $user = User::where('confirmation_code', $token)->firstOrFail();
-        $user->verified = 1;
+        $user->verified_email = 1;
         $user->confirmation_code = null;
         $user->save();
 
@@ -106,6 +106,7 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'username' => 'required|alpha_dash|max:25|unique:users,username|unique:stores,slug|unique:chains,slug',
             'name' => 'required|max:255',
             'mobile' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
@@ -127,6 +128,8 @@ class AuthController extends Controller
 
         $user = new User;
 
+        $user->username = $data['username'];
+
         $user->name = $data['name'];
         $user->gender = $data['gender'];
         $user->dob = $data['dob'];
@@ -134,8 +137,6 @@ class AuthController extends Controller
 
         $user->email = $data['email'];
         $user->password = $data['password'];
- 
-
 
         $user->save();
 
@@ -169,11 +170,11 @@ class AuthController extends Controller
 
 
 
-/*
+
     public function postLogin(Request $request)
     {
         $this->validate($request, [
-            $this->loginUsername() => 'required', 'password' => 'required',
+            'login' => 'required', 'password' => 'required',
         ]);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -185,8 +186,19 @@ class AuthController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
-        $credentials = $this->getCredentials($request);
+        // $credentials = $this->getCredentials($request);
 
+
+        // ['username' => $request->username, 'password' => $request->password]
+        // dd($credentials);
+
+        if (Auth::attempt(['username' => $request->login, 'password' => $request->password], $request->has('remember'))) {
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }else if(Auth::attempt(['email' => $request->login, 'password' => $request->password], $request->has('remember'))){
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }
+
+        /*
 
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $user = Auth::user();
@@ -204,6 +216,8 @@ class AuthController extends Controller
             }
         }
 
+        */
+
 
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
@@ -218,7 +232,7 @@ class AuthController extends Controller
                 $this->loginUsername() => $this->getFailedLoginMessage(),
             ]);
     }
-*/
+
 
 
 
@@ -230,8 +244,8 @@ class AuthController extends Controller
      */
     public function redirectToProvider()
     {
-        return Socialite::driver('github')
-            ->scopes(['scope1', 'scope2'])->redirect();
+        return Socialite::driver('facebook')
+            ->scopes(['email'])->redirect();
     }
 
     /**
@@ -241,7 +255,7 @@ class AuthController extends Controller
      */
     public function handleProviderCallback()
     {
-        $user = Socialite::driver('github')->user();
+        $user = Socialite::driver('facebook')->user();
 
         // $user->token;
         // OAuth Two Providers

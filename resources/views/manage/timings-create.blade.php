@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
-@section('content')
 
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
@@ -9,6 +9,11 @@
   <li><a href="/manage/{{$store->slug}}/timings">Timings</a></li>
   <li class="active">New Timing</li>
 </ol>
+@endsection
+
+@section('content')
+
+
 
 <div class="row">
   <div class="col-md-3">

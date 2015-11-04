@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -14,6 +13,16 @@ class BrowseController extends Controller
                         'stores.building_id','stores.status_working','stores.info',
                         'stores.logo','stores.cover']; // used in dashbaord.orderStores / browse.search
 
+    protected $storeImageBase = 'img/store/';
+    protected $storeImageBaseThumb = 'img/store-thumb/';
+
+
+    public function browseIndex()
+    {
+        return view('browse.index');
+    }
+
+
     public function city($citySlug)
     {
         $city = \App\City::where('slug',$citySlug)->firstOrFail();
@@ -27,6 +36,14 @@ class BrowseController extends Controller
         return view('browse.area', compact('city','area'));
     }
 
+    public function building($citySlug, $areaSlug, $buildingSlug)
+    {
+        $city = \App\City::where('slug',$citySlug)->firstOrFail();
+        $area = $city->areas()->where('slug',$areaSlug)->first();
+        $building = $area->buildings()->where('slug',$buildingSlug)->firstOrFail();
+
+        return view('browse.building', compact('city','area','building'));
+    }
 
 
     public function deliveryBuilding($citySlug, $areaSlug, $buildingSlug)
@@ -43,29 +60,19 @@ class BrowseController extends Controller
         return view('browse.delivery-building', compact('city','area','building','allStores'));
     }
 
-
-
-
-
-
-
-
     public function store($citySlug, $areaSlug, $storeSlug)
     {
         $city = \App\City::where('slug',$citySlug)->firstOrFail();
         $area = $city->areas()->where('slug',$areaSlug)->firstOrFail();
-        $store = $area->stores()->where('slug',$storeSlug)->firstOrFail();
+        $store = $area->stores()->where('slug',$storeSlug)->with('building','sections.subsections.items','sections.items','payments')->firstOrFail();
         $user = \Auth::user();
-
-
+                
         return view('browse.store', compact('city','area','store','user'));
     }
 
-    public function storeOrder($citySlug, $areaSlug, $storeSlug)
+    public function storeOrder($storeSlug)
     {
-        $city = \App\City::where('slug',$citySlug)->firstOrFail();
-        $area = $city->areas()->where('slug',$areaSlug)->firstOrFail();
-        $store = $area->stores()->where('slug',$storeSlug)->firstOrFail();
+        $store = \App\Store::where('slug',$storeSlug)->with('building','sections.subsections.items','sections.items','payments','items.options.options')->firstOrFail();
         $user = \Auth::user();
 
 
@@ -103,19 +110,17 @@ class BrowseController extends Controller
         $daysDelivery = $this->getDays($store, 'Area Delivery');
         $daysPickup = $this->getDays($store, 'Normal Openning');
 
-        return view('browse.store-order', compact('city','area','store','user','user_addresses','daysMini','daysDelivery','daysPickup'));
+
+        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup'));
     }
 
 
-    public function storeOrderStore(Request $request, $citySlug, $areaSlug, $storeSlug)
+    public function storeOrderStore(Request $request, $storeSlug)
     {
-        
-        $city = \App\City::where('slug',$citySlug)->firstOrFail();
-        $area = $city->areas()->where('slug',$areaSlug)->firstOrFail();
-        $store = $area->stores()->where('slug',$storeSlug)->firstOrFail();
+        $store = \App\Store::where('slug',$storeSlug)->firstOrFail();
         $user = \Auth::user();
-
-        $response = saveOrder($store, $user, json_decode($request->cart), $request->totalPrice, $request->fee, $request->instructions, $request->dorp, $request->address, $request->showTimes, $request->day, $request->time);
+        
+        $response = saveOrder($store, $user, json_decode($request->cart), $request->payment, $request->totalPrice, $request->fee, $request->instructions, $request->dorp, $request->address, $request->showTimes, $request->day, $request->time);
 
         if($response == 'ok') return jsonOut(0,'order_saved');
         else return jsonOut(1,$response);   
@@ -124,30 +129,63 @@ class BrowseController extends Controller
 
 
 
-
-
-   public function storeReviews($citySlug, $areaSlug, $storeSlug)
+   public function storephoto(Request $request, $storeSlug)
     {
-        $city = \App\City::where('slug',$citySlug)->firstOrFail();
-        $area = $city->areas()->where('slug',$areaSlug)->firstOrFail();
-        $store = $area->stores()->where('slug',$storeSlug)->firstOrFail();
+        $store = \App\Store::where('slug',$storeSlug)->firstOrFail();
         $user = \Auth::user();
 
+        if(!$user) return redirect("/auth/login?redirect=/".$store->slug."/reviews");
 
-        return view('browse.store-reviews', compact('city','area','store','user'));
+        //validate request
+        $this->validate($request, [
+            'imagefile' => 'required|mimes:jpg,jpeg,png,bmp',
+            'photoCaption' => 'required|string|max:200'
+        ]);
+
+
+        $file = $request->file('imagefile');
+
+        //store the new image
+        $photoFileName = time() . '-' . str_random(5) . '-' . $store->slug . '.jpg' ;
+
+        $image = \Image::make($file->getRealPath());
+        $image->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })->resize(null, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })->save($this->storeImageBase.$photoFileName);
+
+
+        $image = \Image::make($file->getRealPath());
+        $image->fit(140,140)->save($this->storeImageBaseThumb.$photoFileName);
+
+        $store->photos()->create(['path'=>$photoFileName, 'text'=> $request->photoCaption, 'user_id'=>$user->id]);
+
+
+        flash('Image uploaded successfully.');
+    
+        return redirect('/' . $storeSlug );
     }
 
-    public function storeReviewsStore(Request $request, $citySlug, $areaSlug, $storeSlug)
+
+
+   public function storeReviews($storeSlug)
     {
-        
-
-
-        $city = \App\City::where('slug',$citySlug)->firstOrFail();
-        $area = $city->areas()->where('slug',$areaSlug)->firstOrFail();
-        $store = $area->stores()->where('slug',$storeSlug)->firstOrFail();
+        $store = \App\Store::where('slug',$storeSlug)->firstOrFail();
         $user = \Auth::user();
 
-        if(!$user) return redirect("/auth/login?redirect=/store/".$city->slug."/".$area->slug."/".$store->slug."/reviews");
+
+        return view('browse.store-reviews', compact('store','user'));
+    }
+
+    public function storeReviewsStore(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->firstOrFail();
+        $user = \Auth::user();
+
+        if(!$user) return redirect("/auth/login?redirect=/".$store->slug."/reviews");
 
         //validate request
         $this->validate($request, [
@@ -164,7 +202,7 @@ class BrowseController extends Controller
         $rating->rating = $request->rating;
         $rating->save();
 
-        return redirect()->back();
+        return redirect('/' . $storeSlug );
     }
 
 
@@ -218,7 +256,30 @@ class BrowseController extends Controller
         return response()->json($returnData);
     }
 
-    
+
+
+
+
+
+    public function profileOrStore($usernameOrSlug)
+    {
+
+        $store = \App\Store::where('slug',$usernameOrSlug)->with('building','sections.subsections.items','sections.items','payments')->first();
+        $user = \Auth::user();
+        if($store) return view('browse.store', compact('store','user'));
+
+        unset($user);
+
+        $chain = \App\Chain::where('slug', $usernameOrSlug)->first();
+        if($chain) return view('browse.chain', compact('chain'));
+
+
+        $user = \App\User::where('username', $usernameOrSlug)->first();
+        if($user) return view('browse.profile', compact('user'));
+
+
+        abort(404);        
+    }
 
 
 

@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top:15px">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">

@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top:15px">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
@@ -12,6 +12,8 @@
 
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/register') }}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                        <h4>General</h4>
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Name</label>
@@ -80,7 +82,7 @@
 
                         <hr>
 
-                        <h3>Choose your login detail</h3>
+                        <h4>Choose login detail</h4>
                         <div class="form-group">
                             <label class="col-md-4 control-label">E-Mail Address</label>
                             <div class="col-md-6">
@@ -102,6 +104,24 @@
                             </div>
                         </div>
 
+                        <hr>
+
+
+                        <h4>Choose username</h4>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Username</label>
+                            <div class="col-md-6">
+                                <input type="username" class="form-control" name="username" value="{{ old('username') }}" v-model="username">
+                                <br>
+                                <div style="font-style: italic">
+                                    Your profile will be www.minidel.com/@{{username}}
+                                </div>
+                            
+                            </div>
+                        </div>
+
+
 
 
                         <div class="form-group">
@@ -118,3 +138,33 @@
     </div>
 </div>
 @endsection
+
+
+@section('footer')
+<script type="text/javascript">
+
+    var vm = new Vue({
+    el: '#defaultMainContainer',
+    data:{
+        
+    },
+
+    ready: function(){
+    
+    },
+
+    computed: {
+      percentAddress: function(){
+
+      },
+
+    },
+
+    methods:{
+
+    } // methods
+
+  })
+
+</script>
+@stop

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>minidel.com</title>
+    <title>{{ (isset($page_title))?$page_title:'Minidel.com | order delivery from your nearby stores' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/all.css">
@@ -14,6 +14,8 @@
     @yield('header')
 
     @include('layouts.partials.nav')
+
+    @yield('breadcrumb')
 
     <div class="container" id="defaultMainContainer">
         @include('flash::message')
@@ -54,5 +56,8 @@
     </script>
 
     @yield('footer')
+
+  <?php // echo(json_encode(DB::getQueryLog())); ?>
+  
 </body>
 </html>

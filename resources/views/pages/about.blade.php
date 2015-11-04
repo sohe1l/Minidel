@@ -1,32 +1,32 @@
 @extends('layouts.default')
 
-@section('content')
-
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li class="active">Terms of Service</li>
 </ol>
+@endsection
+
+@section('content')
+
+
 
 
 <h2>About minidel.com</h2>
 
-<h3>For customers</h3>
+<h4>For Individuals</h4>
 <div>
-    use minidel.com and get deliveries right to your door.
+    Minidel is an online delivery service that enables customers to place orders using web or mobile app. Customers are required to enter their delivery address once in the system and it will be sent to the stores everytime automatically. This service will help everyone hassel of keeping different menu and phone numbers of eaech individual store.
 </div>
 
 
 
-<h3>For Store Managers</h3>
+<h4>For Store Managers</h4>
 <div>
-    use minidel.com to get customers
+    Minidel will create an online ordering service for stores. It will dedicate a personal page for each store and it will include different information such as operating hours, menu, location and photos. Cusomers can view the store information and place orders directly.
+    <a href="/manage/">Click here to create your store</a>.
 </div>
 
-
-<h3>How to use</h3>
-<div>
-    use minidel
-</div>
 
 
 @stop

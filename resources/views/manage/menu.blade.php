@@ -1,13 +1,17 @@
 @extends('layouts.default')
 
-@section('content')
-
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
   <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
   <li class="active">Menu</li>
 </ol>
+@endsection
+
+@section('content')
+
+
 
 <div class="row">
   <div class="col-md-3">
@@ -23,14 +27,36 @@
 
 
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-sm-4">
         <a href="/manage/{{$store->slug}}/menu/item/create" class="btn btn-default">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
           New Menu Item
         </a>
       </div><!-- /.col-lg-6 -->
 
-      <div class="col-md-6">
+    @if($store->type == 'Groceries')
+
+      <div class="col-sm-8" style="text-align: right">
+        {!! Form::open(array('url'=>'/manage/'.$store->slug.'/menu/section', 'class'=>'form-inline')) !!}
+        <div class="form-group">
+          {!! Form::select('parent', \App\menuSection::selectFromCollection($store->sections,true), null, ['placeholder' => 'Pick parent', 'class'=>'form-control']); !!}
+        </div><!-- /input-group -->
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" placeholder="New Menu Section">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+        </div><!-- /input-group -->
+
+        {!! Form::close() !!}
+      </div><!-- /.col-lg-6 -->
+
+    @else
+      <div class="col-sm-2">
+        &nbsp;
+      </div><!-- /.col-lg-6 -->
+
+      <div class="col-sm-6">
         {!! Form::open(array('url'=>'/manage/'.$store->slug.'/menu/section')) !!}
         <div class="input-group">
           <input type="text" name="title" class="form-control" placeholder="New Menu Section">
@@ -40,78 +66,45 @@
         </div><!-- /input-group -->
         {!! Form::close() !!}
       </div><!-- /.col-lg-6 -->
+    @endif
+
+
+
     </div><!-- /.row -->
 
     <br>
  
 
 
-    @forelse ($store->sections->sortBy('order') as $section)
+    @forelse ($store->sections->where('menu_section_id',0)->sortBy('order') as $section)
 
           
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                          {{ $section->title }}
-                          <span style="float:right">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+            {{ $section->title }}
+            @include('manage._section-controls', array('section_id'=>$section->id, 'available'=>$section->available))
+          </div>
+          <table class="table">
+          @foreach ($section->items->sortBy('order') as $item)
+            @include('manage._item')
+          @endforeach
 
-                            <a href="/manage/{{$store->slug}}/menu/section/{{ $section->id }}/up" title="Move up">
-                                <span class="glyphicon glyphicon-arrow-up"></span>
-                            </a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="/manage/{{$store->slug}}/menu/section/{{ $section->id }}/down" title="Move down">
-                              <span class="glyphicon glyphicon-arrow-down"></span>
-                            </a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="javascript:deleteSection({{ $section->id }})">
-                              <span class="glyphicon glyphicon-remove"></span>
-                            </a>
-                          </span>
-                        </div>
-                        <table class="table">
-                        @forelse ($section->items->sortBy('order') as $item)
-                          <tr>
-                            <td style="width:100px"><img src="/img/menu/{{ $item->photo or 'placeholder.svg' }}" class="img-thumbnail"></td>
-                            <td>
-                              <b>{{ $item->title }}</b> - {{ $item->price }} - <h1>{{ $item->section }}</h1> <br>
-                              {{ $item->info }}
-                            </td>
-                            <td style="width:100px">
+          @foreach ($section->subsections->sortBy('order') as $subsection)
+          <tr>
+            <td colspan="3">
+              <b>{{ $subsection->title }}</b>
+              @include('manage._section-controls', array('section_id'=>$subsection->id, 'available'=>$subsection->available))
+            </td>
+          </tr>
+            @foreach ($subsection->items->sortBy('order') as $item)
+              @include('manage._item')
+            @endforeach
+          @endforeach
 
+          </table>
 
-                              <a href="/manage/{{$store->slug}}/menu/item/{{ $item->id }}/edit" title="Edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                              </a>
-
-                              &nbsp;&nbsp;&nbsp;
-
-                              <a href="/manage/{{$store->slug}}/menu/item/{{ $item->id }}/up" title="Move up">
-                                <span class="glyphicon glyphicon-arrow-up"></span>
-                              </a>
-                              
-                              
-                              
-
-                              <br><br>
-
-                              <a href="javascript:deleteItem({{ $item->id }})" title="Delete">
-                                <span class="glyphicon glyphicon-remove"></span>
-                              </a>
-                              &nbsp;&nbsp;&nbsp;
-                              <a href="/manage/{{$store->slug}}/menu/item/{{ $item->id }}/down" title="Move down">
-                                <span class="glyphicon glyphicon-arrow-down"></span>
-                              </a>
-                              
-                              
-                            </td>
-                          </tr>
-                        @empty
-                          <tr><td>No menu items in this section!</td></tr>
-                        @endforelse
-
-                        </table>
-
-                         
-                    </div>
+           
+      </div>
     @empty
       <h4 style="text-align: center">To begin add a new section to your menu!</h4>
     @endforelse
@@ -159,8 +152,17 @@
           $( "#insert form" ).submit();
         }
       }
-  </script>
 
+      function available(type, item_id,isAvailable){
+        if(isAvailable == 1) var mes = "Are you sure you want to mark this item as available?";
+        if(isAvailable == 0) var mes = "Are you sure you want to mark this item as unavailable?"; 
+        var r = confirm(mes);
+        if (r == true) {
+          $('#insert').html('<form action="/manage/{{$store->slug}}/menu/'+type+'/'+item_id+'/available" method="post"><input type="hidden" name="_method" value="PUT" /><input type="hidden" name="available" value="'+isAvailable+'" />{!!Form::token()!!}</form>'); 
+          $( "#insert form" ).submit();
+        }
+      }
+  </script>
 @endsection
 
 

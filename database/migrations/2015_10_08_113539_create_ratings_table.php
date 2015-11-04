@@ -16,8 +16,8 @@ class CreateRatingsTable extends Migration
 
             $table->increments('id');
 
-            $table->integer('user_id')->unsigned();
-            $table->integer('store_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
+            $table->integer('store_id')->unsigned()->index();
             $table->tinyInteger('rating')->unsigned();
             $table->text('public_review');
             $table->text('private_review');

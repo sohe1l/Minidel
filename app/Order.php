@@ -21,6 +21,12 @@ class Order extends Model
     {
         return $this->belongsTo('\App\UserAddress');
     }
+
+
+    public function paymentType()
+    {
+        return $this->belongsTo('\App\PaymentType');
+    }
     
     public function orders(){
         return $this->hasMany('\App\Order');

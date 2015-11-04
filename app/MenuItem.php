@@ -31,6 +31,19 @@ class menuItem extends Model
         return $this->belongsToMany('\App\menuOption');
     }
 
+    public function tags(){
+        return $this->belongsToMany('\App\itemTag');
+    }
+
+    public function tagsSelectedList()
+    {
+        $arr = array();
+        foreach($this->tags as $tag)
+            $arr[] =  $tag->id;
+        return ($arr);
+    }
+
+
     public function optionsSelectedList()
     {
         $arr = array();

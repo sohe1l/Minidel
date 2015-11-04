@@ -1,10 +1,14 @@
 @extends('layouts.default')
 
-<ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li class="active">Order</li>
-</ol>
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/browse/">Browse</a></li>
+    <li><a href="/browse/{{$city->slug}}">{{$city->name}}</a></li>
+    <li class="active">{{$area->name}}</li>
+  </ol>
+@endsection
+
 
 
 @section('content')
@@ -18,7 +22,7 @@
 
 
     @foreach($area->stores as $store)
-        <h3>{{ $store->name }}<br>
+        <h3><a href="/{{$store->slug}}">{{ $store->name }}</a><br>
             <small>{{ $store->info }}</small>
         </h3>
     @endforeach

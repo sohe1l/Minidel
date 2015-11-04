@@ -1,6 +1,4 @@
 <?php
-
-
     function jsonOut($error, $msg){
         $returnData = array(
             'error' => $error,
@@ -9,10 +7,11 @@
         return response()->json($returnData);
     }
 
-
-
-    function saveOrder($store, $user, $cart, $totalPrice, $fee, $instructions, $type, $addressId=0, $isSchedule="false", $day="", $time=""){
+    function saveOrder($store, $user, $cart, $payment, $totalPrice, $fee, $instructions, $type, $addressId=0, $isSchedule="false", $day="", $time=""){
         
+        if($payment == '')
+            return 'Please select a payment method.';
+
         if($store->status_listing != 'published')
             return "Store is not confirmed. Please try another store.";
 
@@ -28,6 +27,7 @@
         $order->instructions = $instructions;
         $order->cart = json_encode($cart);
         $order->user_address_id = $addressId;
+        $order->payment_type_id = $payment;
 
         if(preg_match("/(delivery|pickup)/", $type) != 1) return "Please either choose delivery or pickup";
         $order->type = $type;
@@ -80,12 +80,28 @@
 
         if(!($totalPrice > 0))
             return 'Total price cannot be zero';
-        if($totalPrice != calculateTotalPrice($cart))
+
+        $cpt = calculateTotalPrice($cart);
+        if($cpt == 'ERR_NOT_AVAILABLE')
+            return 'One of the items are not available in the store. Please try again.';
+
+        if($totalPrice != $cpt)
             return 'Total price is not matching system price. Items must have been changed';
 
         $order->price = $totalPrice;
 
         $order->save();
+
+        //save order time
+        $orderTime = new \App\OrderTime;
+        $orderTime->user_id = $user->id;
+        $orderTime->order_id = $order->id;
+        $orderTime->store_id = $store->id;
+        $orderTime->status = 'pending';
+        $orderTime->timestamp = time();
+        $orderTime->save();
+    
+
 
         return 'ok';
     }
@@ -93,7 +109,6 @@
 
 
         
-
 
 
 
@@ -121,6 +136,12 @@
         $priceProduct = priceArray( \App\MenuItem::class , $array_products);
         $priceOption = priceArray( \App\MenuOptionOption::class , $array_options);
 
+        if($priceProduct == 'ERR_NOT_AVAILABLE' || $priceOption == 'ERR_NOT_AVAILABLE'){
+            return 'ERR_NOT_AVAILABLE';
+        }
+        
+        
+
         //loop again and sum price
         $total_price = 0;
         foreach($cart as $item){
@@ -129,6 +150,7 @@
                 foreach($item->options as $option){
                     if(is_array($option->selects)){
                         foreach($option->selects as $select){
+                            if(!isset($priceOption[$select->id])) return 'ERR_NOT_AVAILABLE';
                             $total_price += $priceOption[$select->id] * $item->quan;
                         }
                     }
@@ -140,11 +162,28 @@
     }
 
 
+    // if item is not available it will return error!
     function priceArray($model, $idArr){
         $out = [];
-        $products = $model::whereIn('id', $idArr)->select('id', 'price')->get();
+        $products = $model::whereIn('id', $idArr)->select('id', 'price' ,'available');
+
+        //dd($idArr);
+
+        if($model == "App\MenuItem") $products = $products->addSelect('menu_section_id'); //menu section is is required for menu items
+        
+        $products = $products->get();
+
+        //if($model == "App\MenuOptionOption")
+          //  dd($products);
+
         foreach($products as $p){
             $out[$p->id] = $p->price;
+            
+            if($p->available==0) return 'ERR_NOT_AVAILABLE';
+            if($model == "App\MenuItem"){
+                if($p->menuSection->available==0) return 'ERR_NOT_AVAILABLE';
+                if($p->menuSection->menuSection != null && $p->menuSection->menuSection->available == 0) return 'ERR_NOT_AVAILABLE';
+            }
         }
         return $out;
     }
@@ -159,5 +198,21 @@
                 $output .= '<span class="glyphicon glyphicon-star-empty"></span>';
         }
         return $output;
+    }
+
+
+
+
+    function getEnumValues($table, $column)
+    {
+      $type = DB::select( DB::raw("SHOW COLUMNS FROM $table WHERE Field = '$column'") )[0]->Type;
+      preg_match('/^enum\((.*)\)$/', $type, $matches);
+      $enum = array();
+      foreach( explode(',', $matches[1]) as $value )
+      {
+        $v = trim( $value, "'" );
+        $enum = array_add($enum, $v, $v);
+      }
+      return $enum;
     }
 ?>

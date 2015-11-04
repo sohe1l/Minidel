@@ -1,11 +1,15 @@
 @extends('layouts.default')
 
-@section('content')
-
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li class="active">Add Store</li>
 </ol>
+@endsection
+
+@section('content')
+
+
 
 
     <div class="jumbotron">

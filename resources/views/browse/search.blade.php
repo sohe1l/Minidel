@@ -1,12 +1,17 @@
 @extends('layouts.default')
 
-@section('content')
 
-<ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li class="active">Browse</li>
-  <li class="active">Search</li>
-</ol>
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/browse/">Browse</a></li>
+    <li class="active">Search</li>
+  </ol>
+@endsection
+
+
+
+@section('content')
 
 <div class="row">
   <div class="col-md-3">

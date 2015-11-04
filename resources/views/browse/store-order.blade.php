@@ -1,11 +1,28 @@
 @extends('layouts.default')
 
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/browse/">Browse</a></li>
+    <li><a href="/browse/{{$store->city->slug}}">{{$store->city->name}}</a></li>
+    <li><a href="/browse/{{$store->city->slug}}/{{$store->area->slug}}">{{$store->area->name}}</a></li>
+    @if ($store->building)
+      <li><a href="/browse/{{$store->city->slug}}/{{$store->area->slug}}/{{ $store->building->slug }}">{{$store->building->name}}</a></li>
+    @endif
+    <li><a href="/{{$store->slug}}">{{$store->name}}</a></li>
+    <li class="active">Order</li>
+  </ol>
+@endsection
+
+
 @section('content')
 
 <style>
 html, body { overflow-x: hidden;}
 
 footer { padding: 30px 0;} 
+
+#storeDiv a {color: #333333 !important;}
 
 /*
  * Off Canvas
@@ -54,7 +71,7 @@ footer { padding: 30px 0;}
 
   <small id="headingSmall">
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
-    <div>{{ $store->building->name }} - {{ $area->name }}</div>
+    <div>{{ ($store->building)?$store->building->name:'' }} - {{ $store->area->name }}</div>
   </small>
 </h3>
 
@@ -72,8 +89,11 @@ footer { padding: 30px 0;}
 
     <div class="hidden-xs menuSections">
       <table class="table" data-spy="affix" data-offset-top="310"> 
-      @foreach ($store->sections as $section)
-        <tr><td>{{ $section->title }}</td></tr>
+      @foreach ($store->sections->where('menu_section_id',0)->where('available',1) as $section)
+        <tr><td><a href="#section{{$section->id}}">{{ $section->title }}</a></td></tr>
+        @foreach ($section->subsections->where('available',1) as $subsection)
+          <tr><td style="font-size:70%;"><a href="#section{{$subsection->id}}">{{ $subsection->title }}</a></td></tr>
+        @endforeach
       @endforeach
       </table>
 
@@ -86,12 +106,7 @@ footer { padding: 30px 0;}
 
       <div v-show="!isLogin" class="alert alert-danger" role="alert">Please login to be able to place orders.</div>
 
-      <div v-show="isLogin && !hasAddresses" class="alert alert-danger" role="alert">
-        You don't have any address in your system therefore you cannot place orders for delivery.
-        (click to Add your address)
-      </div>
-
-      <div v-show="isLogin && hasAddresses && !userAddresses" class="alert alert-warning" role="alert">
+      <div v-show="isLogin && !hasAddresses" class="alert alert-warning" role="alert">
         None of your delivery addresses matches the delivery coverage of this resturant. You can still place orders for pickup.<br>
         <?php /*
         Your addresses: <span v-repeat="userAddresses">@{{$value}} </span>  <br>
@@ -99,33 +114,23 @@ footer { padding: 30px 0;}
         */ ?>
       </div>
       
-      @forelse ($store->sections as $section)              
+      @forelse ($store->sections->where('menu_section_id',0)->where('available',1) as $section)              
         <div class="panel panel-default">
-            <div class="panel-heading">{{ $section->title }}</div>
-            <table class="table">
-            @forelse ($section->items->sortBy('order') as $item)
-              <tr>
-                <td style="width:100px"><img src="/img/menu/{{ $item->photo or 'placeholder.svg' }}" class="img-thumbnail"></td>
-                <td>
-                  <b>{{ $item->title }}</b> - {{ $item->price }}
+          <div class="panel-heading"><a name="section{{$section->id}}">{{ $section->title }}</a></div>
+          
+          <table class="table">
+            @foreach ($section->items->sortBy('order') as $item)
+              @include('browse._item')
+            @endforeach
+            
+            @foreach ($section->subsections->where('available',1) as $subsection)
+            <tr><td colspan="2"><a name="section{{$subsection->id}}"><b>{{ $subsection->title }}</b></a></td></tr>
+              @foreach ($subsection->items->sortBy('order') as $item)
+                @include('browse._item')
+              @endforeach
+            @endforeach
 
-                  
-                  <span v-on="click: addItem({{ $item->id }})" title="Add" style="float:right">
-                    <span v-if="quans[{{$item->id}}]" class="badge" style="background-color: #f0ad4e">
-                      {{ " {"."{". "quans[".$item->id  ."] }"."} " }}
-                    </span>
-                    &nbsp;
-                    <span class="glyphicon glyphicon-plus" style="color:#f0ad4e"></span>
-                  </span>
-
-                  <br>
-                  {{ $item->info }}
-                </td>
-              </tr>
-            @empty
-              <tr><td>No menu items in this section!</td></tr>
-            @endforelse
-          </table>  
+          </table>
         </div>
       @empty
         <h4 style="text-align: center">No menu available!</h4>
@@ -186,13 +191,12 @@ footer { padding: 30px 0;}
           Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
           </div>  
 
-
           <div class="form-horizontal">
             <div class="form-group">
               <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Option</label>
               <div class="col-md-8 col-lg-9">
                 <label class="radio-inline">
-                  <input type="radio" name="dorp" v-model="dorp" value="delivery" v-attr="disabled: !userAddresses"> Delivery
+                  <input type="radio" name="dorp" v-model="dorp" value="delivery" v-attr="disabled: !hasAddresses"> Delivery
                 </label>
                 <label class="radio-inline">
                   <input type="radio" name="dorp" v-model="dorp" value="pickup"> Pickup
@@ -212,6 +216,7 @@ footer { padding: 30px 0;}
                 </label>
               </div>
             </div>
+
 
             <div v-show="!showTimes" v-on="click: showTimes = true" style="font-style: italic">
                 Schedule Delivery
@@ -233,6 +238,20 @@ footer { padding: 30px 0;}
             <div class="form-group" v-show="showInstruction">
               <div class="col-md-12 col-lg-12">
                 <textarea class="form-control" placeholder="No tomatoes!" v-model="instructions" name="orderInstructions"></textarea>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Payment</label>
+              <div class="col-md-8 col-lg-9">
+                <label class="radio-inline" v-repeat="paymentMethods">
+                  <input type="radio" 
+                         name="payment"
+                         v-model="payment"
+                         v-attr="checked: $index==0"
+                         value="@{{pivot.payment_type_id}}"> @{{name}}
+                </label>
               </div>
             </div>
 
@@ -285,6 +304,7 @@ footer { padding: 30px 0;}
       <span class="label label-success" v-show="addressObj.type == 'delivery'">{{ $store->is_deliver_area=='true'?'Deliveres Now':''  }}</span>
   </div>
 
+<?php /*
   <div v-show="!showStoreTimings" v-on="click: showStoreTimings = true" style="font-style: italic; font-size: 90%">Show Store Timings</div>
   <div v-show="showStoreTimings">
     <b>Room Service Timings</b>
@@ -315,6 +335,7 @@ footer { padding: 30px 0;}
         </div>
     @endforeach
   </div>
+*/ ?>
 </div>
 
 <!-- Modal Options -->
@@ -423,12 +444,13 @@ footer { padding: 30px 0;}
       cart: [],
       modalItem: [],
       isLogin: {{ ($user) ?'true':'false' }},
-      hasAddresses: {{ ($user && $user->hasAddresses())?'true':'false' }},
       userAddresses: {!! json_encode($user_addresses) !!},
-      items: {!! $store->itemsWithOptions !!},
+      items: {!! $store->items !!},
       deliveryMini: {!! json_encode($daysMini) !!},
       deliveryDays: {!! json_encode($daysDelivery) !!},
       pickupDays: {!! json_encode($daysPickup) !!},
+      payment: '',
+      paymentMethods: {!! json_encode($store->payments) !!},
       deliveryDay: '',
       deliveryTimes: '',
       deliveryTime: '',
@@ -445,11 +467,15 @@ footer { padding: 30px 0;}
 
     },
     ready: function(){
-      if(this.userAddresses) this.dorp = "delivery";
+      if(this.hasAddresses) this.dorp = "delivery";
     },
 
 
     computed: {
+      hasAddresses: function(){
+        if(this.userAddresses.length == 0) return false;
+        return true;
+      },
       addressObj: function(){
         var obj = "";
         var that = this;
@@ -665,12 +691,17 @@ footer { padding: 30px 0;}
           return false;
         }
 
+        if(this.payment == ''){
+          alert("Please select a payment option.");
+          return false;
+        }
+
         var that = this;
 
 
         $.ajax({
           type: "POST",
-          url: "/store/{{$store->city->slug}}/{{$store->area->slug}}/{{$store->slug}}/order",
+          url: "/{{$store->slug}}/order",
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           data: {
             showTimes: this.showTimes,
@@ -680,6 +711,7 @@ footer { padding: 30px 0;}
             day:this.deliveryDay,
             time:this.deliveryTime,
             address: this.selectedAddress,
+            payment: this.payment,
             totalPrice: this.totalPrice,
             fee: this.deliveryFee,
             discountAmount: this.discountAmount
@@ -771,18 +803,20 @@ footer { padding: 30px 0;}
 
   <script id="optiontemplate" type="x-template">
     <div v-class="optionError: !isValid" style="font-weight: bold; margin-top:1em;">
-      <b>@{{optionName}}</b> [@{{min}}:@{{max}}]
+      <b>@{{optionName}}</b> [select @{{min}} to @{{max}}]
     </div>
-    <div class="optionItem" v-repeat="option: optionsData">
-      <div class="itemTitle" style="float:right">@{{option.price}}</div>
-      <input
-        v-on="change: selectOption(option,$event)"
-        type="checkbox" 
-        name="@{{option.menu_option_id}}"
-        id="el_@{{option.menu_option_id}}_@{{option.id}}"
-        v-attr="checked: option.isSelected"
-        >
-      <label class="itemName" for="el_@{{option.menu_option_id}}_@{{option.id}}">@{{option.name}}</label>
+    <div v-repeat="option: optionsData">
+      <div class="optionItem" v-if="option.available == 1">
+        <div class="itemTitle" style="float:right">@{{option.price}}</div>
+        <input
+          v-on="change: selectOption(option,$event)"
+          type="checkbox" 
+          name="@{{option.menu_option_id}}"
+          id="el_@{{option.menu_option_id}}_@{{option.id}}"
+          v-attr="checked: option.isSelected"
+          >
+        <label class="itemName" for="el_@{{option.menu_option_id}}_@{{option.id}}">@{{option.name}}</label>
+      </div>
     </div>
   </script>
 

@@ -1,12 +1,14 @@
 @extends('layouts.default')
 
-@section('content')
+@section('breadcrumb')
+    <ol class="breadcrumb hidden-xs">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard/">Dashboard</a></li>
+      <li class="active">Address</li>
+    </ol>
+@endsection
 
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li class="active">Address</li>
-</ol>
+@section('content')
 
 <div class="row">
   <div class="col-md-3 hidden-xs">
@@ -51,7 +53,7 @@
             </span>
         </div>
         <div class="panel-body">
-            {{ $address->city->name }}, {{ $address->area->name }}, {{ $address->building->name }},
+            {{ $address->city->name }}, {{ $address->area->name }}, {{ ($address->building)?$address->building->name:'' }},
             {{ $address->unit }}, {{ $address->info }}
         </div>
       </div>

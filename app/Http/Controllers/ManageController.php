@@ -19,6 +19,9 @@ class ManageController extends Controller
     protected $coverBase = 'img/cover/';
     protected $coverMobileBase = 'img/cover-mobile/';
    
+    protected $menuImageBase = 'img/menu/';
+    protected $menuImageBaseThumb = 'img/menu-thumb/';
+
     public function __construct()
     {
         /*
@@ -55,13 +58,16 @@ class ManageController extends Controller
         $this->validate($request, [
             'name' => 'required|max:100',
             'phone' => 'required|max:100',
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'store_url' =>  'required|alpha_dash|max:25|unique:users,username|unique:stores,slug|unique:chains,slug',
+            'type' => 'required'
         ]);
 
         // save the store into the db
         $store = new \App\Store;
+        $store->type = $request->type;
         $store->name = $request->name;
-        $store->slug = Str::slug($request->name);
+        $store->slug = $request->store_url;
         $store->phone = $request->phone;
         $store->email = $request->email;
         $store->country = $request->country;
@@ -288,6 +294,24 @@ class ManageController extends Controller
 
 
 
+    public function location(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        if($store->coordinate){
+            list($lat,$lng)=explode(',', $store->coordinate);
+        }else{
+            $lat = '25.2048';
+            $lng = '55.2708';
+        }
+
+        $countries = \Countries::getList('en', 'php', 'cldr');
+        return view('manage.location',compact('store', 'countries','lat','lng'));
+    }
+
+
 
     public function locationStore(Request $request, $storeSlug)
     {
@@ -300,7 +324,7 @@ class ManageController extends Controller
             'country' => 'required|max:2',
             'city_id' => 'required|integer',
             'area_id' => 'required|integer',
-            'building_id' => 'required|integer'
+            'building_id' => 'integer'
         ]);
 
         // save the store into the db
@@ -311,7 +335,29 @@ class ManageController extends Controller
         $store->save();
 
         flash('Store location updated successfully.');
-        return redirect('/manage/' . $storeSlug . '/general');
+        return redirect('/manage/' . $storeSlug . '/location');
+    }
+
+
+
+    public function locationMarkerStore(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        //validate request
+        $this->validate($request, [
+            'lat' => 'required',
+            'lng' => 'required'
+        ]);
+
+        // save the store into the db
+        $store->coordinate = $request->lat . ',' . $request->lng;
+        $store->save();
+
+        flash('Store location marker updated successfully.');
+        return redirect('/manage/' . $storeSlug . '/location');
     }
 
 
@@ -326,7 +372,7 @@ class ManageController extends Controller
 
     public function menu(Request $request, $storeSlug)
     {
-        $store = \App\Store::where('slug',$storeSlug)->first();
+        $store = \App\Store::where('slug',$storeSlug)->with('sections.subsections.items','sections.items')->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
@@ -341,13 +387,28 @@ class ManageController extends Controller
 
         //validate request
         $this->validate($request, [
-            'title' => 'required|max:100'
+            'title' => 'required|max:100',
+            'parent' => 'integer'
         ]);
 
         $section = new \App\menuSection;
         $section->store_id = $store->id;
         $section->title = $request->title;
-        $section->order = $store->lastSectionOrder() + 1;
+        
+        if($request->parent != ""){
+            $sectionCheck = \App\menuSection::where('id',$request->parent)->first();
+            if($sectionCheck == null || $sectionCheck->store_id != $store->id){
+                flash('Parent section does not belong to the store.');
+                return redirect('/manage/' . $storeSlug . '/menu' );
+            }
+            $section->menu_section_id = $request->parent;
+            $section->order = $store->lastSectionOrder($request->parent) + 1;
+        }else{
+          $section->order = $store->lastSectionOrder() + 1;  
+        }
+
+        
+
         $section->save();
         
         flash('Menu section created successfully.');
@@ -363,6 +424,10 @@ class ManageController extends Controller
         $section = \App\menuSection::findOrFail($sectionId);
 
         if($section->store_id != $store->id) abort(403);
+
+        foreach($section->subsections as $subsection){
+            $subsection->delete();
+        }
 
         $section->delete();
 
@@ -389,7 +454,7 @@ class ManageController extends Controller
         if($item->order != 0){
             $item->order = $item->order - 1;
 
-            $item2 = \App\menuSection::where('order', $item->order)->first();
+            $item2 = \App\menuSection::where('order', $item->order)->where('menu_section_id',$item->menu_section_id)->first();
 
             if($item2  != null){
                 $item2->order = $item2->order + 1;
@@ -414,10 +479,10 @@ class ManageController extends Controller
         if($store->id != $item->store_id) abort(403); // item belongs to someone else
 
 
-        if($item->order != $store->lastSectionOrder()){
+        if($item->order != $store->lastSectionOrder($item->menu_section_id)){
             $item->order = $item->order + 1;
 
-            $item2 = \App\menuSection::where('order', $item->order)->first();
+            $item2 = \App\menuSection::where('order', $item->order)->where('menu_section_id',$item->menu_section_id)->first();
                                   
             if($item2  != null){
                 $item2->order = $item2->order - 1;
@@ -432,7 +497,27 @@ class ManageController extends Controller
         return redirect('/manage/' . $storeSlug . '/menu' );
     }
 
+    public function menuSectionUpdateAvailable(Request $request, $storeSlug, $sectionId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $item = \App\menuSection::findOrFail($sectionId);
+        if($store->sections()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
 
+
+        //validate request
+        $this->validate($request, [
+            'available' => 'required|integer|min:0|max:1'
+        ]);
+
+        $item->available = $request->available;
+        $item->save();
+        
+        flash('Section update successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu' );
+    }
 
 
 
@@ -471,7 +556,7 @@ class ManageController extends Controller
 
     public function menuItemCreate(Request $request, $storeSlug)
     {
-        $store = \App\Store::where('slug',$storeSlug)->first();
+        $store = \App\Store::where('slug',$storeSlug)->with('sections.subsections')->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
@@ -502,6 +587,8 @@ class ManageController extends Controller
         $item = $section->items()->create($request->all());
 
         if(is_array($request->options)) $item->options()->sync($request->options);
+
+        if(is_array($request->tags)) $item->tags()->sync($request->tags);
 
         //handle image
         $file = $request->file('imagefile');
@@ -554,9 +641,9 @@ class ManageController extends Controller
         $item = \App\menuItem::findOrFail($itemId);
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
 
-        $sectionList = $store->sections()->lists('title', 'id');
+        //$sectionList = $store->sections()->lists('title', 'id');
 
-        return view('manage.menu-item-edit',compact('store','item','sectionList'));
+        return view('manage.menu-item-edit',compact('store','item'));
     }
 
 
@@ -591,6 +678,14 @@ class ManageController extends Controller
             $item->options()->detach();
         }
 
+        if(is_array($request->tags)){
+            $item->tags()->sync($request->tags);
+        }else{
+            $item->tags()->detach();
+        }
+
+
+
         //handle image
         $file = $request->file('imagefile');
         if($file){
@@ -614,6 +709,29 @@ class ManageController extends Controller
         flash('Menu item update successfully.');
         return redirect('/manage/' . $storeSlug . '/menu' );
     }
+
+    public function menuItemUpdateAvailable(Request $request, $storeSlug, $itemId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $item = \App\menuItem::findOrFail($itemId);
+        if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
+
+
+        //validate request
+        $this->validate($request, [
+            'available' => 'required|integer|min:0|max:1'
+        ]);
+
+        $item->available = $request->available;
+        $item->save();
+        
+        flash('Menu item update successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu' );
+    }
+
 
 
 
@@ -847,6 +965,45 @@ class ManageController extends Controller
 
         return redirect('/manage/' . $storeSlug . '/options' );
     }
+
+
+
+    public function optionsUpdateAvailable(Request $request, $storeSlug, $optionOptionId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $option = \App\menuOptionOption::findOrFail($optionOptionId);
+
+        if($option->menuOption->store_id != $store->id) abort(403); // item belongs to someone else
+
+        //validate request
+        $this->validate($request, [
+            'available' => 'required|integer|min:0|max:1'
+        ]);
+
+        $option->available = $request->available;
+        $option->save();
+        
+        flash('Option update successfully.');
+        return redirect('/manage/' . $storeSlug . '/options' );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function coverage(Request $request, $storeSlug)
@@ -1203,7 +1360,10 @@ class ManageController extends Controller
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
-
+        
+        $this->validate($request, [
+            'tags' => 'required|array'
+        ]);
         
         $store->tags()->sync($request->tags);
 
@@ -1212,6 +1372,231 @@ class ManageController extends Controller
         return redirect('/manage/' . $storeSlug . '/tags' );
     }
 
+
+
+
+    //menu photos
+
+    public function menuphotos(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        return view('manage.menuphoto',compact('store'));
+    }
+
+
+
+
+    public function menuphotosStore(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        //validate request
+        $this->validate($request, [
+            'imagefile' => 'required|mimes:jpg,jpeg,png,bmp',
+            'photoCaption' => 'required|string|max:200'
+        ]);
+
+        $file = $request->file('imagefile');
+
+        //store the new image
+        $photoFileName = time() . '-' . str_random(5) . '-' . $store->slug . '.jpg' ;
+
+        $image = \Image::make($file->getRealPath());
+        $image->resize(700, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })->resize(null, 700, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })->save($this->menuImageBase.$photoFileName);
+
+
+        $image = \Image::make($file->getRealPath());
+        $image->fit(140,140)->save($this->menuImageBaseThumb.$photoFileName);
+
+        $store->photos()->create(['type' => 'menu',
+                                  'path' => $photoFileName,
+                                  'text' => $request->photoCaption,
+                                  'order' => $store->lastMenuPhotoOrder() + 1,
+                                  'user_id' => $request->user()->id]);
+
+        flash('Image uploaded successfully.');
+    
+        return redirect('/manage/'. $storeSlug . '/menu/photos');
+    }
+
+
+
+    public function menuphotoUp(Request $request, $storeSlug, $photoId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+
+        $item = $store->photos()->where('id', $photoId)->first();
+        if(!$item) abort(404);
+
+        if($item->order != 0){
+            $item->order = $item->order - 1;
+
+            $item2 = $store->photos()->where('type','menu')->where('order', $item->order)->first();
+
+            if($item2  != null){
+                $item2->order = $item2->order + 1;
+                $item2->save();
+            }
+
+            $item->save();
+        }
+        
+
+        flash('Menu photo updated successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu/photos' );
+    }
+
+    public function menuphotoDown(Request $request, $storeSlug, $photoId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $item = $store->photos()->where('id', $photoId)->first();
+        if(!$item) abort(404);
+
+        if($item->order != $store->lastMenuPhotoOrder()){
+            $item->order = $item->order + 1;
+
+            $item2 = $store->photos()->where('type','menu')->where('order', $item->order)->first();
+                                  
+            if($item2  != null){
+                $item2->order = $item2->order - 1;
+                $item2->save();
+            }
+
+            $item->save();
+        }
+        
+        flash('Menu photo updated successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu/photos' );
+    }
+
+    public function menuphotoDestroy(Request $request, $storeSlug, $photoId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $item = $store->photos()->where('id', $photoId)->first();
+        if(!$item) abort(404);
+
+        \File::delete($this->menuImageBase. $item->path); 
+        \File::delete($this->menuImageBaseThumb. $item->path); 
+        
+        $item->delete();
+        
+        flash('Menu photo deleted successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu/photos' );
+    }
+
+    public function menuphotoEdit(Request $request, $storeSlug, $photoId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $photo = $store->photos()->where('id', $photoId)->first();
+        if(!$photo) abort(404);
+
+        return view('manage.menuphoto-edit',compact('store', 'photo'));
+    }
+
+    public function menuphotoUpdate(Request $request, $storeSlug, $photoId)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $photo = $store->photos()->where('id', $photoId)->first();
+        if(!$photo) abort(404);
+
+        $this->validate($request, [
+            'photoCaption' => 'required|string|max:200'
+        ]);
+
+        $photo->text = $request->photoCaption;
+        $photo->save();
+
+
+        flash('Menu photo edited successfully.');
+        return redirect('/manage/' . $storeSlug . '/menu/photos' );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //payments
+    public function payments(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        
+        $paymentslist = $store->payments->lists('id')->toArray();
+
+        // dd($tagslist);
+
+        return view('manage.payments',compact('store','paymentslist'));
+    }
+
+    public function paymentsStore(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $this->validate($request, [
+            'payments' => 'required|array'
+        ]);
+        
+        $store->payments()->sync($request->payments);
+
+        flash('Payments updated successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/payments' );
+    }
 
 
 
@@ -1229,7 +1614,7 @@ class ManageController extends Controller
 
         $store->updateLastCheck();
 
-        $orders = \App\Order::where('store_id',$store->id)->where('hidden_store',0)->with('user','userAddress','userAddress.area','userAddress.building')->get();
+        $orders = \App\Order::where('store_id',$store->id)->where('hidden_store',0)->with('user','userAddress','userAddress.area','userAddress.building','paymentType')->get();
 
         $returnData = array(
             'error' => 0,
@@ -1251,6 +1636,17 @@ class ManageController extends Controller
 
         if($order->store_id != $store->id) return $this->jsonOut('order_denied','The order does not belong to this store.');
 
+        //check if order is changing log
+        if($request->status != "" &&  $request->status != "callback" && $order->status != $request->status){
+            $orderTime = new \App\OrderTime;
+            $orderTime->user_id = $request->user()->id;
+            $orderTime->order_id = $orderId;
+            $orderTime->store_id = $store->id;
+            $orderTime->status = $request->status;
+            $orderTime->timestamp = time();
+            $orderTime->save();
+        }
+
         // check if delivered add comission
         if($order->status != 'delivered' && $request->status == 'delivered'){
             $tran = new \App\Transaction;
@@ -1263,10 +1659,13 @@ class ManageController extends Controller
         }
 
         if($request->hide == 1) $order->hidden_store = 1;
-        if($request->reason != "") $order->reason = $request->reason;
-        if($request->status != ""){
-            if($request->status == "callback") $order->callback = 0;
-            else $order->status = $request->status;
+
+        if($order->status != "canceled"){
+            if($request->reason != "") $order->reason = $request->reason;
+            if($request->status != ""){
+                if($request->status == "callback") $order->callback = 0;
+                else $order->status = $request->status;
+            }
         }
 
         $order->save();
@@ -1295,20 +1694,6 @@ class ManageController extends Controller
 
         return jsonOut(0,'ok');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

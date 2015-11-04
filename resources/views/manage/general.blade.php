@@ -1,13 +1,41 @@
 @extends('layouts.default')
 
-@section('content')
-
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
   <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
   <li class="active">General</li>
 </ol>
+@endsection
+
+@section('content')
+
+<style>
+     .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      .controls:focus {
+        border-color: #4d90fe;
+      }
+</style>
+
+
 
 
 <div class="row">
@@ -29,22 +57,6 @@
 
             {!! Form::model($store, array('class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/general' )) !!}
             
-            <div class="form-group clearfix">
-                <label class="col-md-4 control-label">Status</label>
-                <div class="col-md-8">
-                        <label class="radio-inline">
-                            {!! Form::radio('status_working', 'open') !!} Open
-                        </label>
-                        <label class="radio-inline">
-                          {!! Form::radio('status_working', 'close') !!} Close
-                        </label>
-                        <label class="radio-inline">
-                          {!! Form::radio('status_working', 'busy') !!} Busy
-                        </label>
-                </div>
-            </div>
-
-
             <div class="form-group">
                 <label class="col-md-4 control-label">Name</label>
                 <div class="col-md-8">
@@ -75,6 +87,45 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-md-4 control-label">Store Type</label>
+                <div class="col-md-8">
+                    {!! Form::text('type' , $value = 'null', $attributes=array('class'=>'form-control', 'disabled') ) !!}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label">Store URL</label>
+                <div class="col-md-8">
+                    {!! Form::text('storeslug' , "www.minidel.com/$store->slug", $attributes=array('class'=>'form-control', 'disabled') ) !!}
+                </div>
+            </div>
+
+            @if($store->chain)
+            <div class="form-group">
+                <label class="col-md-4 control-label">Chain</label>
+                <div class="col-md-8">
+                    {!! Form::text('chain' , $store->chain->name, $attributes=array('class'=>'form-control', 'disabled') ) !!}
+                </div>
+            </div>
+            @endif
+
+            <div class="form-group clearfix">
+                <label class="col-md-4 control-label">Status</label>
+                <div class="col-md-8">
+                        <label class="radio-inline">
+                            {!! Form::radio('status_working', 'open') !!} Open
+                        </label>
+                        <label class="radio-inline">
+                          {!! Form::radio('status_working', 'close') !!} Close
+                        </label>
+                        <label class="radio-inline">
+                          {!! Form::radio('status_working', 'busy') !!} Busy
+                        </label>
+                </div>
+            </div>
+
+            
             <div class="form-group">
                 <div class="col-md-8 col-md-offset-4">
                     {!! Form::submit('Update Information!', $attributes=array('class'=>'btn btn-primary')); !!}
@@ -137,64 +188,6 @@
         </div>
     </div>
 
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">Location</div>
-        <div class="panel-body">
-            {!! Form::model($store, array('url' => '/manage/'.$store->slug.'/location', 'class'=>'form-horizontal' ) ) !!}
-            <div>
-                <b>Current Location:</b>
-                {{ $store->country }} / 
-                {{ $store->city->name or '-' }} /
-                {{ $store->area->name or '-' }} /
-                {{ $store->building->name or '-' }} 
-            </div>
-
-            <br>
-
-
-            <div class="form-group">
-                <label class="col-md-4 control-label">Country</label>
-                <div class="col-md-6">
-                    {!! Form::select('country', $countries, null, $attributes=array('class'=>'form-control','id'=>'country') );  !!}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-4 control-label">City</label>
-                <div class="col-md-6">
-                    {!! Form::select('city_id',[],null,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-4 control-label">Area</label>
-                <div class="col-md-6">
-                    {!! Form::select('area_id',[],null,$attributes=array('class'=>'form-control','id'=>'area') ); !!}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-4 control-label">Building</label>
-                <div class="col-md-6">
-                    {!! Form::select('building_id',[],null,$attributes=array('class'=>'form-control','id'=>'building') ); !!}
-                </div>
-            </div>
-
-
-
-            <div class="form-group">
-                <div class="col-md-6 col-md-offset-4">
-                    {!! Form::submit('Update Location!', $attributes=array('class'=>'btn btn-primary')); !!}
-                </div>
-            </div>
-        {!! Form::close() !!}
-        </div>
-    </div>
-
-
-
   </div>
 </div>
 
@@ -215,78 +208,4 @@
 
 
 @section('footer')
-    <script type="text/javascript">
-
-        function update_city(){
-            $.ajax({
-              url: '/api/v1/country/'+ $("#country").val() +'/cities/',
-              type: 'GET',
-              cache: true,
-              success: function(data) {
-                if(data.length == 0){
-                    $('#city').select2('val','');
-                    $('#city').html('');
-                }else{
-                    $('#city').select2({data: data});
-                }
-                update_area();
-               },
-              error: function(e) { alert("Some error occurred. Please try again."); }
-            });
-        }
-
-        function update_area(){
-            if($("#city").val() == null ){
-                helper_clear('#area');
-            }else{
-                $.ajax({
-                  url: '/api/v1/country/'+ $("#country").val() + '/cities/' + $("#city").val() + '/areas/' ,
-                  type: 'GET',
-                  cache: true,
-                  success: function(data) {
-                    if(data.length == 0){
-                        helper_clear('#area');
-                    }else{
-                        $('#area').select2({data: data});
-                    }
-                    update_building();
-                   },
-                  error: function(e) { alert("Some error occurred. Please try again."); }
-                });
-            }
-        }
-
-        function update_building(){
-            if($("#city").val() == null || $("#area").val() == null ){
-                helper_clear('#building');
-            }else{
-                $.ajax({
-                  url: '/api/v1/country/'+ $("#country").val() + '/cities/' + $("#city").val() + '/areas/' + $("#area").val() + '/buildings/' ,
-                  type: 'GET',
-                  cache: true,
-                  success: function(data) { 
-                    if(data.length == 0) {
-                        helper_clear('#building');
-                    }else{
-                        $('#building').select2({data: data});
-                    }
-                  },
-                  error: function(e) { alert("Some error occurred. Please try again."); }
-                });
-            }
-        }
-
-        function helper_clear(input){
-            $(input).select2('val','');
-            $(input).html(' ');
-        }
-
-        $('#country').select2().on("change", update_city);
-        $('#city').select2().on("change", update_area);
-        $('#area').select2().on("change", update_building);
-        $('#building').select2();
-
-        update_city();
-
-    </script>
 @endsection

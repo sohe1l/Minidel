@@ -1,6 +1,11 @@
 @extends('layouts.default')
 
 @section('head')
+    <style type="text/css">
+    @media(max-width:767px){
+        body {background-color:#FFDC7B !important;}
+    }
+</style>
 @endsection
 
 
@@ -52,7 +57,7 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">Email</label>
                             <div class="col-md-6">
-                                <input type="input" class="form-control" name="email" value="{{ old('email') }}">
+                                <input type="input" class="form-control" name="login" value="{{ old('login') }}">
                             </div>
                         </div>
 
@@ -105,8 +110,8 @@
             </ul>
         </div>
 
-        <div>Order from your surrounding stores with no minimum delivery & no delivery charges! <br>
-        Beta Testing. Currenly available in Dubai, JLT</div>
+        <div>Order from your surrounding stores with no minimum delivery & no delivery charges! <br><br>
+        <h3>Currenly available in Dubai, JLT</h3></div>
     </div>
 
 

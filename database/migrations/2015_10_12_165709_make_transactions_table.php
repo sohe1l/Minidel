@@ -15,8 +15,8 @@ class MakeTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('user_id')->unsigned();
-            $table->integer('store_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
+            $table->integer('store_id')->unsigned()->index();
             $table->integer('amount')->unsigned();
             $table->enum('type',['debit','credit']);
             $table->text('reference');

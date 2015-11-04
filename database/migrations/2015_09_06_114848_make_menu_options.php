@@ -29,6 +29,7 @@ class MakeMenuOptions extends Migration
             $table->integer('menu_option_id')->unsigned()->index();
             $table->string('name');
             $table->decimal('price', 10, 2);
+            $table->boolean('available')->default(true);
             $table->timestamps();
 
             $table->foreign('menu_option_id')->references('id')->on('menu_options')->onDelete('cascade');

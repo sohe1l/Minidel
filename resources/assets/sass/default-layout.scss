@@ -1,3 +1,25 @@
+body{
+    background-color:#FAFAFA !important;
+}
+
+.whiteBG {background-color:#FFFFFF !important;}
+
+#globalSearch input[type=search] {
+    width: 100%;
+    background: #e12f33;
+    border: none;
+    padding: .4em 1em;
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+
+.navbar {
+    background-color: #FFFFFF !important;
+}
+
+
+
 h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 0 !important;
 }
@@ -7,7 +29,7 @@ h1, .h1, h2, .h2, h3, .h3 {
 .glyphicon-star-empty { color: #FFCC78; }
 
 .breadcrumb {
-    padding-left: 0px !important;
+  /*  padding-left: 0px !important; */
     background-color: initial !important;
     font-size: 90% !important;
 }
@@ -15,6 +37,7 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 .storeListing{
     border-bottom: 1px solid #e7e7e7;
+    padding: 10px 0;
 }
 .storeListing .title{
     font-size:120%;
@@ -63,19 +86,21 @@ h1, .h1, h2, .h2, h3, .h3 {
 }
 
 
-@media(max-width:767px){
-    html{
-        background-color:#FFDC7B !important;
-    }
+#defaultMainContainer {min-height: 400px;}
 
+
+@media(max-width:767px){
+    .panel{margin-right:-15px; margin-left:-15px;}
 }
 
 
 @media(min-width:768px){
+    #defaultMainContainer {margin-top:15px}
 
-    html{
-        background-color:#FAFAFA !important;
+    .navbar {
+        margin-bottom: 0 !important;
     }
+
 }
 
 
@@ -88,11 +113,14 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 
 
+
+
 .footerLinks {
-    background-color: #F5F5F5;
+    border-top:1px solid #F0F0F0;
+   /*  background-color: #F5F5F5; */
     text-align: center;
     padding:1em 0;
-    margin-top:100px;
+    margin-top:20px;
 }
 .footerLinks ul { 
     padding: 0;
@@ -101,9 +129,9 @@ h1, .h1, h2, .h2, h3, .h3 {
  }
 
 .footerRow{
-    background-color: #FAFAFA;
-    border-top:1px solid #F0F0F0;
-    padding:10px;
+   /* background-color: #FAFAFA;
+    border-top:1px solid #F0F0F0;  */
+    padding:15px 10px;
     font-size: 80%;
     color: #8E8F92;
 }

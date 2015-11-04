@@ -1,12 +1,16 @@
 @extends('layouts.default')
 
-@section('content')
-
+@section('breadcrumb')
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
   <li class="active">New Store</li>
 </ol>
+@endsection
+
+@section('content')
+
+
 
 
 <div class="container-fluid">
@@ -21,6 +25,16 @@
 
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/manage/create') }}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                        <h4>General</h4>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Store Type</label>
+                            <div class="col-md-6">
+                                {!! Form::select('type', getEnumValues('stores','type'),'food',['class'=>'form-control']) !!}
+                            </div>
+                        </div>
+
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Name</label>
@@ -88,10 +102,32 @@
                             </div>
                         </div>
 
+                        <h4>Store Url</h4>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Store Url</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="store_url" value="{{ old('store_url') }}">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                Store url will be www.minidel.com/store-url
+                            </div>
+                        </div>
 
 
 
+                        <h4>Payment</h4>
 
+                        <div class="form-group">
+                            <label class="col-md-4 control-label"></label>
+                            <div class="col-md-6">
+                                Zero setup fee.<br>Zero monthly fee.<br>10% comission as per orders.
+                            </div>
+                        </div>
 
 
 

@@ -49,16 +49,18 @@
                 <li class="dropdown" class="hidden-xs">
 
                     <a href="#" class="dropdown-toggle hidden-xs" data-toggle="dropdown" style="padding:10px">
-                        <img class="nav-gravatar" src="/img/user/{{ (\Auth::user()->gender=='F')?'female':'male' }}.jpg">
+                        <img class="nav-gravatar" src="/img/user-tiny/{{ (\Auth::user()->dp!=null)?\Auth::user()->dp:((\Auth::user()->gender=='F')?'female.jpg':'male.jpg') }}">
 
                         {{ \Auth::user()->name }} <span class="caret"></span>
                     </a>
 
                     <ul class="dropdown-menu hidden-xs" role="menu">
+                        <li><a href="/{{ \Auth::user()->username }}/">Profile</a></li>
+                        <li class="divider"></li>
                         <li><a href="/dashboard/">Dashboard</a></li>
                         <li class="divider"></li>
                         <li><a href="/dashboard/orders">Orders</a></li>
-                        <li><a href="/dashboard/address">Your Address</a></li>
+                        <li><a href="/dashboard/general">Manage Account</a></li>
                         <li class="divider"></li>
                         <li><a href="/auth/logout/">Logout</a></li>
                     </ul>
@@ -67,33 +69,12 @@
             @else
                 <li><a href="/auth/register/">Register</a></li>
                 <li><a href="/auth/login/?redirect={{ Request::path() }}">Login</a></li>
+                <li class="hidden-xs"><a data-toggle="collapse" data-target="#globalSearch"><span class="glyphicon glyphicon-search"></span></a></li>
             @endif
         </ul>
     </div>
   </div>
 </nav>
-
-
-
-
-<style>
-#globalSearch input[type=search] {
-    width: 100%;
-    background: #e12f33;
-    border: none;
-    padding: .4em 1em;
-    font-size: 20px;
-    color: #FFFFFF;
-}
-</style>
-
-
-
-
-
-
-
-
 
 
 <?php /*

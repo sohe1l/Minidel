@@ -21,6 +21,7 @@ class MakeMenuItemsTable extends Migration
             $table->decimal('price', 10, 2);
             $table->string('photo')->nullable();
             $table->integer('order');
+            $table->boolean('available')->default(true);
             $table->timestamps();
 
             // $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');;

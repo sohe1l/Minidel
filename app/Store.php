@@ -27,6 +27,10 @@ class Store extends Model
         return $this->belongsToMany('\App\User', 'role_user', 'store_id', 'user_id')->withTimestamps()->withPivot('role_id');
     }
 
+    public function chain(){
+        return $this->belongsTo('\App\Chain');
+    }
+
     public function city(){
         return $this->belongsTo('\App\City');
     }
@@ -145,15 +149,32 @@ class Store extends Model
     }
 
 
-    public function lastSectionOrder()
+    public function lastSectionOrder($parent = null)
     {
-        if($this->sections()->count() == 0) return -1;
-        $section = $this->sections()->orderBy('order','desc')->first();
+        if($this->sections()->where('menu_section_id',$parent)->count() == 0) return -1;
+        $section = $this->sections()->where('menu_section_id',$parent)->orderBy('order','desc')->first();
         return $section->order;
+    }
+
+
+    public function lastMenuPhotoOrder()
+    {
+        if($this->photos()->where('type','menu')->count() == 0) return -1;
+        $photo = $this->photos()->where('type','menu')->orderBy('order','desc')->first();
+        return $photo->order;
     }
 
     public function transactions(){
         return $this->hasMany('\App\Transaction');
     }
 
+    public function payments(){
+        return $this->belongsToMany('\App\paymentType')->where('slug','!=','card');
+    }
+
+
+    public function photos()
+    {
+        return $this->morphMany('App\Photo', 'imageable');
+    }
 }

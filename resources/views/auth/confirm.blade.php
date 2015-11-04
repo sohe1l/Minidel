@@ -1,5 +1,5 @@
 @extends('layouts.default')
 
 @section('content')
-Confirmation page template
+    Email confirmed. Thanks.
 @endsection

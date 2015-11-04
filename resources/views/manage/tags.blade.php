@@ -1,5 +1,14 @@
 @extends('layouts.default')
 
+@section('breadcrumb')
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/manage/">Manage</a></li>
+  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
+  <li class="active">Tags</li>
+</ol>
+@endsection
+
 @section('head')
 <style type="text/css">
   input[type=checkbox]:checked + label {
@@ -10,12 +19,7 @@
 
 @section('content')
 
-<ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li><a href="/manage/">Manage</a></li>
-  <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
-  <li class="active">Tags</li>
-</ol>
+
 
 
 <div class="row">
@@ -30,7 +34,7 @@
 
     {!! Form::open() !!}
   
-    @foreach (\App\Tag::groupBy('type')->orderBy('type', 'asc')->get() as $type)
+    @foreach (\App\Tag::groupBy('type')->where('store_type',$store->type)->orderBy('type', 'asc')->get() as $type)
         <h4 style="text-transform: capitalize;"> {{ $type->type }} </h4>
         <div class="row" style="line-height: 3em;">
           @foreach (\App\Tag::where('type',$type->type)->orderBy('name', 'asc')->get() as $tag)

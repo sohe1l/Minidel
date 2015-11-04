@@ -4,7 +4,7 @@
         <img v-attr="src: cover?'/img/cover/'+cover:'/img/cover/placeholder.svg'" class="img-responsive visible-xs">
     </div>
     <div class="col-sm-10">
-        <div class="title"><a href="/store/@{{city.slug}}/@{{area.slug}}/@{{slug}}/order">@{{ name }}</a></div>
+        <div class="title"><a href="/@{{slug}}/order">@{{ name }}</a></div>
         <div>
             <span class="label label-success">@{{ is_open == 'true'?'Open Now':''  }}</span>
             <span class="label label-danger">@{{ is_open == 'false'?'Closed Now':''  }}</span>

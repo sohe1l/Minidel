@@ -1,12 +1,28 @@
 @extends('layouts.default')
 
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/browse/">Browse</a></li>
+    <li><a href="/browse/{{$store->city->slug}}">{{$store->city->name}}</a></li>
+    <li><a href="/browse/{{$store->city->slug}}/{{$store->area->slug}}">{{$store->area->name}}</a></li>
+    @if ($store->building)
+      <li><a href="/browse/{{$store->city->slug}}/{{$store->area->slug}}/{{ $store->building->slug }}">{{$store->building->name}}</a></li>
+    @endif
+    <li><a href="/{{$store->slug}}">{{$store->name}}</a></li>
+    <li class="active">Reviews</li>
+  </ol>
+@endsection
+
+
+
 @section('content')
 
 
 <h2 style="margin-top: 0;">{{ $store->name }} 
     <small id="headingSmall">
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
-    {{ $store->building->name }} - {{ $area->name }}
+    {{ ($store->building)?$store->building->name:'' }} - {{ $store->area->name }}
     </small>
 </h2>
 

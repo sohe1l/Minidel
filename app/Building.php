@@ -15,7 +15,7 @@ class Building extends Model
 
     public function stores()
     {
-        return $this->belongsToMany('\App\Store');
+        return $this->hasMany('\App\Store')->listed(); //->withTimestamps();
     }
 
     public function coverageStores(){

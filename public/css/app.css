@@ -1,3 +1,20 @@
+body {
+  background-color: #FAFAFA !important; }
+
+.whiteBG {
+  background-color: #FFFFFF !important; }
+
+#globalSearch input[type=search] {
+  width: 100%;
+  background: #e12f33;
+  border: none;
+  padding: 0.4em 1em;
+  font-size: 20px;
+  color: #FFFFFF; }
+
+.navbar {
+  background-color: #FFFFFF !important; }
+
 h1, .h1, h2, .h2, h3, .h3 {
   margin-top: 0 !important; }
 
@@ -8,12 +25,13 @@ h1, .h1, h2, .h2, h3, .h3 {
   color: #FFCC78; }
 
 .breadcrumb {
-  padding-left: 0px !important;
+  /*  padding-left: 0px !important; */
   background-color: initial !important;
   font-size: 90% !important; }
 
 .storeListing {
-  border-bottom: 1px solid #e7e7e7; }
+  border-bottom: 1px solid #e7e7e7;
+  padding: 10px 0; }
 
 .storeListing .title {
   font-size: 120%;
@@ -49,19 +67,26 @@ h1, .h1, h2, .h2, h3, .h3 {
 .search-query:focus + button {
   z-index: 3; }
 
+#defaultMainContainer {
+  min-height: 400px; }
+
 @media (max-width: 767px) {
-  html {
-    background-color: #FFDC7B !important; } }
+  .panel {
+    margin-right: -15px;
+    margin-left: -15px; } }
 
 @media (min-width: 768px) {
-  html {
-    background-color: #FAFAFA !important; } }
+  #defaultMainContainer {
+    margin-top: 15px; }
+  .navbar {
+    margin-bottom: 0 !important; } }
 
 .footerLinks {
-  background-color: #F5F5F5;
+  border-top: 1px solid #F0F0F0;
+  /*  background-color: #F5F5F5; */
   text-align: center;
   padding: 1em 0;
-  margin-top: 100px; }
+  margin-top: 20px; }
 
 .footerLinks ul {
   padding: 0;
@@ -69,9 +94,9 @@ h1, .h1, h2, .h2, h3, .h3 {
   list-style-type: none; }
 
 .footerRow {
-  background-color: #FAFAFA;
-  border-top: 1px solid #F0F0F0;
-  padding: 10px;
+  /* background-color: #FAFAFA;
+    border-top:1px solid #F0F0F0;  */
+  padding: 15px 10px;
   font-size: 80%;
   color: #8E8F92; }
 
@@ -93,7 +118,7 @@ h1, .h1, h2, .h2, h3, .h3 {
   padding: 0.2em 1em; }
 
 #firstPageLogin {
-  margin-bottom: 0; }
+  margin: 0 auto; }
 
 @media (max-width: 767px) {
   #firstTitle span:nth-child(1) {
@@ -117,9 +142,6 @@ h1, .h1, h2, .h2, h3, .h3 {
   #listIndex ul li {
     font-size: 1.3em; }
   .firstPart .bg {
-    /*    background: url('http://www.ladigital.me/images/ladigital-jlt.jpg') no-repeat center center; 
-        background: url('http://previews.123rf.com/images/luckybusiness/luckybusiness1408/luckybusiness140800059/30471393-Wooden-table-with-office-supplies-top-view-Stock-Photo-desk.jpg') no-repeat center center;
-    */
     background: url("/img/desk3.jpg") no-repeat center center;
     background-size: cover;
     padding: 8em 2em; } }

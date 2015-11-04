@@ -1,6 +1,11 @@
 @extends('layouts.default')
 
-
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li class="active">Dashboard</li>
+  </ol>
+@endsection
 
 @section('head')
 
@@ -25,10 +30,7 @@
 
 @section('content')
 
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li class="active">Dashboard</li>
-</ol>
+
 
 @if ($user->addresses->count() == 0)
   <div class="jumbotron visible-xs" style="text-align:center">
@@ -53,7 +55,7 @@
 </div>
 */ ?>
 
-<div class="row">
+<div class="row whiteBG">
   <div class="col-sm-4">
 
 
@@ -61,7 +63,7 @@
 
     <div class="btn-group" role="group" style="width: 100%;">
 
-        <a href="/dashboard/order/?type=mini" class="btn btn-primary btn-lg" style="width:50%">
+        <a href="/dashboard/order/?type=mini" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
           <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Mini
         </a>
         <?php /*
@@ -69,7 +71,7 @@
           <span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Delivery
         </a>
         */ ?>
-        <a href="/dashboard/order/?type=pickup" class="btn btn-default btn-lg" style="width:50%">
+        <a href="/dashboard/order/?type=pickup" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
           <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
         </a>
     </div>
@@ -99,13 +101,13 @@
 
         <div class="media">
           <div class="media-left">
-            <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}/order/">
+            <a href="/{{ $order->store->slug }}/order/">
               <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
             </a>
           </div>
           <div class="media-body">
             <h4 class="media-heading">
-              <a href="/store/{{ $order->store->city->slug }}/{{ $order->store->area->slug }}/{{ $order->store->slug }}/order/">
+              <a href="/{{ $order->store->slug }}/order/">
                 {{ $order->store->name }}
               </a>
             </h4>
@@ -189,7 +191,7 @@
 
     @forelse($user->addresses as $address)
         <div><b>{{ $address->name }}</b></div>
-        <div>{{ $address->city->name }}, {{ $address->area->name }}, {{ $address->building->name }}</div>
+        <div>{{ $address->city->name }}, {{ $address->area->name }}, {{ ($address->building!=null)?$address->building->name:"" }}</div>
         <div>{{ $address->unit }}, {{ $address->info }}</div>
         <div>&nbsp;</div>
     @empty
@@ -228,9 +230,11 @@
         .done(function(data) {
           if(data["error"]==1){
             alert(data["message"]);
-          }else{
+          }else if(data["error"]==0){
             that.orderComplete = true;
             setTimeout(function(){location.href="/dashboard/orders/"} , 100); 
+          }else{
+            alert("Network Error");
           }
         })
         .fail( function(xhr, status, error) {

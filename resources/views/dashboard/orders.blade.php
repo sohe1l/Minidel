@@ -1,6 +1,9 @@
 @extends('layouts.default')
 
 
+
+
+
 @section('head')
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <style>
@@ -12,13 +15,16 @@
   </style>
 @endsection
 
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/dashboard/">Dashboard</a></li>
+    <li class="active">Orders</li>
+  </ol>
+@endsection
+
 @section('content')
 
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li class="active">Orders</li>
-</ol>
 
 
 <div class="row" id="ordersDiv">
@@ -52,6 +58,7 @@
 
           <h3>
             <span class="label label-primary">@{{ orders[selectedIndex].type }}</span>
+            <span class="label label-primary">@{{ orders[selectedIndex].payment_type.name }}</span>
             <span class="label label-default">@{{ 'Created: ' + orders[selectedIndex].created_at }}</span>
             <span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span>
           </h3>

@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
+    protected $dpBase = 'img/user/';
+    protected $dpBaseTiny = 'img/user-tiny/';
 
     var $store_columns = ['stores.name','stores.slug','stores.country','stores.area_id','stores.city_id',
                             'stores.building_id','stores.status_working','stores.info',
@@ -24,7 +26,8 @@ class DashboardController extends Controller
 
         foreach( $user->addresses  as $address){
             $building = \App\Building::find($address->building_id);
-            $merged = $merged->merge($building->coverageStores);
+            if($building)
+                $merged = $merged->merge($building->coverageStores);
         }
 
 
@@ -42,7 +45,7 @@ class DashboardController extends Controller
         $store = \App\Store::find($oo->store_id);
         if(!$store) return jsonOut(1,'Store does not exists.');
 
-        $response = saveOrder($store, $user, json_decode($oo->cart), $oo->price, $oo->fee, $oo->instructions, $oo->type, $oo->user_address_id, $oo->schedule, $oo->day, $oo->time);
+        $response = saveOrder($store, $user, json_decode($oo->cart), $oo->payment_type_id, $oo->price, $oo->fee, $oo->instructions, $oo->type, $oo->user_address_id, $oo->schedule, $oo->day, $oo->time);
 
         if($response == 'ok') return jsonOut(0,'order_saved');
         else return jsonOut(1,$response);  
@@ -54,14 +57,17 @@ class DashboardController extends Controller
     {
         $user = \Auth::user();
 
+/*
         $merged = new \Illuminate\Database\Eloquent\Collection;
 
         foreach( $user->addresses  as $address){
             $building = \App\Building::find($address->building_id);
-            $merged = $merged->merge($building->coverageStores);
+            if($building)
+                $merged = $merged->merge($building->coverageStores);
         }
+*/
             
-        return view('dashboard.order', compact('user','merged'));
+        return view('dashboard.order', compact('user'));
     }
 
 
@@ -87,9 +93,13 @@ class DashboardController extends Controller
 
         switch($request->type){
             case 'mini':
-                $stores_building = $address->building->coverageStores()->with('city','area')->select($this->store_columns)->get();
-                if($request->time == 'now')
-                    $stores_building = $stores_building->where('is_deliver_building','true');
+                if($address->building){
+                    $stores_building = $address->building->coverageStores()->with('city','area')->select($this->store_columns)->get();
+                    if($request->time == 'now')
+                        $stores_building = $stores_building->where('is_deliver_building','true');
+                }else{
+                    $stores_building = new \Illuminate\Database\Eloquent\Collection;
+                }
                 
 
                 $stores_area = $address->area->coverageStores()
@@ -152,7 +162,7 @@ class DashboardController extends Controller
     public function getorders(Request $request)
     {
         $user = \Auth::user();
-        $orders = \App\Order::where('user_id',$user->id)->where('hidden_user',0)->with('store','userAddress','userAddress.area','userAddress.building')->get();
+        $orders = \App\Order::where('user_id',$user->id)->where('hidden_user',0)->with('store','userAddress','userAddress.area','userAddress.building','paymentType')->get();
 
         $returnData = array(
             'error' => 0,
@@ -172,6 +182,16 @@ class DashboardController extends Controller
 
         if($order->user_id != $user->id) return jsonOut('order_denied','The order does not belong to you.');
 
+        if($request->status != "" && $request->status != "callback" && $order->status != $request->status){
+            $orderTime = new \App\OrderTime;
+            $orderTime->user_id = $request->user()->id;
+            $orderTime->order_id = $orderId;
+            $orderTime->store_id = $order->store_id;
+            $orderTime->status = $request->status;
+            $orderTime->timestamp = time();
+            $orderTime->save();
+        }
+
         if($request->hide == 1) $order->hidden_user = 1;
         if($request->reason != "") $order->reason = $request->reason;
         if($request->status != ""){
@@ -189,6 +209,130 @@ class DashboardController extends Controller
         );
         return response()->json($returnData);
     }
+
+
+
+
+
+    public function generalIndex()
+    {
+        $user = \Auth::user();
+        return view('dashboard.general', compact('user'));
+    }
+
+
+    public function generalStore(Request $request)
+    {
+        $user = \Auth::user();
+
+        $this->validate($request, [
+            'username' => 'required|string|max:25|unique:stores,slug|unique:chains,slug',
+            'name' => 'required|max:255',
+            'mobile' => 'required|max:255',
+            'gender' => 'size:1',
+            'dob' => 'required|date',
+        ]);
+
+        if($user->username != $request->username){
+            //check if user name is unique
+            $checkUsername = \App\User::where('username', $request->username)->get();
+            if($checkUsername->count() == 0){
+                $user->username = $request->username;
+            }else{
+                return back()
+                ->withErrors("Username is already taken.")
+                ->withInput();
+            }
+            
+        }
+
+        if($user->mobile != $request->mobile)
+            $user->verified_mobile = 0;
+
+        $user->name = $request->name;
+        $user->gender = $request->gender;
+        $user->dob = $request->dob;
+        $user->mobile = $request->mobile;
+        $user->save();
+
+        flash('Your information updated successfully.');
+
+        return redirect('/dashboard/general/');
+    }
+
+
+
+    public function dpStore(Request $request)
+    {
+        $user = \Auth::user();
+
+        $this->validate($request, [
+            'imagefile' => 'required|mimes:jpg,jpeg,png,bmp'
+        ]);
+
+        $file = $request->file('imagefile');
+
+        //delete old 
+        if($user->dp) \File::delete($this->dpBase. $user->dp); 
+        if($user->dp) \File::delete($this->dpBaseTiny. $user->dp); 
+
+        //store the new image
+        $photoFileName = time() . '-' . str_random(10) . '.jpg' ;
+
+        $image = \Image::make($file->getRealPath());
+        $image->fit(150,150)->save($this->dpBase.$photoFileName);
+
+        //do again for tiny
+        $image = \Image::make($file->getRealPath());
+        $image->fit(25,25)->save($this->dpBaseTiny.$photoFileName);
+
+        //update db
+        $user->dp = $photoFileName;
+        $user->save();
+
+        flash('Photo update successfully.');
+        return redirect('/dashboard/general/');
+
+    }
+
+
+
+
+
+    public function passwordIndex()
+    {
+        $user = \Auth::user();
+
+        return view('dashboard.password', compact('user'));
+    }
+
+    public function passwordStore(Request $request)
+    {
+        $user = \Auth::user();
+
+        $this->validate($request, [
+            'password' => 'required|min:6',
+            'newpassword' => 'required|confirmed|min:6',
+        ]);
+
+        if (!\Hash::check($request->password, $user->password))
+        {
+            return back()
+            ->withErrors("Current password is not matching our records.")
+            ->withInput();
+        }
+
+        $user->password = $request->newpassword;
+        $user->save();
+
+        flash('Your password has been saved successfully.');
+
+        return redirect('/dashboard/password');
+    }
+
+
+
+
 
 
 
@@ -214,7 +358,7 @@ class DashboardController extends Controller
             'country' => 'required|max:2',
             'city_id' => 'required|integer',
             'area_id' => 'required|integer',
-            'building_id' => 'required|integer',
+            // 'building_id' => 'required|integer',
             'unit' => 'required|string',
             'info' => 'string',
             'phone' => 'string',
@@ -259,7 +403,7 @@ class DashboardController extends Controller
             'country' => 'required|max:2',
             'city_id' => 'required|integer',
             'area_id' => 'required|integer',
-            'building_id' => 'required|integer',
+            'building_id' => 'integer',
             'unit' => 'required|string',
             'info' => 'string',
             'phone' => 'string',
@@ -271,6 +415,7 @@ class DashboardController extends Controller
         if($address->user_id != \Auth::user()->id) abort(403);
 
         $address->fill($request->all());
+        if(!$request->building_id) $address->building_id = null;
 
         $address->save();
 

@@ -1,32 +1,41 @@
 @extends('layouts.default')
 
 
-
 @section('head')
 <style type="text/css">
 .btn-default.active{
+  color: #e12f33;
+  background-color: #FFFFFF;
+/*
     color: #FFF;
     background-color: #f0ad4e;
     border-color: #eea236;
+*/
 }
 .btn-default.active:hover{
-    color: #fff;
+  color: #e12f33;
+ 
+ /*   color: #fff;
     background-color: #ec971f;
     border-color: #985f0d;
+  */
 }
 </style>
 @endsection
 
 
 
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/dashboard/">Dashboard</a></li>
+    <li class="active">Order</li>
+  </ol>
+@endsection
+
 
 @section('content')
 
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li class="active">Order</li>
-</ol>
 
 
 
@@ -126,7 +135,7 @@
 
 
 <div style="text-align: right;">
-    <button type="button" class="btn btn-primary" v-on="click: updateStores">Update</button>
+    <button type="button" class="btn btn-danger" v-on="click: updateStores">Update</button>
 </div>
 
 
@@ -151,7 +160,8 @@
 
 
   </div>
-  <div class="col-sm-8 col-md-9">
+  <div class="col-sm-8 col-md-9 panel panel-default">
+    <div class="panel-body">
 
     <div id="custom-search-input">
         <div class="input-group col-md-12">
@@ -178,7 +188,7 @@
 
 
 
-
+    </div>
   </div>
 </div>
 

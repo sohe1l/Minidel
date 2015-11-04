@@ -1,20 +1,22 @@
 @extends('layouts.default')
 
+@section('breadcrumb')
+    <ol class="breadcrumb hidden-xs">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard/">Dashboard</a></li>
+      <li><a href="/dashboard/address">Address</a></li>
+      <li class="active">Edit Address</li>
+    </ol>
+@endsection
+
 @section('content')
-
-<ol class="breadcrumb hidden-xs">
-  <li><a href="/">Home</a></li>
-  <li><a href="/dashboard/">Dashboard</a></li>
-  <li><a href="/dashboard/address">Address</a></li>
-  <li class="active">Edit Address</li>
-</ol>
-
 
 <div class="row">
   <div class="col-md-3 hidden-xs">
   @include('dashboard.nav', array('active'=>'address'))
   </div>
-  <div class="col-md-9">
+      <div class="col-md-9 panel panel-default">
+        <div class="panel-body">
             <h3>Edit Address<br>
                 <small>Use the below form to edit your address easily.</small>
             </h3>
@@ -92,7 +94,7 @@
                     </div>
                 {!! Form::close() !!}
 
-
+            </div>
         </div>
     </div>
 

@@ -1,3 +1,5 @@
+
+
 .firstPart .title{
     color:black;
     padding:1em;
@@ -23,35 +25,24 @@
 }
 
     
-#firstPageLogin{ margin-bottom: 0;}
+#firstPageLogin{ margin:0 auto;}
 
 
 @media(max-width:767px){
-
     #firstTitle span:nth-child(1){ font-size:2em; font-weight:bold;}
     #firstTitle span:nth-child(2){ font-size:2em;}
-
-
     .firstPart .bg{
       background-color: #FFDC7B;
       padding:1em 2em;
       margin-top: -20px;
     }
-
 }
 @media(min-width:768px){
-    #firstPageLogin{ width:300px;}
-
-    #firstTitle span:nth-child(1){ font-size:3em; font-weight:bold;}
-    #firstTitle span:nth-child(2){ font-size:3em;}
-    #listIndex ul li {  font-size:1.3em; }
-
-
+  #firstPageLogin{ width:300px;}
+  #firstTitle span:nth-child(1){ font-size:3em; font-weight:bold;}
+  #firstTitle span:nth-child(2){ font-size:3em;}
+  #listIndex ul li {  font-size:1.3em; }
   .firstPart .bg{
-    /*    background: url('http://www.ladigital.me/images/ladigital-jlt.jpg') no-repeat center center; 
-        background: url('http://previews.123rf.com/images/luckybusiness/luckybusiness1408/luckybusiness140800059/30471393-Wooden-table-with-office-supplies-top-view-Stock-Photo-desk.jpg') no-repeat center center;
-    */
-
       background: url('/img/desk3.jpg') no-repeat center center; 
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -59,11 +50,9 @@
       background-size: cover;
       padding:8em 2em;
     }
-
 }
 @media(min-width:992px){
     #firstPageLogin{ width:400px; margin:0 auto; }
-
     #firstTitle span:nth-child(1){ font-size:3.5em; font-weight:bold;}
     #firstTitle span:nth-child(2){ font-size:4em;}
     #listIndex ul li {  font-size:1.7em; }

@@ -14,9 +14,14 @@ class MakeOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            
+            $table->integer('user_id')->unsigned()->index();
             $table->integer('user_address_id')->unsigned();
-            $table->integer('store_id')->unsigned();
+            
+
+            $table->integer('store_id')->unsigned()->index();
+            $table->integer('payment_type_id')->unsigned();
+
             $table->timestamp('schedule')->nullable();
             $table->enum('type', ['delivery', 'pickup']);
             $table->enum('status', ['pending', 'accepted', 'delivering', 'delivered', 'canceled', 'rejected'])->default('pending');
@@ -30,6 +35,10 @@ class MakeOrdersTable extends Migration
             $table->decimal('fee', 10, 2)->default(0);
             $table->integer('discount')->unsigned();
             $table->enum('discount_type', ['percent', 'amount'])->default('percent');
+
+            $table->integer('call_count')->unsigned();
+            $table->timestamp('call_last');
+
             $table->timestamps();
         });
     }
