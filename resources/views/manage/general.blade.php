@@ -90,7 +90,7 @@
             <div class="form-group">
                 <label class="col-md-4 control-label">Store Type</label>
                 <div class="col-md-8">
-                    {!! Form::text('type' , $value = 'null', $attributes=array('class'=>'form-control', 'disabled') ) !!}
+                    {!! Form::text('type', null, $attributes=array('class'=>'form-control', 'disabled') ) !!}
                 </div>
             </div>
 

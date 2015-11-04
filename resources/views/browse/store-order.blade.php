@@ -89,7 +89,7 @@ footer { padding: 30px 0;}
 
     <div class="hidden-xs menuSections">
       <table class="table" data-spy="affix" data-offset-top="310"> 
-      @foreach ($store->sections->where('menu_section_id',0)->where('available',1) as $section)
+      @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
         <tr><td><a href="#section{{$section->id}}">{{ $section->title }}</a></td></tr>
         @foreach ($section->subsections->where('available',1) as $subsection)
           <tr><td style="font-size:70%;"><a href="#section{{$subsection->id}}">{{ $subsection->title }}</a></td></tr>
@@ -114,7 +114,7 @@ footer { padding: 30px 0;}
         */ ?>
       </div>
       
-      @forelse ($store->sections->where('menu_section_id',0)->where('available',1) as $section)              
+      @forelse ($store->sections->where('menu_section_id',null)->where('available',1) as $section)              
         <div class="panel panel-default">
           <div class="panel-heading"><a name="section{{$section->id}}">{{ $section->title }}</a></div>
           

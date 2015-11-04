@@ -76,7 +76,7 @@
  
 
 
-    @forelse ($store->sections->where('menu_section_id',0)->sortBy('order') as $section)
+    @forelse ($store->sections->where('menu_section_id',null)->sortBy('order') as $section)
 
           
       <div class="panel panel-default">

@@ -5,3 +5,12 @@ Homestead.json
 .env
 /graphic
 /docs
+/public/img/cover
+/public/img/cover-mobile
+/public/img/logo
+/public/img/menu
+/public/img/menu-thumb
+/public/img/store
+/public/img/store-thumb
+/public/img/user
+/public/img/user-tiny

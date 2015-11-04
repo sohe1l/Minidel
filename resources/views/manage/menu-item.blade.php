@@ -34,7 +34,7 @@
                             <div class="col-md-6">
                                 <select name="menu_section_id" class="form-control">
                                     @if($store->type == 'Groceries')
-                                        @foreach ($store->sections->where('menu_section_id',0)->sortBy('order') as $section)
+                                        @foreach ($store->sections->where('menu_section_id',null)->sortBy('order') as $section)
                                             <option value="{{ $section->id }}" disabled>{{ $section->title }}</option>
                                             @foreach ($section->subsections->sortBy('order') as $sub)
                                                 <option value="{{ $sub->id }}">{{ $sub->title }}</option>
@@ -42,7 +42,7 @@
                                         @endforeach
 
                                     @else
-                                        @foreach ($store->sections->where('menu_section_id',0)->sortBy('order') as $section)
+                                        @foreach ($store->sections->where('menu_section_id',null)->sortBy('order') as $section)
                                         <option value="{{ $section->id }}">{{ $section->title }}</option>
                                         @endforeach
                                     @endif
