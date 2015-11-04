@@ -8,7 +8,7 @@ use App\User;
 class AppMailer{
     
     protected $mailer;
-    protected $from = 'admin@example.com';
+    protected $from = 'hello@minidel.com';
     protected $to;
     protected $view;
     protected $data = [];
@@ -37,4 +37,4 @@ class AppMailer{
 } 
 
 
-?>s
+?>
