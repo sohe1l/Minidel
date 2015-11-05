@@ -578,8 +578,9 @@ class ManageController extends Controller
             'title' => 'required|max:30',
             'info' => 'max:200',
             'price' => 'required|numeric',
-            'imagefile' => 'mimes:jpg,jpeg,png,bmp'
+            'imagefile' => 'mimes:jpg,jpeg,png,bmp',
         ]);
+
 
         //dd($_POST['options']);
         //dd($request->options);
@@ -611,7 +612,10 @@ class ManageController extends Controller
 
 
         flash('Item created successfully.');
-        return redirect('/manage/' . $storeSlug . '/menu' );
+        if($request->goback == 1)
+            return redirect('/manage/' . $storeSlug . '/menu' );
+        else
+            return redirect('/manage/' . $storeSlug . '/menu/section/' . $request->menu_section_id . '/item/create/' );
     }
 
     public function menuItemDestroy(Request $request, $storeSlug, $itemId)

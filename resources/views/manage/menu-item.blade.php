@@ -26,7 +26,7 @@
                  
                     @include('errors.list')
 
-                    {!! Form::open(['class'=>'form-horizontal', 'files' => true,
+                    {!! Form::open(['id'=>'newItemForm', 'class'=>'form-horizontal', 'files' => true,
                             'url' => '/manage/'.$store->slug.'/menu/item/']) !!}
 
 
@@ -108,8 +108,12 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Create
+                                    Create & Go Back
                                 </button>
+                                <input name="goback" value="1" type="hidden" id="goback">
+                                <a type="button" href="javascript:submitCreate()" class="btn btn-primary">
+                                    Create & Create Another
+                                </a>
                             </div>
                         </div>
                     {!! form::close() !!}
@@ -124,5 +128,10 @@
     <script type="text/javascript">
         $("#options_select").select2();
         $("#tags_select").select2();
+        function submitCreate(){
+            $('#goback').val('0');
+            $('#newItemForm').submit();
+        }
+
     </script>
 @endsection
