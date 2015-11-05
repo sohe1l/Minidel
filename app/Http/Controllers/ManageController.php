@@ -554,13 +554,16 @@ class ManageController extends Controller
 
 
 
-    public function menuItemCreate(Request $request, $storeSlug)
+    public function menuItemCreate(Request $request, $storeSlug, $sectionId)
     {
         $store = \App\Store::where('slug',$storeSlug)->with('sections.subsections')->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
-        return view('manage.menu-item',compact('store'));
+        $section = \App\menuSection::findOrFail($sectionId);
+        if($store->sections()->get()->where('id',$section->id)->isEmpty()) abort(403); // item belongs to someone else
+
+        return view('manage.menu-item',compact('store', 'section'));
     }
 
     public function menuItemStore(Request $request, $storeSlug)
@@ -665,7 +668,12 @@ class ManageController extends Controller
             'imagefile' => 'mimes:jpg,jpeg,png,bmp'
         ]);
 
-        $item->menu_section_id = $request->menu_section_id;
+        if($request->menu_section_id != $item->menu_section_id){ //change order as well
+            $item->menu_section_id = $request->menu_section_id;
+            $item->order = $item->lastOrder() + 1; // first update section then get lastOrder
+            //TODO: fix order in the old section as well
+        } 
+        
         $item->title = $request->title;
         $item->info = $request->info;
         $item->price = $request->price;

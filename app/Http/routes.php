@@ -132,7 +132,7 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::put('{store}/menu/section/{sectionId}/available','ManageController@menuSectionUpdateAvailable');
 
     // resource menu/item
-    Route::get('{store}/menu/item/create','ManageController@menuItemCreate');
+    Route::get('{store}/menu/section/{sectionId}/item/create','ManageController@menuItemCreate');
     Route::post('{store}/menu/item','ManageController@menuItemStore');
     Route::delete('{store}/menu/item/{itemId}','ManageController@menuItemDestroy');
     Route::get('{store}/menu/item/{itemId}/edit','ManageController@menuItemEdit');

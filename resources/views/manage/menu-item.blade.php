@@ -29,6 +29,16 @@
                     {!! Form::open(['class'=>'form-horizontal', 'files' => true,
                             'url' => '/manage/'.$store->slug.'/menu/item/']) !!}
 
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Section</label>
+                            <div class="col-md-6">
+                                <input type="text" disabled class="form-control" name="title" value="{{ $section->title }}">
+                                <input type="hidden" name="menu_section_id" value="{{ $section->id }}">
+                            </div>
+                        </div>
+
+<?php /*
                         <div class="form-group">
                             <label class="col-md-4 control-label">Section</label>
                             <div class="col-md-6">
@@ -49,6 +59,8 @@
                                 </select>
                             </div>
                         </div>
+
+*/ ?>
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Title</label>

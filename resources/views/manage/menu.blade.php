@@ -28,10 +28,12 @@
 
     <div class="row">
       <div class="col-sm-4">
+        <?php /*
         <a href="/manage/{{$store->slug}}/menu/item/create" class="btn btn-default">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
           New Menu Item
         </a>
+        */ ?>
       </div><!-- /.col-lg-6 -->
 
     @if($store->type == 'Groceries')
@@ -75,14 +77,13 @@
     <br>
  
 
-
     @forelse ($store->sections->where('menu_section_id',null)->sortBy('order') as $section)
 
           
       <div class="panel panel-default">
           <div class="panel-heading">
             {{ $section->title }}
-            @include('manage._section-controls', array('section_id'=>$section->id, 'available'=>$section->available))
+            @include('manage._section-controls', array('s'=>$section))
           </div>
           <table class="table">
           @foreach ($section->items->sortBy('order') as $item)
@@ -93,7 +94,7 @@
           <tr>
             <td colspan="3">
               <b>{{ $subsection->title }}</b>
-              @include('manage._section-controls', array('section_id'=>$subsection->id, 'available'=>$subsection->available))
+              @include('manage._section-controls', array('s'=>$subsection))
             </td>
           </tr>
             @foreach ($subsection->items->sortBy('order') as $item)
