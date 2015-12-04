@@ -48,9 +48,15 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">Login</button>
-
+                                <button type="submit" class="btn btn-primary pull-right">Login</button>
                                 <a class="btn btn-link" href="{{ url('/password/email') }}">Forgot Your Password?</a>
+                                
+                            </div>
+                            <div class="col-md-6 col-md-offset-4" style="padding-top:15px; text-align: center">
+                                <hr>
+                            </div>
+                            <div class="col-md-12" style="padding-top:15px; text-align: center">
+                                <a href="/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
                             </div>
                         </div>
                     </form>

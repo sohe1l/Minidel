@@ -20,7 +20,7 @@
   <div class="col-md-9">
 
 
-    <h2>Delivery Timings<br>
+    <h2>Store Timings<br>
         <small>Customers will be able to make orders during the specified timings below.</small>
     </h2>
 
@@ -56,7 +56,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td>No areas added!</td></tr>
+              <tr><td>No timing added (closed all the time!)</td></tr>
             @endforelse
             </table>
       </div>

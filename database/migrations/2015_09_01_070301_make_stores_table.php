@@ -27,6 +27,7 @@ class MakeStoresTable extends Migration
             $table->integer('comission')->default(10);
             $table->enum('status_listing', ['published', 'draft', 'review'])->default('draft');
             $table->enum('status_working', ['open', 'close', 'busy'])->default('open');
+            $table->boolean('accept_orders')->default(1);
             $table->text('info')->nullable();
             $table->text('coordinate')->nullable();
             $table->string('logo')->nullable();

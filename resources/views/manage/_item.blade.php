@@ -1,5 +1,5 @@
 <tr>
-  <td style="width:100px"><img src="/img/menu/{{ $item->photo or 'placeholder.svg' }}" class="img-thumbnail"></td>
+  <td style="width:100px"><img src="/img/item-thumb/{{ $item->photo or 'placeholder.svg' }}" class="img-thumbnail"></td>
   <td>
     <div>
     @if($item->available)

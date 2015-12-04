@@ -111,7 +111,19 @@
             @endif
 
             <div class="form-group clearfix">
-                <label class="col-md-4 control-label">Status</label>
+                <label class="col-md-4 control-label">Accept Orders</label>
+                <div class="col-md-8">
+                        <label class="radio-inline">
+                            {!! Form::radio('accept_orders', '1') !!} Yes
+                        </label>
+                        <label class="radio-inline">
+                          {!! Form::radio('accept_orders', '0') !!} No
+                        </label>
+                </div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label class="col-md-4 control-label">Current Status</label>
                 <div class="col-md-8">
                         <label class="radio-inline">
                             {!! Form::radio('status_working', 'open') !!} Open

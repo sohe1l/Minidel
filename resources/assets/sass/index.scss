@@ -29,18 +29,19 @@
 
 
 @media(max-width:767px){
-    #firstTitle span:nth-child(1){ font-size:2em; font-weight:bold;}
-    #firstTitle span:nth-child(2){ font-size:2em;}
-    .firstPart .bg{
-      background-color: #FFDC7B;
-      padding:1em 2em;
-      margin-top: -20px;
+    #firstTitle div:nth-child(1){
+      font-size:1.5em;
+      /* padding:1em 2em; */
+      margin-top: -15px;
+    }
+    #firstTitle div:nth-child(2){
+      font-size:1.2em;
     }
 }
 @media(min-width:768px){
   #firstPageLogin{ width:300px;}
-  #firstTitle span:nth-child(1){ font-size:3em; font-weight:bold;}
-  #firstTitle span:nth-child(2){ font-size:3em;}
+  #firstTitle div:nth-child(1){ font-size:2em;}
+  #firstTitle div:nth-child(2){ font-size:2em;}
   #listIndex ul li {  font-size:1.3em; }
   .firstPart .bg{
       background: url('/img/desk3.jpg') no-repeat center center; 
@@ -50,11 +51,14 @@
       background-size: cover;
       padding:8em 2em;
     }
+
+
+
 }
 @media(min-width:992px){
     #firstPageLogin{ width:400px; margin:0 auto; }
-    #firstTitle span:nth-child(1){ font-size:3.5em; font-weight:bold;}
-    #firstTitle span:nth-child(2){ font-size:4em;}
+    #firstTitle div:nth-child(1){ font-size:3em;}
+    #firstTitle div:nth-child(2){ font-size:3em;}
     #listIndex ul li {  font-size:1.7em; }
 
 }

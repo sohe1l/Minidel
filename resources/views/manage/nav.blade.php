@@ -7,13 +7,16 @@
 
   <li role="presentation" {!! ($active=='options')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/options/">Menu Options</a></li>
   <li role="presentation" {!! ($active=='coverage')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/coverage/">Delivery Coverage</a></li>
-  <li role="presentation" {!! ($active=='timings')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/timings/">Delivery Timings</a></li>
+  <li role="presentation" {!! ($active=='timings')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/timings/">Store Timings</a></li>
 
   <li role="presentation" {!! ($active=='tags')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/tags/">Tags</a></li>
 
   <li role="presentation" {!! ($active=='payments')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/payments/">Payments</a></li>
 
   <li role="presentation" {!! ($active=='menu-photo')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/menu/photos">Menu Photos</a></li>
+
+  <li role="presentation" {!! ($active=='inline')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/inline/">Inline Code</a></li>
+
 
   <li role="presentation" {!! ($active=='users')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/users/">Users</a></li>
 

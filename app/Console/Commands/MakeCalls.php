@@ -41,14 +41,21 @@ class MakeCalls extends Command
         $date->modify('-3 minutes');
         $timeLimit = $date->format('Y-m-d H:i:s');
 
-        $order = \App\Order::where('status','pending')->where('created_at','<=',$timeLimit)->where('call_last','<=',$timeLimit)->first();
+        $order = \App\Order::where('status','pending')
+                           ->where('call_last','<=',$timeLimit)
+                           ->where('created_at','<=',$timeLimit)
+                           ->where(function ($query) {
+                                $query->whereNull('schedule')
+                                      ->orWhere('schedule','<=',$timeLimit);
+                            })
+                           ->first();
 
         if($order){
             if($order->call_count == 2){ // already two attemps... cancel order
                 $order->status = 'rejected';
                 $order->reason = 'Sorry for the inconvenience. We have canceled the order automatically because the store is not responding to the order.';
                 $order->save();
-                return "Order cancled";
+                return "Order canceled";
             }
 
 /*

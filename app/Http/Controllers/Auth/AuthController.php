@@ -31,6 +31,8 @@ class AuthController extends Controller
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     protected $redirectPath = '/dashboard';
+    protected $dpBase = 'img/user/'; //should be same as dashboard controller
+    protected $dpBaseTiny = 'img/user-tiny/'; //should be same as dashboard controller
     
 
     /**
@@ -237,6 +239,7 @@ class AuthController extends Controller
 
 
 
+
     /**
      * Redirect the user to the GitHub authentication page.
      *
@@ -253,23 +256,72 @@ class AuthController extends Controller
      *
      * @return Response
      */
-    public function handleProviderCallback()
+    public function handleProviderCallback(Request $request)
     {
-        $user = Socialite::driver('facebook')->user();
+        $throttles = $this->isUsingThrottlesLoginsTrait();
 
-        // $user->token;
-        // OAuth Two Providers
-        $token = $user->token;
+        $socialiteUser = Socialite::driver('facebook')->user();
 
-        // OAuth One Providers
-        $token = $user->token;
-        $tokenSecret = $user->tokenSecret;
+        //check if user exits login
+        $user = \App\User::where('provider','facebook')->where('provider_id',$socialiteUser->id)->first();
+        if($user != null){
+            Auth::login($user);
+            
+            if($user->username == null){
+                flash("Please choose a username to continue!");
+                return redirect("/dashboard/general/");
+            }else{
+                return $this->handleUserWasAuthenticated($request, $throttles);
+            }
 
-        // All Providers
-        $user->getId();
-        $user->getNickname();
-        $user->getName();
-        $user->getEmail();
-        $user->getAvatar();
+        }else{ // user does not exists... create new user
+
+            $user = new User;
+            
+            if($socialiteUser->user['email'] != null){
+                $userEmailCheck = \App\User::where('email',$socialiteUser->user['email'])->first();
+                if($userEmailCheck != null){
+                    //return error page
+                    $errors = new \Illuminate\Database\Eloquent\Collection;
+                    $errors->add('The Email address assosiated with your facebook account is already registered in our system. Please try to log in with your account or recover your password with "forget your password" option.');
+                    return view('errors.general',compact('errors'));
+                }
+                 $user->email = $socialiteUser->user['email'];
+            }
+
+            if($socialiteUser->name != null) $user->name = $socialiteUser->name;
+            else if($socialiteUser->nickname != null) $user->name = $socialiteUser->nickname;
+            else $user->name = 'FB User';
+
+            if($socialiteUser->user['gender'] == 'female')  $user->gender = 'F';
+            else $user->gender = 'M';
+
+            $user->provider = 'facebook';
+            $user->provider_id = $socialiteUser->id;
+
+            if($socialiteUser->avatar_original){
+                $photoFileName = time() . '-' . str_random(10) . '.jpg' ;
+
+                $image = \Image::make($socialiteUser->avatar_original);
+                $image->fit(150,150)->save($this->dpBase.$photoFileName);
+
+                //do again for tiny
+                $image = \Image::make($socialiteUser->avatar_original);
+                $image->fit(25,25)->save($this->dpBaseTiny.$photoFileName);
+
+                //update db
+                $user->dp = $photoFileName;
+            }
+
+
+            $user->save();
+
+            Auth::login($user);
+
+            flash("Please choose a username to continue!");
+
+            return redirect("/dashboard/general/");
+        }
+    
     }
 }

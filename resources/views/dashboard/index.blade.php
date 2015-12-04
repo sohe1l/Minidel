@@ -55,7 +55,7 @@
 </div>
 */ ?>
 
-<div class="row whiteBG">
+<div class="row">
   <div class="col-sm-4">
 
 
@@ -111,7 +111,13 @@
                 {{ $order->store->name }}
               </a>
             </h4>
-            {{ $order->store->info }}
+
+            <div>
+                <span class="label label-success">{{ $order->store->is_open == 'true'?'Open Now':''  }}</span>
+                <span class="label label-danger">{{ $order->store->is_open == 'false'?'Closed Now':''  }}</span>
+              <span class="label label-success">{{ ($order->store->is_deliver_building == 'true' || $order->store->is_deliver_area == 'true')?'Deliveres Now':''  }}</span>
+            </div>
+
           </div>
         </div>
 

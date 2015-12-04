@@ -15,9 +15,9 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('username')->unique();
-            $table->string('email')->unique();
-            $table->string('password', 60);
+            $table->string('username')->nullable()->default(null)->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('password', 60)->nullable();
             
             $table->string('mobile')->nullable();
             $table->char('gender',1);
@@ -25,6 +25,11 @@ class CreateUsersTable extends Migration
 
             $table->boolean('verified_email')->default(false);
             $table->boolean('verified_mobile')->default(false);
+
+            $table->string('dp')->nullable();
+
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->unique()->nullable();
 
 
             $table->string('confirmation_code')->nullable();

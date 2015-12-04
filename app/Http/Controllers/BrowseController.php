@@ -70,8 +70,12 @@ class BrowseController extends Controller
         return view('browse.store', compact('city','area','store','user'));
     }
 
-    public function storeOrder($storeSlug)
-    {
+    public function storeOrderInline($storeSlug){
+        return $this->storeOrder($storeSlug, true);
+    }
+
+    public function storeOrder($storeSlug, $inline = false)
+    {        
         $store = \App\Store::where('slug',$storeSlug)->with('building','sections.subsections.items','sections.items','payments','items.options.options')->firstOrFail();
         $user = \Auth::user();
 
@@ -110,8 +114,10 @@ class BrowseController extends Controller
         $daysDelivery = $this->getDays($store, 'Area Delivery');
         $daysPickup = $this->getDays($store, 'Normal Openning');
 
+        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup'));
 
-        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup'));
+        $page_title = $store->name . " Online Order Delivery & Pickup";
+        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','page_title'));
     }
 
 
@@ -215,9 +221,12 @@ class BrowseController extends Controller
         $searchQuery = $request->q;
 
         $searchTerms = explode(' ', $searchQuery);
-        $stores = new \App\Store;
-        foreach($searchTerms as $term) $stores = $stores->orWhere('name', 'LIKE', '%'. $term .'%');
-        $stores = $stores->with('city','area')->select($this->store_columns)->get();
+
+        $stores = \App\Store::listed()->acceptOrders()->where(function ($query) use ($searchTerms) {
+
+            foreach($searchTerms as $term) $query->orWhere('name', 'LIKE', '%'. $term .'%');
+        
+        })->with('city','area')->select($this->store_columns)->get();
 
         return view('browse.search', compact('stores','searchQuery'));
     }
@@ -227,11 +236,13 @@ class BrowseController extends Controller
         $searchQuery = $request->searchQuery;
 
         $searchTerms = explode(' ', $searchQuery);
-        $stores = new \App\Store;
-
+        
         $arrTags = [];
         foreach(json_decode($request->tags) as $key => $val)
             if($val) $arrTags[] = $val; 
+
+        $stores = \App\Store::listed()->acceptOrders();
+
 
         if(count($arrTags) != 0){
             foreach($arrTags as $tagid){

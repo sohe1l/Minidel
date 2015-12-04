@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Str;
 
+use GuzzleHttp\Client;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -14,7 +17,9 @@ class ManageController extends Controller
 {
 
 
-    protected $menuBase = 'img/menu/';
+    protected $itemBase = 'img/item/';
+    protected $itemBaseThumb = 'img/item-thumb/';
+
     protected $logoBase = 'img/logo/';
     protected $coverBase = 'img/cover/';
     protected $coverMobileBase = 'img/cover-mobile/';
@@ -124,21 +129,86 @@ class ManageController extends Controller
 
 
 
-
-
-
-    public function reports(Request $request, $storeSlug)
+    public function reportsIndex(Request $request, $storeSlug)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
         
-        return view('manage.reports',compact('store'));
+        //create empty array
+        $orders = [];
+        $price = [];
+        
+        $dt = Carbon::now()->subDays(31);
+        for($i = 0; $i<30; $i++){
+            $orders[$dt->format('M j')] = 0;
+            $price[$dt->format('M j')] = 0;
+            $dt->addDay();
+        }
+
+        //get db data
+        $daily = $store->orders()
+                ->where('status','delivered')
+                ->whereBetween('created_at', [Carbon::now()->subDays(31), Carbon::now()])
+                ->select(\DB::raw('date_format(created_at,"%b %e") as day'),
+                         \DB::raw('sum(price) as total'), 
+                         \DB::raw('count(*) AS count')
+                    )
+                ->groupBy('day')
+                ->get();
+
+        //fill array with db data
+        foreach($daily as $day){
+            $orders[$day->day] = $day->count;
+            $price[$day->day] = $day->total;
+        }
+
+
+        return view('manage.reports.index',compact('store','orders','price'));
+    }
+
+
+    public function orders(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $monthlyBreakdown = $store->orders()
+                ->where('status','delivered')
+                ->select(\DB::raw('date_format(created_at,"%Y/%c") as yearMonth'), \DB::raw('sum(price) as total'), 
+                         \DB::raw('sum(CASE WHEN type = "delivery" THEN price ELSE 0 END) AS delivery'),
+                         \DB::raw('sum(CASE WHEN type = "pickup" THEN price ELSE 0 END) AS pickup'),
+                         \DB::raw('sum(CASE WHEN type = "pickup" THEN 1 ELSE 0 END) AS countPickup'),
+                         \DB::raw('sum(CASE WHEN type = "delivery" THEN 1 ELSE 0 END) AS countDelivery'),
+                         \DB::raw('count(*) AS count')
+                    )
+                ->groupBy('yearMonth')
+                ->get();
+
+        return view('manage.reports.orders',compact('store','monthlyBreakdown'));
+    }
+
+
+    public function ordersMonth(Request $request, $storeSlug, $year, $month)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $orders = $store->orders()
+                ->whereMonth('created_at', '=', $month)
+                ->whereYear('created_at', '=', $year)
+                ->get();
+
+
+
+        return view('manage.reports.orders-month',compact('store','orders','year','month'));
     }
 
 
 
-    public function reportsOrderShow(Request $request, $storeSlug, $orderId)
+    public function orderShow(Request $request, $storeSlug, $orderId)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
@@ -148,7 +218,7 @@ class ManageController extends Controller
         if(!$order) abort(404);
 
 
-        return view('manage.reports-order',compact('store', 'order'));
+        return view('manage.reports.order',compact('store', 'order'));
     }
 
 
@@ -157,9 +227,62 @@ class ManageController extends Controller
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
-        
-        return view('manage.billing',compact('store'));
+
+        $monthlyBreakdown = $store->transactions()
+        ->select(\DB::raw('date_format(created_at,"%Y/%c") as yearMonth'),
+                 \DB::raw('sum(CASE WHEN type = "credit" THEN amount ELSE 0 END) AS credit'),
+                 \DB::raw('sum(CASE WHEN type = "debit" THEN amount ELSE 0 END) AS debit'),
+                 \DB::raw('sum(CASE WHEN type = "credit" THEN 1 ELSE 0 END) AS countCredit'),
+                 \DB::raw('sum(CASE WHEN type = "debit" THEN 1 ELSE 0 END) AS countDebit')            )
+        ->groupBy('yearMonth')
+        ->get();
+
+        return view('manage.reports.billing',compact('store','monthlyBreakdown'));
     }
+
+    public function billingMonth(Request $request, $storeSlug, $year, $month)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
+        $transactions = $store->transactions()
+                        ->whereMonth('created_at', '=', $month)
+                        ->whereYear('created_at', '=', $year)
+                        ->get();
+
+        return view('manage.reports.billing-month',compact('store','transactions','year','month'));
+    }
+
+
+    public function billingCreateTransaction(Request $request, $storeSlug){ // add transaction ONLY SUPER ADMIN
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403); // SUPERADMIN
+
+
+
+        $this->validate($request, [
+            'amount' => 'required|numeric',
+            'type' => 'required|in:debit,credit',
+            'reference' => 'required|max:200',
+        ]);
+
+        $tran = new \App\Transaction;
+        $tran->user_id = $request->user()->id;
+        $tran->store_id = $store->id;
+        $tran->amount = $request->amount;
+        $tran->type = $request->type;
+        $tran->reference = $request->reference ;
+        $tran->save();
+        
+        flash("Transaction created successfully.");
+
+        return redirect()->back();        
+
+    }
+
+
 
 
 
@@ -198,6 +321,7 @@ class ManageController extends Controller
             'email' => 'required|email',
             'info' => 'required',
             'status_working' => 'required|in:open,close,busy',
+            'accept_orders' => 'required|boolean',
         ]);
 
         // save the store into the db
@@ -206,6 +330,7 @@ class ManageController extends Controller
         $store->email = $request->email;
         $store->info = $request->info;
         $store->status_working = $request->status_working;
+        $store->accept_orders = $request->accept_orders;
         $store->save();
 
         flash('Store information updated successfully.');
@@ -234,7 +359,8 @@ class ManageController extends Controller
         if($store->logo) \File::delete($this->logoBase. $store->logo); 
 
         //store the new image
-        $photoFileName = time() . '-' . $file->getClientOriginalName();
+        $photoFileName = time() . '-' . $store->slug . '-' . str_random(2) . '.jpg' ;
+
         $image = \Image::make($file->getRealPath());
 
         // prevent possible upsizing
@@ -273,7 +399,7 @@ class ManageController extends Controller
         if($store->cover) \File::delete($this->coverMobileBase. $store->cover); 
 
         //store the new image
-        $photoFileName = time() . '-' . $file->getClientOriginalName();
+        $photoFileName = time() . '-' . $store->slug . '-' . str_random(2) . '.jpg' ;
         $image = \Image::make($file->getRealPath());
         $image->fit(960,320)->save($this->coverBase.$photoFileName);
         //do again for mobile
@@ -290,6 +416,16 @@ class ManageController extends Controller
 
 
 
+
+
+    public function inline(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager' , 'store_staff'])) abort(403);
+        
+        return view('manage.inline',compact('store'));
+    }
 
 
 
@@ -601,9 +737,13 @@ class ManageController extends Controller
             //if($item->photo) \File::delete($this->menuBase.$item->photo);
 
             //store the new image
-            $photoFileName = time() . '-' . $file->getClientOriginalName();
+            $photoFileName = time() . '-menu-' . $store->slug . '-' . str_random(2) . '.jpg' ;
+            
             $image = \Image::make($file->getRealPath());
-            $image->fit(150,150)->save($this->menuBase.$photoFileName);
+            $image->fit(500,500)->save($this->itemBase.$photoFileName);
+
+            $image = \Image::make($file->getRealPath());
+            $image->fit(100,100)->save($this->itemBaseThumb.$photoFileName);
 
             //update db
             $item->photo = $photoFileName;
@@ -629,7 +769,11 @@ class ManageController extends Controller
         if($store->items()->get()->where('id',$item->id)->isEmpty()) abort(403); // item belongs to someone else
 
         // delete photo
-        if($item->photo) \File::delete($this->menuBase.$item->photo);
+        if($item->photo){
+            \File::delete($this->itemBase.$item->photo);
+            \File::delete($this->itemBaseThumb.$item->photo);
+        } 
+
 
         $item->delete();
 
@@ -702,14 +846,21 @@ class ManageController extends Controller
         $file = $request->file('imagefile');
         if($file){
             //delete the old picture
-            if($item->photo) \File::delete($this->menuBase.$item->photo);
+            if($item->photo){
+                \File::delete($this->itemBase.$item->photo);
+                \File::delete($this->itemBaseThumb.$item->photo);
+            } 
 
             //store the new image
-            $photoFileName = time() . '-' . $file->getClientOriginalName();
-            $image = \Image::make($file->getRealPath());
-            $image->fit(150,150)->save($this->menuBase.$photoFileName);
+            $photoFileName = time() . '-menu-' . $store->slug . '-' . str_random(2) . '.jpg' ;
 
-            //update db
+            $image = \Image::make($file->getRealPath());
+            $image->fit(500,500)->save($this->itemBase.$photoFileName);
+
+            $image = \Image::make($file->getRealPath());
+            $image->fit(100,100)->save($this->itemBaseThumb.$photoFileName);
+
+                        //update db
             $item->photo = $photoFileName;
             $item->save();
         }
@@ -1613,6 +1764,199 @@ class ManageController extends Controller
 
 
 
+
+
+
+    //zomato
+    public function zomato(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403); // SUPERADMIN
+
+        return view('manage.zomato.index',compact('store'));
+    }
+
+
+
+    private function add_to_options($options,$arr){
+        //check if already exists
+        $exists = 0;
+        foreach($options as $option){
+            if($option === $arr) $exists = 1;
+        }
+        if($exists == 0) $options[] = $arr;
+
+        return $options;
+    }
+
+    private function get_option_id($options,$arr){
+        //check if already exists
+        $exists = 0;
+        foreach($options as $key => $option){
+            if($option === $arr) return $key;
+        }
+        return null;
+    }
+
+
+    public function zomatoProcess(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403); // SUPERADMIN
+
+        \DB::beginTransaction();
+
+        $this->validate($request, [
+            'url' => 'required|url'
+        ]);
+
+        $res_id=0;
+        $csrf = "";
+
+        $client = new Client();
+        $response = $client->request('GET', $request->url);
+        $body = $response->getBody();
+        
+
+
+        $stringBody = (string) $body;
+
+        if(preg_match('/var RES_ID = ([0-9]*);/', $stringBody, $matchesRes)){
+            if(isset($matchesRes[1])) $res_id = $matchesRes[1];
+        }
+
+        if(preg_match('/zomato.csrft = "([^"]*)";/', $stringBody, $matchesC)){
+            if(isset($matchesC[1])) $csrf = $matchesC[1];
+        }
+
+        if($res_id == 0 | $csrf == ""){
+            flash("Could not process the url.");
+            return redirect()->back();
+        }
+
+        $response = $client->request( 'POST', 'https://www.zomato.com/php/o2_handler.php', [
+                    'form_params' => [
+                        'case' => 'getdata',
+                        'res_id' => $res_id,
+                        'csrfToken' => $csrf
+                    ]
+                ]);
+
+        $raw = (string) $response->getBody();
+
+        $resData = json_decode($raw);
+
+        $menuItem = [];
+        $options = [];
+        $sections = [];
+
+        foreach($resData->menus as $menus){
+            foreach($menus as $menu){
+                foreach($menu->categories as $cats){
+                    foreach($cats as $cat){
+
+                        $sections[] = ['title'=>$cat->name, 'db'=>0];
+
+                        foreach($cat->items as $item){
+                            foreach($item as $i){
+
+                                //reset option ids
+                                $optionIds = [];
+                                // {{$i->name}} - {{$i->price}} - {{$i->desc}} 
+                                if(isset($i->groups)){
+                                    foreach($i->groups as $group){
+                                        foreach($group as $g){
+
+                                            $tempGI = [];
+                                            
+
+                                            foreach($g->items as $groupItem){
+                                                foreach($groupItem as $gi){
+                                                    // {{ $gi->name }} {{ $gi->price }} {{ $gi->desc }}
+                                                    $tempGI[] = ["name" => $gi->name, "price"=>$gi->price];
+                                                }
+                                            }
+
+                                            $optionTemp = ["name" => $g->name, "min" => $g->min, "max" => $g->max, "options"=>$tempGI];
+
+                                            $options = $this->add_to_options($options, $optionTemp);
+
+                                            $newOptionId = $this->get_option_id($options, $optionTemp);
+                                            if($newOptionId != null) $optionIds[] = $newOptionId;
+                                        }
+                                    }
+                                }
+                                $menuItem[] = ['title'=>$i->name, 'info'=>$i->desc, 'price'=>$i->price, 'section'=>count($sections)-1, 'options'=>$optionIds];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //add all sections 
+        foreach($sections as $key => $section){
+            
+            $db_section = new \App\menuSection;
+            $db_section->store_id = $store->id;
+            $db_section->title = $section['title'];
+            $db_section->order = $store->lastSectionOrder() + 1;
+            $db_section->save();
+
+            $sections[$key]['db'] =  $db_section->id;
+        }
+
+        //add options
+        foreach($options as $key => $option){
+
+            $db_option = new \App\menuOption;
+            $db_option->store_id = $store->id;
+            $db_option->name = $option['name'];
+            $db_option->min = $option['min'];
+            $db_option->max = $option['max'];
+            $db_option->save();
+
+            $options[$key]['db'] = $db_option->id;
+
+            foreach($option['options'] as $keyOption => $optionOption){
+                $db_options = new \App\menuOptionOption;
+                $db_options->menu_option_id = $db_option->id;
+                $db_options->name = $optionOption['name'];
+                $db_options->price = $optionOption['price'];
+                $db_options->save();
+            }
+        }
+
+
+        //add items
+        foreach($menuItem as $key => $mi){
+            $db_mi = new \App\menuItem;
+            $db_mi->menu_section_id = $sections[$mi['section']]['db'];
+            $db_mi->title = $mi['title'];
+            $db_mi->info = $mi['info'];
+            $db_mi->price = $mi['price'];
+            $db_mi->save();
+
+            $syncArray = [];
+            foreach($mi['options'] as $k => $o) $syncArray[] = $options[$o]['db']; 
+            $db_mi->options()->sync($syncArray);
+        }
+
+        \DB::commit();
+
+        $store->coordinate = $resData->restaurant->location->latitude . "," . $resData->restaurant->location->longitude ;
+        $store->address = $resData->restaurant->location->address;
+        $store->save();
+
+
+
+
+        flash("Store imported Successfully");
+
+        return redirect()->back();
+    }
 
 
 

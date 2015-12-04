@@ -1,5 +1,7 @@
 @extends('layouts.default')
 
+@section('bodyProp')data-spy="scroll" data-target="#navbar-menu" style="position: relative"@endsection
+
 @section('breadcrumb')
   <ol class="breadcrumb hidden-xs">
     <li><a href="/">Home</a></li>
@@ -22,7 +24,23 @@ html, body { overflow-x: hidden;}
 
 footer { padding: 30px 0;} 
 
-#storeDiv a {color: #333333 !important;}
+#storeDiv a {
+    color: #333333;
+    font-size: 0.9em;
+}
+
+#storeDiv li{
+    border-bottom: 1px solid #E4E4E4;
+    border-radius: 0 !important;
+}
+
+#storeDiv li.active a{
+    background-color: inherit !important;
+    font-weight: bold;
+    color:#f0ad4e !important;
+    font-size: 1.2em;
+
+}
 
 /*
  * Off Canvas
@@ -88,6 +106,27 @@ footer { padding: 30px 0;}
 
 
     <div class="hidden-xs menuSections">
+
+
+      <nav data-spy="affix" data-offset-top="420" id="navbar-menu" class="whiteBG">
+        
+
+      @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
+        <ul class="nav nav-pills nav-stacked">
+          <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}">{{ $section->title }}</a></li>
+        </ul>
+
+        @foreach ($section->subsections->where('available',1) as $subsection)
+          <ul class="nav nav-pills nav-stacked">
+            <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c">{{ $subsection->title }}</a></li>
+          </ul>
+        @endforeach
+      @endforeach
+
+      </nav>
+
+
+<?php /*
       <table class="table" data-spy="affix" data-offset-top="310"> 
       @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
         <tr><td><a href="#section{{$section->id}}">{{ $section->title }}</a></td></tr>
@@ -96,13 +135,14 @@ footer { padding: 30px 0;}
         @endforeach
       @endforeach
       </table>
+*/ ?>
 
       <hr>
       <small></small>
 
 
     </div>
-    <div class="menuContainer">
+    <div class="menuContainer" id="menuContainer">
 
       <div v-show="!isLogin" class="alert alert-danger" role="alert">Please login to be able to place orders.</div>
 
@@ -115,22 +155,33 @@ footer { padding: 30px 0;}
       </div>
       
       @forelse ($store->sections->where('menu_section_id',null)->where('available',1) as $section)              
-        <div class="panel panel-default">
-          <div class="panel-heading"><a name="section{{$section->id}}">{{ $section->title }}</a></div>
+        <div class="panel panel-default" style="margin-bottom:0; border:0;">
+          <div class="panel-heading">
           
+        <a class="collapsed collapseCnt" role="button" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}" style="font-size:1.2em">
+          {{ $section->title }} <span class="glyphicon glyphicon-menu-right"></span>
+        </a>
+
+
+            
+
+          </div>
+
+          <div id="section{{$section->id}}" class="panel-collapse collapse">
           <table class="table">
             @foreach ($section->items->sortBy('order') as $item)
               @include('browse._item')
             @endforeach
             
             @foreach ($section->subsections->where('available',1) as $subsection)
-            <tr><td colspan="2"><a name="section{{$subsection->id}}"><b>{{ $subsection->title }}</b></a></td></tr>
+            <tr><td colspan="2" id="section{{$subsection->id}}"><b style="color: #fe602c; font-size: 1.15em">{{ $subsection->title }}</b></td></tr>
               @foreach ($subsection->items->sortBy('order') as $item)
                 @include('browse._item')
               @endforeach
             @endforeach
 
           </table>
+          </div>
         </div>
       @empty
         <h4 style="text-align: center">No menu available!</h4>
@@ -139,10 +190,10 @@ footer { padding: 30px 0;}
   </div>
 
 
-  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar"> 
+  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: lane;"> 
 
-    <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="310" id="cartContainer">
-      <h4 style="margin:0">Your Order</h4>
+    <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="150" id="cartContainer">
+      <h4 style="margin:0; color: #fe602c;">Your Order</h4>
 
       <div v-show="isLogin && !orderComplete">
         <div class="cart-row" v-repeat="item: cart">
@@ -181,17 +232,36 @@ footer { padding: 30px 0;}
 
 
         <div v-show="cart.length > 0">
-          <div style="text-align: right" v-show="deliveryFee!=0 && dorp=='delivery'">Delivery Fee: Dhs @{{ deliveryFee }} dhs</div>     
-          
-          <div style="text-align: right; font-weight: bold">Total: Dhs @{{ totalPrice + deliveryFee  }} dhs</div>   
+          <div style="color: #fe602c; font-size:1.2em">
+            <div style="text-align: right" v-show="deliveryFee!=0 && dorp=='delivery'">Delivery Fee: Dhs @{{ deliveryFee }} dhs</div>     
+            
+            <div style="text-align: right; font-weight: bold">Total: Dhs @{{ totalPrice + deliveryFee  }} dhs</div>   
 
-          <div style="text-align: right; font-weight: bold" v-show="dorp=='delivery' && addressObj.discount!=0">
-          Discount: @{{ discountAmount }} dhs
-            <Br>
-          Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
-          </div>  
+            <div style="text-align: right; font-weight: bold" v-show="dorp=='delivery' && addressObj.discount!=0">
+            Discount: @{{ discountAmount }} dhs
+              <br>
+            Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
+            </div>
+          </div>
+
+
+
 
           <div class="form-horizontal">
+
+            <div class="form-group">
+              <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Payment</label>
+              <div class="col-md-8 col-lg-9">
+                <label class="radio-inline" v-repeat="paymentMethods">
+                  <input type="radio" 
+                         name="payment"
+                         v-model="payment"
+                         v-attr="checked: $index==0"
+                         value="@{{pivot.payment_type_id}}"> @{{name}}
+                </label>
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Option</label>
               <div class="col-md-8 col-lg-9">
@@ -241,23 +311,9 @@ footer { padding: 30px 0;}
               </div>
             </div>
 
-
-            <div class="form-group">
-              <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Payment</label>
-              <div class="col-md-8 col-lg-9">
-                <label class="radio-inline" v-repeat="paymentMethods">
-                  <input type="radio" 
-                         name="payment"
-                         v-model="payment"
-                         v-attr="checked: $index==0"
-                         value="@{{pivot.payment_type_id}}"> @{{name}}
-                </label>
-              </div>
-            </div>
-
             <div class="form-group">
               <div class="col-md-offset-4 col-lg-offset-3 col-md-8 col-lg-9" style="text-align: right">
-                <button type="submit" class="btn btn-primary" v-on="click: placeOrder">Place Order</button>
+                <button type="submit" class="btn btn-danger" v-on="click: placeOrder">Place Order</button>
               </div>
             </div>
           </div>
@@ -435,6 +491,22 @@ footer { padding: 30px 0;}
       else vm.toggleText = "View Your Order";
       window.scrollTo(0,0);
     });
+
+
+  //  $(window).bind('resize load', function() {
+    if ($(this).width() < 767) {
+        $('.panel-collapse').removeClass('in');
+        $('.panel-collapse').addClass('out');
+    } else {
+        $('.collapseCntNav').removeAttr('data-toggle');
+        $('.collapseCnt').removeAttr('data-toggle');
+        $('.collapseCnt').removeAttr('href');
+        $('.panel-collapse').removeClass('out');
+        $('.panel-collapse').addClass('in');
+    }
+  //});
+
+
   });
 
   var vm = new Vue({

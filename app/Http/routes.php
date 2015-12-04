@@ -17,6 +17,8 @@
       //  \DB::connection()->enableQueryLog();
 
 
+Route::get('payment','PaypalController@paymentTest');
+
 
 
 /* Super Admin */
@@ -24,16 +26,30 @@ Route::group(['prefix' => 'superadmin' , 'middleware' => 'auth.superadmin'], fun
     Route::get('/','Superadmin\AdminController@index');
 
     /* Locations */
-    Route::get('location','Superadmin\LocationController@index');
+    Route::get('locations','Superadmin\LocationController@index');
     
-    Route::get('location/{country}/','Superadmin\LocationController@countryIndex'); //view all cities
-    Route::post('location/{country}/city','Superadmin\LocationController@cityStore'); // to save a new city
+    Route::get('locations/{country}/','Superadmin\LocationController@countryIndex'); //view all cities
+    Route::post('locations/{country}/city','Superadmin\LocationController@cityStore'); // to save a new city
     
-    Route::get('location/{country}/{city}','Superadmin\LocationController@cityIndex'); // to view all areas
-    Route::post('location/{country}/{city}/area','Superadmin\LocationController@areaStore'); // to save new areas
+    Route::get('locations/{country}/{city}','Superadmin\LocationController@cityIndex'); // to view all areas
+    Route::post('locations/{country}/{city}/area','Superadmin\LocationController@areaStore'); // to save new areas
 
-    Route::get('location/{country}/{city}/{area}','Superadmin\LocationController@areaIndex'); // to view all buildings
-    Route::post('location/{country}/{city}/{area}/building','Superadmin\LocationController@buildingStore'); // to save new building
+    Route::get('locations/{country}/{city}/{area}','Superadmin\LocationController@areaIndex'); // to view all buildings
+    Route::post('locations/{country}/{city}/{area}/building','Superadmin\LocationController@buildingStore'); // to save new building
+
+    Route::get('stats','Superadmin\AdminController@statsIndex');
+    Route::get('stats/times','Superadmin\AdminController@statsTimesIndex');
+
+
+    Route::get('stores','Superadmin\AdminController@storesIndex');
+    Route::put('stores/updateStatus','Superadmin\AdminController@storesUpdateStatus');
+
+    Route::get('orders','Superadmin\AdminController@ordersIndex');
+    Route::get('orders/pending','Superadmin\AdminController@ordersPendingIndex');
+    Route::POST('orders/getPendingOrders','Superadmin\AdminController@ordersGetPending');
+
+
+
 });
 
 
@@ -47,6 +63,7 @@ Route::get('pages/contact','PagesController@contact');
 Route::get('pages/privacy','PagesController@privacy');
 Route::get('pages/terms','PagesController@terms');
 Route::get('pages/about','PagesController@about');
+Route::get('pages/test','PagesController@test');
 
 
 
@@ -56,6 +73,11 @@ Route::get('pages/about','PagesController@about');
 // Dashboard
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/', 'DashboardController@index');
+
+    Route::get('running', 'DashboardController@running');
+
+    
+
     Route::post('regular', 'DashboardController@orderRegular');
 
     Route::get('order', 'DashboardController@order');
@@ -73,6 +95,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     //password
     Route::get('password','DashboardController@passwordIndex');
     Route::post('password','DashboardController@passwordStore');
+
+
 
     // resource address
     Route::get('address','DashboardController@addressIndex');
@@ -104,12 +128,17 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::post('{store}/submitReview','ManageController@submitReview');
 
 
+    Route::get('{store}/reports/','ManageController@reportsIndex');
 
-    Route::get('{store}/reports','ManageController@reports');
-    Route::get('{store}/reports/order/{id}','ManageController@reportsOrderShow');
-    Route::get('{store}/billing','ManageController@billing');
+    Route::get('{store}/reports/orders/order/{id}','ManageController@orderShow');
+    Route::get('{store}/reports/orders/','ManageController@orders');
+    Route::get('{store}/reports/orders/{year}/{month}','ManageController@ordersMonth');
 
+    Route::get('{store}/reports/billing','ManageController@billing');
+    Route::get('{store}/reports/billing/{year}/{month}','ManageController@billingMonth');
 
+    // add transaction only allowed by siperadmin
+    Route::post('{store}/reports/billing/transaction/create','ManageController@billingCreateTransaction');
 
 
     Route::get('{store}/general','ManageController@general');
@@ -121,6 +150,7 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::post('{store}/location','ManageController@locationStore');
     Route::post('{store}/location/marker','ManageController@locationMarkerStore');
     
+    Route::get('{store}/inline','ManageController@inline');
 
 
     Route::get('{store}/menu','ManageController@menu');
@@ -191,11 +221,17 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     // payments
     Route::get('{store}/payments','ManageController@payments');
     Route::post('{store}/payments','ManageController@paymentsStore');
+
+
+    Route::get('{store}/zomato','ManageController@zomato');
+    Route::post('{store}/zomato/process','ManageController@zomatoProcess');
+
 });
 
 
 Route::get('/', function () {
-    return view('welcome');
+    $body_class = 'container-fluid';
+    return view('welcome', compact('body_class'));
 });
 
 
@@ -260,6 +296,8 @@ Route::group(['middleware' => 'auth'], function () {
 */
 Route::post('{store}/photo','BrowseController@storePhoto');
 Route::post('{store}/reviews','BrowseController@storeReviewsStore');
+
+Route::get('{store}/order/inline','BrowseController@storeOrderInline'); // save orders for a store
 
 Route::get('{store}/order','BrowseController@storeOrder'); // save orders for a store
 Route::post('{store}/order','BrowseController@storeOrderStore'); // save orders for a store

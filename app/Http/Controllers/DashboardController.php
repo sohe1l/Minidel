@@ -20,7 +20,10 @@ class DashboardController extends Controller
     {
         $user = \Auth::user();
 
-        if ($user->addresses->count() == 0) return redirect('/dashboard/address/create/');
+        if ($user->addresses->count() == 0){
+            flash("Please add your address to be able to make an order!");
+            return redirect('/dashboard/address/create/');  
+        } 
         
         $merged = new \Illuminate\Database\Eloquent\Collection;
 
@@ -35,6 +38,18 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact('user','merged','recent'));
     }
+
+
+    public function running()
+    {
+        $user = \Auth::user();
+
+
+        return view('dashboard.running', compact('user'));
+    }
+
+
+
 
     public function orderRegular(Request $request){
         $user = \Auth::user();
@@ -56,6 +71,10 @@ class DashboardController extends Controller
     public function order()
     {
         $user = \Auth::user();
+        if ($user->addresses->count() == 0){
+            flash("Please add your address to be able to make an order!");
+            return redirect('/dashboard/address/create/');  
+        } 
 
 /*
         $merged = new \Illuminate\Database\Eloquent\Collection;
@@ -66,7 +85,7 @@ class DashboardController extends Controller
                 $merged = $merged->merge($building->coverageStores);
         }
 */
-            
+
         return view('dashboard.order', compact('user'));
     }
 
@@ -94,7 +113,7 @@ class DashboardController extends Controller
         switch($request->type){
             case 'mini':
                 if($address->building){
-                    $stores_building = $address->building->coverageStores()->with('city','area')->select($this->store_columns)->get();
+                    $stores_building = $address->building->coverageStores()->acceptOrders()->with('city','area')->select($this->store_columns)->get();
                     if($request->time == 'now')
                         $stores_building = $stores_building->where('is_deliver_building','true');
                 }else{
@@ -102,7 +121,7 @@ class DashboardController extends Controller
                 }
                 
 
-                $stores_area = $address->area->coverageStores()
+                $stores_area = $address->area->coverageStores()->acceptOrders()
                                 ->where('fee',0)->where('min',0)->where('feebelowmin',0)->with('city','area')->select($this->store_columns)->get();
 
                 if($request->time == 'now')
@@ -135,7 +154,7 @@ class DashboardController extends Controller
                 $area = \App\Area::find($request->area);
                 if(!$area) return jsonOut(1,'Invalid area for pickup.');
 
-                $stores = $area->stores()->with('city','area')->select($this->store_columns)->get();
+                $stores = $area->stores()->acceptOrders()->with('city','area')->select($this->store_columns)->get();
 
                 if($request->time == 'now'){
                     $stores = $stores->filter(function ($item) {

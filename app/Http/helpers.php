@@ -15,6 +15,9 @@
         if($store->status_listing != 'published')
             return "Store is not confirmed. Please try another store.";
 
+        if(!$store->accept_orders)
+            return "Store is not accepting online orders.";
+
         if($store->status_working != 'open')
             return 'Store is currently ' . $store->status_working  .', please try again later!';
 

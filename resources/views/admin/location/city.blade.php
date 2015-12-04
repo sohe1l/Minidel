@@ -1,4 +1,13 @@
-@extends('layouts.admin')
+@extends('layouts.default')
+
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/superadmin/">Super Admin</a></li>
+    <li><a href="/superadmin/locations/">Locations</a></li>
+    <li><a href="/superadmin/locations/{{ $city->country }}">{{ strtoupper($city->country) }}</a></li>
+    <li class="active">{{ $city->name }}</li>
+  </ol>
+@endsection
 
 @section('content')
     <h1>Locations</h1>
@@ -6,7 +15,7 @@
     <div>Please select a area below to view the buildings:</div> <br>
 
         @foreach ($city->areas as $area)
-            <a href="/superadmin/location/{{$city->country}}/{{$city->slug}}/{{ $area->slug }}" class="btn btn-default btn-lg">{{ $area->name }}</a>    
+            <a href="/superadmin/locations/{{$city->country}}/{{$city->slug}}/{{ $area->slug }}" class="btn btn-default btn-lg">{{ $area->name }}</a>    
         @endforeach
 
     <hr>
@@ -14,7 +23,7 @@
 
     @include('errors.list')
 
-    <form class="form-horizontal" role="form" method="POST" action="/superadmin/location/{{$city->country}}/{{$city->slug}}/area">
+    <form class="form-horizontal" role="form" method="POST" action="/superadmin/locations/{{$city->country}}/{{$city->slug}}/area">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
         <div class="form-group">

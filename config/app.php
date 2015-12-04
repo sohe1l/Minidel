@@ -150,6 +150,8 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
 
+        'Ignited\LaravelOmnipay\LaravelOmnipayServiceProvider',
+
 
     ],
 
@@ -205,6 +207,7 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Omnipay' => 'Ignited\LaravelOmnipay\Facades\OmnipayFacade',
 
     ],
 

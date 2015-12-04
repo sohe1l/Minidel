@@ -15,9 +15,8 @@ class AuthSuperAdmin
      */
     public function handle($request, Closure $next)
     {
-        $admins = [1];
         
-        if(!$request->user()  || !in_array($request->user()->id, $admins)){
+        if(!$request->user()  || !in_array($request->user()->id, \Config::get('vars.superAdmins') )){
             
             abort(403);
 

@@ -160,8 +160,7 @@
 
 
   </div>
-  <div class="col-sm-8 col-md-9 panel panel-default">
-    <div class="panel-body">
+  <div class="col-sm-8 col-md-9">
 
     <div id="custom-search-input">
         <div class="input-group col-md-12">
@@ -188,7 +187,6 @@
 
 
 
-    </div>
   </div>
 </div>
 

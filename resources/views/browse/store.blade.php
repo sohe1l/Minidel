@@ -107,7 +107,9 @@
           </a>
         </div>
         <div class="col-xs-6">
-          <a class="btn btn-danger" href="/{{$store->slug}}/order">Order Online</a>
+          @if($store->accept_orders)
+            <a class="btn btn-danger" href="/{{$store->slug}}/order">Order Online</a>
+          @endif
         </div> 
       </div>
 

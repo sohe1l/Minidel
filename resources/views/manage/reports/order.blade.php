@@ -6,7 +6,8 @@
   <li><a href="/manage/">Manage</a></li>
   <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
   <li><a href="/manage/{{$store->slug}}/reports">Reports</a></li>
-  <li class="active">View Order</li>
+  <li><a href="/manage/{{$store->slug}}/reports/orders">Orders</a></li>
+  <li class="active">Order {{ $order->id }}</li>
 </ol>
 @endsection
 
@@ -15,13 +16,7 @@
 
 <div class="row">
   <div class="col-md-3">
-  
-  <div style="height:20px">&nbsp;</div>
-
-    <ul class="nav nav-pills nav-stacked">
-      <li role="presentation" class="active"><a href="#">Reports</a></li>
-    </ul>
-
+    @include('manage.reports.nav', array('active'=>'orders'))
   </div>
   <div class="col-md-9">
 

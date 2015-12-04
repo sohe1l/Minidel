@@ -1,4 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.default')
+
+@section('breadcrumb')
+  <ol class="breadcrumb hidden-xs">
+    <li><a href="/superadmin/">Super Admin</a></li>
+    <li><a href="/superadmin/locations/">Locations</a></li>
+    <li><a href="/superadmin/locations/{{ $city->country }}">{{ strtoupper($city->country) }}</a></li>
+    <li><a href="/superadmin/locations/{{ $city->country }}/{{ $city->slug }}">{{ $city->name }}</a></li>
+    <li class="active">{{ $area->name }}</li>
+  </ol>
+@endsection
 
 @section('content')
     <h1>Locations</h1>
@@ -14,7 +24,7 @@
 
     @include('errors.list')
 
-    <form class="form-horizontal" role="form" method="POST" action="/superadmin/location/{{$city->country}}/{{$city->slug}}/{{$area->slug}}/building">
+    <form class="form-horizontal" role="form" method="POST" action="/superadmin/locations/{{$city->country}}/{{$city->slug}}/{{$area->slug}}/building">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
         <div class="form-group">

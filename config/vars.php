@@ -52,6 +52,13 @@ return array(
     '50' => '50 %'
  ],
 
+ 'superAdmins' => [
+    1
+
+
+
+ ],
+
 
 
 )

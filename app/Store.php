@@ -16,8 +16,17 @@ class Store extends Model
         return $query->where('status_listing', 'published');
     }
 
+    public function scopeAcceptOrders($query)
+    {
+        return $query->where('accept_orders', 1);
+    }
+
     // not working ?
     public function userRole($user_id){
+        if( in_array($user_id, \Config::get('vars.superAdmins') ) ) {
+            return 'store_owner';
+        }
+
         $user = $this->users->where('id',$user_id)->first();
         if($user == null) return null;
         return \App\Role::find($user->pivot->role_id)->name;
