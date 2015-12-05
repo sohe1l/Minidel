@@ -226,7 +226,7 @@ class BrowseController extends Controller
 
             foreach($searchTerms as $term) $query->orWhere('name', 'LIKE', '%'. $term .'%');
         
-        })->with('city','area')->select($this->store_columns)->get();
+        })->with('city','area')->get();
 
         return view('browse.search', compact('stores','searchQuery'));
     }
@@ -258,7 +258,7 @@ class BrowseController extends Controller
             }
         });
 
-        $stores = $stores->with('city','area')->select($this->store_columns)->get();
+        $stores = $stores->with('city','area')->get();
         
         $returnData = array(
             'error' => 0,

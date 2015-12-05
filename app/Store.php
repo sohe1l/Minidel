@@ -10,6 +10,8 @@ class Store extends Model
 
     protected $appends = ['is_open','is_deliver_building','is_deliver_area'];
 
+    protected $hidden = ['email','comission'];
+    
 
     public function scopeListed($query)
     {
