@@ -41,9 +41,12 @@
             </div>
             <div class="col-sm-10">
               <div><h3>{{$store->name}}</h3></div>
-              <div><a href="/manage/{{$store->slug}}">Orders</a></div>
-              <div><a href="/manage/{{$store->slug}}/reports/">Reports</a></div>
-              <div><a href="/manage/{{$store->slug}}/general/">Manage</a></div>
+              <div style="font-size:1.1em">
+                <a href="/manage/{{$store->slug}}">Incoming Orders</a> &nbsp;&nbsp;&nbsp;
+                <a href="/manage/{{$store->slug}}/reports/">Reports</a> &nbsp;&nbsp;&nbsp;
+                <a href="/manage/{{$store->slug}}/general/">Manage</a> &nbsp;&nbsp;&nbsp;
+                <a href="/{{$store->slug}}/order/">View</a>
+              </div>
             </div>
         </div>
 @empty

@@ -6,7 +6,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="/" style="padding: 10px;">
-        <img alt="Brand" style="height:30px" class="img-responsive visible-xs" src="/img/logo-white.png"><img alt="Brand" style="height:30px" class="img-responsive hidden-xs" src="/img/logo.png">
+        <img alt="Minidel" style="height:30px" class="img-responsive visible-xs" src="/img/logo-white.png"><img alt="Minidel" style="height:30px" class="img-responsive hidden-xs" src="/img/logo.png">
       </a>
 
       <button class="navbar-toggle" type="button"  data-toggle="collapse" data-target="#collapse-1">

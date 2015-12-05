@@ -5,7 +5,8 @@
   <li><a href="/">Home</a></li>
   <li><a href="/manage/">Manage</a></li>
   <li><a href="/manage/{{$store->slug}}">{{ $store->name }}</a></li>
-  <li class="active">Menu Photos</li>
+  <li><a href="/manage/{{$store->slug}}/menu/photos">Menu Photos</a></li>
+  <li class="active">Edit</li>
 </ol>
 @endsection
 

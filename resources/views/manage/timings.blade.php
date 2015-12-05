@@ -24,27 +24,24 @@
         <small>Customers will be able to make orders during the specified timings below.</small>
     </h2>
 
-    <div class="row">
-      <div class="col-lg-6">
-
-      </div><!-- /.col-lg-6 -->
-
-      <div class="col-lg-6" style="text-align:right">
-        <a href="/manage/{{$store->slug}}/timings/create" class="btn btn-default">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          New Timing
-        </a>
-      </div><!-- /.col-lg-6 -->
-    </div><!-- /.row -->
-
-    <br>
-
     @foreach ($workmodes as $workmode)
 
       <div class="panel panel-default">
-          <div class="panel-heading">{{ $workmode->name }} Timings</div>
+          <div class="panel-heading clearfix">{{ $workmode->name }} Timings
+            <span class="pull-right">
+              <a href="javascript:deleteAll({{ $workmode->id }})">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" title="Delete All"></span>
+              </a>
+              &nbsp;&nbsp;&nbsp;
+              <a href="/manage/{{$store->slug}}/timings/workmode/{{ $workmode->id }}/create">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              </a>
+            </span>
+
+
+          </div>
           <table class="table">
-            @forelse ($store->timings()->sortByDay()->where('workmode_id',$workmode->id)->get() as $timings)
+            @forelse ($store->timings()->sortAsc()->where('workmode_id',$workmode->id)->get() as $timings)
               <tr>
                 <td><b>{{ \Config::get('vars.days')[$timings->day] }}</b></td>
                 <td>{{ $timings->start }} &nbsp;&nbsp;&nbsp; to &nbsp;&nbsp;&nbsp; {{ $timings->end }}</td>
@@ -89,6 +86,16 @@
           $( "#insert form" ).submit();
         }
       }
+
+
+      function deleteAll(workmodeid){
+        var r = confirm("You are about to delete all the timings in the category. Are you sure?");
+        if (r == true) {
+          $('#insert').html('<form action="/manage/{{$store->slug}}/timings/workmode/'+workmodeid+'" method="post"><input type="hidden" name="_method" value="DELETE" />{!!Form::token()!!}</form>'); 
+          $( "#insert form" ).submit();
+        }
+      }
+
   </script>
 
 @endsection

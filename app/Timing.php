@@ -23,6 +23,11 @@ class Timing extends Model
         return $query->orderByRaw(\DB::raw("FIELD(day, 'sun','mon','tue','wed','thu','fri','sat')"));
     }
 
+    public function scopeSortAsc($query)
+    {
+        return $query->orderByRaw(\DB::raw("FIELD(day, 'sun','mon','tue','wed','thu','fri','sat')"))
+                     ->orderBy('start');
+    }
 
 
 

@@ -193,9 +193,11 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
 
     //timings
     Route::get('{store}/timings','ManageController@timings');
-    Route::get('{store}/timings/create','ManageController@timingsCreate');
+    Route::get('{store}/timings/workmode/{workmodeid}/create','ManageController@timingsCreate');
     Route::post('{store}/timings','ManageController@timingsStore');
     Route::delete('{store}/timings/{id}','ManageController@timingsDestroy');
+    Route::delete('{store}/timings/workmode/{id}','ManageController@timingsDestroyAll');
+
 
     //users
     Route::get('{store}/users','ManageController@users');

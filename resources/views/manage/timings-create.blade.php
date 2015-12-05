@@ -30,18 +30,26 @@
                     {!! Form::open(array('url' => '/manage/'.$store->slug.'/timings', 'class'=>'form-horizontal' ) ) !!}
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Wrok Mode</label>
+                            <label class="col-md-4 control-label">Work Mode</label>
                             <div class="col-md-6">
                                 {!! Form::select('workmode_id', $workmodes_list, null, ['class'=>'form-control'] ) !!}
                             </div>
                         </div>
+                        
                         <div class="form-group">
+                            <label class="col-md-4 control-label">Everyday</label>
+                            <div class="col-md-6">
+                                {!! Form::checkbox('everyday', null, null, ['v-model'=>'everydayCheck'] ) !!}
+                            </div>
+                        </div>
+
+                        <div class="form-group" v-show="!everydayCheck">
                             <label class="col-md-4 control-label">Day</label>
                             <div class="col-md-6">
                                 {!! Form::select('day', \Config::get('vars.days'), null, ['class'=>'form-control'] ) !!}
-
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="col-md-4 control-label">Start Time</label>
                             <div class="col-md-6">
@@ -74,5 +82,32 @@
 
 @endsection
 
+
 @section('footer')
-@endsection
+<script type="text/javascript">
+
+    var vm = new Vue({
+    el: '#defaultMainContainer',
+    data:{
+        
+    },
+
+    ready: function(){
+    
+    },
+
+    computed: {
+      percentAddress: function(){
+
+      },
+
+    },
+
+    methods:{
+
+    } // methods
+
+  })
+
+</script>
+@stop

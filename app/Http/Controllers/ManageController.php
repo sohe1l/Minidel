@@ -1319,17 +1319,17 @@ class ManageController extends Controller
     }
 
 
-    public function timingsCreate(Request $request, $storeSlug)
+    public function timingsCreate(Request $request, $storeSlug, $workmodeid)
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
 
-        $workmodes = \App\Workmode::all();
-        $workmodes_list = array();
-        foreach($workmodes as $workmode)
-                $workmodes_list[$workmode->id] = $workmode->name;
+        $workmodes = \App\Workmode::findOrFail($workmodeid);
+        $workmodes_list = [];
+        //foreach($workmodes as $workmode)
+                $workmodes_list[$workmodes->id] = $workmodes->name;
 
 
         return view('manage.timings-create',compact('store','workmodes_list'));
@@ -1359,25 +1359,59 @@ class ManageController extends Controller
             ->withInput();
         }
 
+        if($request->everyday == "on" || $request->everyday == true){ //everyday
 
-        //check that interval is not interfearing with another timings in the same mode
+            flash('Timing created successfully.'); // set flash first if there is error it will be overwritten
 
-        $timing = $store->timings()->where('workmode_id',$request->workmode_id)->where('day',$request->day);
-        $timing = $timing ->where(function ($query) use ($request){
-            $query->whereBetween('start', [$request->start,$request->end])
-                  ->orwhereBetween('end', [$request->start,$request->end]);
-        })->get();
+            foreach(\Config::get('vars.days') as $day => $Day){
 
-        if($timing->count() != 0){
-            return back()
-            ->withInput()
-            ->withErrors("Timing could not be created due to an conflict with your current timings.")
-            ->withInput();
+                //check that interval is not interfearing with another timings in the same mode
+                $timing = $store->timings()->where('workmode_id',$request->workmode_id)->where('day',$day);
+                $timing = $timing ->where(function ($query) use ($request){
+                    $query->whereBetween('start', [$request->start,$request->end])
+                          ->orwhereBetween('end', [$request->start,$request->end])
+                          ->orWhere(function ($q) use ($request){
+                            $q->where('start', '<=', $request->start)->where('end','>=',$request->end);
+                          });
+                })->get();
+
+                if($timing->count() != 0){
+                    flash("One or more timings conflicted with your existing ones. Double check the created.");
+                }else{
+                    $timing =  $store->timings()->create([
+                                                        'workmode_id' => $request->workmode_id,
+                                                        'start' => $request->start,
+                                                        'end' => $request->end,
+                                                        'day' => $day,
+                                                        ]);
+                }
+            }
+            
+        }else{ // singleday
+
+            //check that interval is not interfearing with another timings in the same mode
+            $timing = $store->timings()->where('workmode_id',$request->workmode_id)->where('day',$request->day);
+            $timing = $timing ->where(function ($query) use ($request){
+                $query->whereBetween('start', [$request->start,$request->end])
+                      ->orwhereBetween('end', [$request->start,$request->end])
+                      ->orWhere(function ($q) use ($request){
+                            $q->where('start', '<=', $request->start)->where('end','>=',$request->end);
+                        });
+            })->get();
+
+            if($timing->count() != 0){
+                return back()
+                ->withInput()
+                ->withErrors("Timing could not be created due to an conflict with your current timings.")
+                ->withInput();
+            }
+
+
+            $timing =  $store->timings()->create($request->all());
+            flash('Timing created successfully.');
         }
 
 
-        $timing =  $store->timings()->create($request->all());
-        flash('Timing created successfully.');
         return redirect('/manage/' . $storeSlug . '/timings' );
     }
 
@@ -1394,6 +1428,18 @@ class ManageController extends Controller
         return redirect('/manage/' . $storeSlug . '/timings' );
     }
 
+    public function timingsDestroyAll(Request $request, $storeSlug, $workmode_id)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null ) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $timing = $store->timings()->where('workmode_id',$workmode_id)->delete();
+
+        flash('Timings deleted successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/timings' );
+    }
 
 
 
