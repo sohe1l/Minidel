@@ -387,8 +387,12 @@ class ManageController extends Controller
             $constraint->upsize();
         });
 
+        $canvas = \Image::canvas($image->width(), $image->height(), 'ffffff');
+        $canvas->insert($image);
 
-        $image->save($this->logoBase.$photoFileName);
+        $canvas->save($this->logoBase.$photoFileName);
+
+        //$image->save($this->logoBase.$photoFileName);
 
         //update db
         $store->logo = $photoFileName;
