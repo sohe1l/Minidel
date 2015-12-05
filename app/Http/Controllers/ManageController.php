@@ -347,13 +347,31 @@ class ManageController extends Controller
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
-        //validate request
-        $this->validate($request, [
-            'imagefile' => 'required|mimes:jpg,jpeg,png,bmp'
-        ]);
 
 
-        $file = $request->file('imagefile');
+       if($request->file_type == 'upload'){
+            //validate request
+            $this->validate($request, [
+                'imagefile' => 'required|mimes:jpg,jpeg,png,bmp'
+            ]);
+
+            $file = $request->file('imagefile')->getRealPath();
+
+        }else if($request->file_type == 'fetch'){
+            $this->validate($request, [
+                'imgurl' => 'required|url'
+            ]);
+
+            //Guzzle
+            $client = new Client();
+            $response = $client->request('GET', $request->imgurl);
+            $body = $response->getBody();
+            $file = (string) $body;
+
+        }else{
+            flash('Unknown error ref:mcp402.');
+            return redirect('/manage/' . $storeSlug . '/general' );
+        }
 
         //delete old logo
         if($store->logo) \File::delete($this->logoBase. $store->logo); 
@@ -361,7 +379,7 @@ class ManageController extends Controller
         //store the new image
         $photoFileName = time() . '-' . $store->slug . '-' . str_random(2) . '.jpg' ;
 
-        $image = \Image::make($file->getRealPath());
+        $image = \Image::make($file);
 
         // prevent possible upsizing
         $image->resize(150, null, function ($constraint) {
@@ -386,13 +404,31 @@ class ManageController extends Controller
         if($store == null ) abort(404);
         if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
-        //validate request
-        $this->validate($request, [
-            'imagefile' => 'required|mimes:jpg,jpeg,png,bmp'
-        ]);
+        if($request->file_type == 'upload'){
+            //validate request
+            $this->validate($request, [
+                'imagefile' => 'required|mimes:jpg,jpeg,png,bmp'
+            ]);
 
+            $file = $request->file('imagefile')->getRealPath();
 
-        $file = $request->file('imagefile');
+        }else if($request->file_type == 'fetch'){
+            $this->validate($request, [
+                'imgurl' => 'required|url'
+            ]);
+
+            //Guzzle
+            $client = new Client();
+            $response = $client->request('GET', $request->imgurl);
+            $body = $response->getBody();
+            $file = (string) $body;
+
+            //$file = file_get_contents($request->imgurl);
+        }else{
+            flash('Unknown error ref:mcp402.');
+            return redirect('/manage/' . $storeSlug . '/general' );
+        }
+
 
         //delete old 
         if($store->cover) \File::delete($this->coverBase. $store->cover); 
@@ -400,10 +436,10 @@ class ManageController extends Controller
 
         //store the new image
         $photoFileName = time() . '-' . $store->slug . '-' . str_random(2) . '.jpg' ;
-        $image = \Image::make($file->getRealPath());
+        $image = \Image::make($file);
         $image->fit(960,320)->save($this->coverBase.$photoFileName);
         //do again for mobile
-        $image = \Image::make($file->getRealPath());
+        $image = \Image::make($file);
         $image->fit(320,180)->save($this->coverMobileBase.$photoFileName);
 
         //update db

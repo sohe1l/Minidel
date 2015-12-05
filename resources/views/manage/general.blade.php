@@ -152,25 +152,39 @@
         <div class="panel-heading">Logo Image</div>
         <div class="panel-body">
 
-            {!! Form::model($store, array('files' => true, 'class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/logo' )) !!}
-            <div class="form-group">
-                <label class="col-md-4 control-label">Current Logo</label>
-                <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3" style="text-align: center; padding-bottom:20px;">
                     <img src="/img/logo/{{ $store->logo or 'placeholder.svg' }}" class="img-thumbnail">
                 </div>
             </div>
 
-
-            <div class="form-group">
-                <label class="col-md-4 control-label">Update Cover</label>
-                <div class="col-md-4">
-                    {!! Form::file('imagefile', $attributes=array('class'=>'')); !!}
+            {!! Form::open(array('files' => true, 'class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/logo' )) !!}
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Update by Upload</label>
+                    <div class="col-md-4">
+                        {!! Form::file('imagefile', $attributes=array('class'=>'')); !!}
+                    </div>
+                    <div class="col-md-2">
+                        <input name="file_type" type="hidden" value="upload">
+                        {!! Form::submit('Upload!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    {!! Form::submit('Update Logo!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
-                </div>
-            </div>
             {!! Form::close() !!}
+
+            {!! Form::open(array('class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/logo' )) !!}
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Update by URL</label>
+                    <div class="col-md-4">
+                        {!! Form::text('imgurl', null, $attributes=array('class'=>'')); !!}
+                    </div>
+                    <div class="col-md-2">
+                        <input name="file_type" type="hidden" value="fetch">
+                        {!! Form::submit('Fetch!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
+                    </div>
+                </div>
+            {!! Form::close() !!}
+
+
         </div>
     </div>
 
@@ -178,25 +192,39 @@
     <div class="panel panel-default">
         <div class="panel-heading">Cover Image</div>
         <div class="panel-body">
-            {!! Form::model($store, array('files' => true, 'class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/cover' )) !!}
-            <div class="form-group">
-                <label class="col-md-4 control-label">Current Cover</label>
-                <div class="col-md-6">
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3" style="padding-bottom:20px;">
                     <img src="/img/cover/{{ $store->cover or 'placeholder.svg' }}" class="img-thumbnail">
                 </div>
             </div>
 
-
+        {!! Form::open(array('files' => true, 'class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/cover' )) !!}
             <div class="form-group">
-                <label class="col-md-4 control-label">Update Cover</label>
+                <label class="col-md-4 control-label">Update by Upload</label>
                 <div class="col-md-4">
                     {!! Form::file('imagefile', $attributes=array('class'=>'')); !!}
                 </div>
                 <div class="col-md-2">
-                    {!! Form::submit('Update Cover!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
+                    <input name="file_type" type="hidden" value="upload">
+                    {!! Form::submit('Upload!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
                 </div>
             </div>
-            {!! Form::close() !!}
+        {!! Form::close() !!}
+
+        {!! Form::open(array('class'=>'form-horizontal', 'url' => '/manage/'.$store->slug.'/cover' )) !!}
+            <div class="form-group">
+                <label class="col-md-4 control-label">Update by URL</label>
+                <div class="col-md-4">
+                    {!! Form::text('imgurl', null, $attributes=array('class'=>'')); !!}
+                </div>
+                <div class="col-md-2">
+                    <input name="file_type" type="hidden" value="fetch">
+                    {!! Form::submit('Fetch!', $attributes=array('class'=>'btn btn-sm btn-primary')); !!}
+                </div>
+            </div>
+        {!! Form::close() !!}
+
         </div>
     </div>
 
