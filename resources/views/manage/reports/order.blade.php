@@ -97,9 +97,11 @@
           @if($order->user_address)
           <blockquote v-show="orders[selectedIndex].user_address">
             @{{ orders[selectedIndex].user_address.name }}
-            @{{ orders[selectedIndex].user_address.phone }}
+            @{{ orders[selectedIndex].user_address.phone }} -
             @{{ orders[selectedIndex].user_address.area.name }}
-            @{{ orders[selectedIndex].user_address.building.name }}
+            @{{ orders[selectedIndex].user_address.building.name }} -
+            @{{ orders[selectedIndex].user_address.unit }}
+            @{{ orders[selectedIndex].user_address.info }}
           </blockquote>     
           @endif           
 

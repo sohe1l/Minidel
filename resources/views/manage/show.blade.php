@@ -17,7 +17,7 @@
     .cart-title, .cart-price {font-weight: bold; font-size: 1.1em;}
     .cart-right {float:right;}
     .btn-warning a {color:white !important;}
-
+    #orderLabels h3{ display: inline-block;}
   </style>
 @endsection
 
@@ -76,17 +76,13 @@
 
     <div v-show="orders[selectedIndex]">
 
-          <h2> 
-            @{{ orders[selectedIndex].user.name }}  
-            <small>@{{ orders[selectedIndex].user.mobile }}</small>
-          </h2>
+          <h2>@{{ orders[selectedIndex].user.name }}  <small>@{{ orders[selectedIndex].user.mobile }}</small></h2>
 
-          <h3>
-            <span class="label label-primary">@{{ orders[selectedIndex].type }}</span>
-            <span class="label label-primary">@{{ orders[selectedIndex].payment_type.name }}</span>
-            <span class="label label-default">@{{ 'Created: ' + orders[selectedIndex].created_at }}</span>
-            <span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span>
-          </h3>
+          <div id="orderLabels">
+          <h3><span class="label label-primary">@{{ orders[selectedIndex].type }}</span></h3>
+          <h3><span class="label label-primary">@{{ orders[selectedIndex].payment_type.name }}</span></h3>
+          <h3><span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span></h3>
+          </div>
 
           <br>
 
@@ -131,9 +127,11 @@
 
           <blockquote v-show="orders[selectedIndex].user_address">
             @{{ orders[selectedIndex].user_address.name }}
-            @{{ orders[selectedIndex].user_address.phone }}
+            @{{ orders[selectedIndex].user_address.phone }} -
             @{{ orders[selectedIndex].user_address.area.name }}
-            @{{ orders[selectedIndex].user_address.building.name }}
+            @{{ orders[selectedIndex].user_address.building.name }} -
+            @{{ orders[selectedIndex].user_address.unit }}
+            @{{ orders[selectedIndex].user_address.info }}
           </blockquote>                
 
           <blockquote v-show="orders[selectedIndex].instructions" style="border-left:5px solid #F34F4F">
@@ -147,7 +145,7 @@
 
 
 
-          <div style="font-size: 1.8em" class="hidden-print">
+          <div style="font-size: 1.3em" class="hidden-print">
             <span v-class="label:true, 
                           label-default:orders[selectedIndex].status != 'pending', 
                           label-warning:orders[selectedIndex].status == 'pending'">Pending</span>
@@ -216,6 +214,8 @@
               <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
             </span>
           </div>
+
+          <small>Order created at @{{ orders[selectedIndex].created_at }}</small>
 
     </div>
 

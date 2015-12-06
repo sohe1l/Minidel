@@ -32,6 +32,7 @@
                 @if(\Session::get('hasRole', false) == true)
                 <li class="visible-xs"><a href="/manage/">Manage Stores</a></li>
                 @endif
+                <li class="visible-xs"><a href="/dashboard/">Dashboard</a></li>
                 <li class="visible-xs"><a href="/dashboard/order/">Order</a></li>
                 <li class="visible-xs"><a href="/dashboard/orders">Orders</a></li>
                 <li class="visible-xs"><a href="/dashboard/address">Your Address</a></li>

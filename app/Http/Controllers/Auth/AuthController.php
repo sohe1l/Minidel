@@ -165,9 +165,9 @@ class AuthController extends Controller
             \Session::put('hasRole', true);
         }
         
-        if($request->redirect && !filter_var($request->redirect, FILTER_VALIDATE_URL) ) return redirect($request->redirect);
+        if($request->redirect && $request->redirect!='/' && !filter_var($request->redirect, FILTER_VALIDATE_URL) ) return redirect($request->redirect);
 
-        return redirect()->intended();
+        return redirect()->intended('/dashboard/');
     }
 
 
