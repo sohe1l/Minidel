@@ -25,7 +25,7 @@
 
     <div>Copy & Paste the following code and forward it to your website moderator to add it to your website.</div>
 
-    <textarea class="form-control" style="height:100px;"><iframe src="http://www.minidel.com/{{$store->slug}}/order/inline" style="width:100%; height:500px;"><a href="http://www.minidel.com/{{$store->slug}}/order/inline" target="_blank">Online Order now from {{$store->name}}</a></iframe></textarea>
+    <textarea class="form-control" style="height:100px;"><iframe src="http://www.minidel.com/{{$store->slug}}/order/inline" style="width:100%; height:900px;"><a href="http://www.minidel.com/{{$store->slug}}/order/inline" target="_blank">Online Order now from {{$store->name}}</a></iframe></textarea>
 
 
   </div>

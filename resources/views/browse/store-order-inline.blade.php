@@ -124,7 +124,46 @@ footer { padding: 30px 0;}
     </div>
     <div class="menuContainer" id="menuContainer">
 
-      <div v-show="!isLogin" class="alert alert-danger" role="alert"><a href="/auth/login/?redirect={{$store->slug}}/order/inline">Click here to login to be able to place orders!</a></div>
+      <div v-show="!isLogin">
+
+      <div class="alert alert-warning" role="alert">
+        Please login to be able to place orders.
+      </div>
+
+          @if (count($errors) > 0)
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <div id="loginFormDiv">
+    <form class="form-inline" role="form" method="POST" action="{{ url('/auth/login') }}">
+      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="redirect" value="dashboard">
+      <div class="form-group" style="text-align: left">
+        <label for="login">Login</label>
+        <input type="text" class="form-control" name="login" id="login" placeholder="Email or Username" value="{{ old('login') }}">
+      </div>
+      <div class="form-group" style="text-align: left">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" name="password" id="password">
+      </div>
+      <div style="text-align: center; padding-top:10px;">
+        <button type="submit" class="btn btn-primary">Login</button>
+        <a href="/auth/register/" class="btn btn-default">Register</a>
+        <a href="/auth/facebook/" class="btn btn-info" style="background:#3b5998; color:white;">Login with Facebook</a>
+      </div>
+    </form>
+
+
+    </div>
+
+
+      </div>
 
       <div v-show="isLogin && !hasAddresses" class="alert alert-warning" role="alert">
         None of your delivery addresses matches the delivery coverage of this resturant.

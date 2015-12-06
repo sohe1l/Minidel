@@ -75,17 +75,22 @@
     <form class="form-inline" role="form" method="POST" action="{{ url('/auth/login') }}">
       <input type="hidden" name="_token" value="{{ csrf_token() }}">
       <input type="hidden" name="redirect" value="dashboard">
-      <div class="form-group">
+      <div class="form-group" style="text-align: left">
         <label for="login">Login</label>
         <input type="text" class="form-control" name="login" id="login" placeholder="Email or Username" value="{{ old('login') }}">
       </div>
-      <div class="form-group">
+      <div class="form-group" style="text-align: left">
         <label for="password">Password</label>
         <input type="password" class="form-control" name="password" id="password">
       </div>
       <button type="submit" class="btn btn-primary">Login</button>
       <a href="/auth/register/" class="btn btn-default">Register</a>
+      <div style="padding-top:10px">
+        <a href="/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+      </div>
     </form>
+
+
     </div>
 @endif
             <div class="col-lg-3 col-xs-6 text-center">
