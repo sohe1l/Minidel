@@ -4,7 +4,7 @@
 <style type="text/css">
 @media(max-width:767px){
         .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
-        #loginFormDiv{text-align:left; padding:80px 10px;}
+        #loginFormDiv{text-align:center; padding:50px 10px;}
         .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
         .service-box h3{font-size:1em;}
         .bigIcon {font-size: 3em;}
@@ -57,7 +57,7 @@
 
  @if (\Auth::user())
     <div id="loginFormDiv">
-        <a href="/dashboard/" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-home"></span> Go to Dashboard</a>
+        <a href="/dashboard/" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-home"></span> Go to Dashboard</a>
     </div>
 @else
     

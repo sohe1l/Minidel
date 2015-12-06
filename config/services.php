@@ -42,7 +42,7 @@ return [
     'facebook' => [
         'client_id' => '1494475447546265',
         'client_secret' => 'f2ff6e679a742eedec0f3afeda1f85c4',
-        'redirect' => 'http://www.c.io/auth/facebook/callback',
+        'redirect' => 'http://www.minidel.com/auth/facebook/callback',
     ],
 
 
