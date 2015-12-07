@@ -154,7 +154,7 @@
             </div>
             <div class="col-xs-6 col-sm-4 col-sm-offset-2 text-center">
                 <i class="glyphicon glyphicon-earphone bigIconSecond"></i>
-                <p><a href="tel:+971504567960" style="font-size: 1.5em; font-family: lane;">+971507687808</a></p>
+                <p><a href="tel:+971504567960" style="font-size: 1.5em; font-family: lane;">+971504567960</a></p>
             </div>
             <div class="col-xs-6 col-sm-4 text-center">
                 <i class="glyphicon glyphicon-envelope bigIconSecond"></i>

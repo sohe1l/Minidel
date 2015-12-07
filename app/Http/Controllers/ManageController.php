@@ -319,7 +319,7 @@ class ManageController extends Controller
             'name' => 'required|max:100',
             'phone' => 'required|max:100',
             'email' => 'required|email',
-            'info' => 'required',
+            'info' => 'string',
             'status_working' => 'required|in:open,close,busy',
             'accept_orders' => 'required|boolean',
         ]);

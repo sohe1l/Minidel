@@ -198,7 +198,7 @@
 
     </div>
 
-
+@{{ selectedIndex }}
 
 
 
@@ -229,6 +229,7 @@
     data:{
       orders:[],
       selectedId:0,
+      loadedFirstTime:true,
     },
     ready: function(){
       this.updateOrders();
@@ -265,6 +266,8 @@
         .done(function(data) { //update orders
           that.orders = data['orders'];
           that.checkPending();
+          if(that.loadedFirstTime) that.selectedId = that.orders[that.orders.length - 1]['id'];
+          that.loadedFirstTime = false;
         })
         .fail( function(xhr, status, error) {
           alert("Error Occured");
