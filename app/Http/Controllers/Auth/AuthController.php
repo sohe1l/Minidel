@@ -79,6 +79,10 @@ class AuthController extends Controller
 
         $mailer->sendEmailConfirmationTo($user);
 
+        //set session to be check for redirections
+        \Session::put('newuser_address', true);
+
+
         flash("Please check your inbox for the confirmation email.");
         
         return redirect('auth/login');
@@ -319,6 +323,10 @@ class AuthController extends Controller
             Auth::login($user);
 
             flash("Please choose a username to continue!");
+
+            //set session to be check for redirections
+            \Session::put('newuser_profile', true);
+            \Session::put('newuser_address', true);
 
             return redirect("/dashboard/general/");
         }

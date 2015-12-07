@@ -276,6 +276,12 @@ class DashboardController extends Controller
         $user->mobile = $request->mobile;
         $user->save();
 
+        if(\Session::get('newuser_profile', false) == true){
+            \Session::put('newuser_profile', false);
+            flash('Your profile saved successfully. Please add your address below.');
+            return redirect('/dashboard/address/create');
+        }
+
         flash('Your information updated successfully.');
 
         return redirect('/dashboard/general/');
@@ -387,6 +393,12 @@ class DashboardController extends Controller
         ]);
 
         $user = \Auth::user()->addresses()->create($request->all());
+
+        if(\Session::get('newuser_address', false) == true){
+            \Session::put('newuser_address', false);
+            flash('Address created successfully. You can make your first order now.');
+            return redirect('/dashboard/order');
+        }
 
         flash('Address created successfully.');
         return redirect('/dashboard');
