@@ -16,7 +16,7 @@
 //  \DB::connection()->enableQueryLog();
 
 
-Route::post('test/php', function () {
+Route::get('test/php', function () {
     phpinfo();
 });
 
