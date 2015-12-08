@@ -13,8 +13,14 @@
 
 
 
+//  \DB::connection()->enableQueryLog();
 
-      //  \DB::connection()->enableQueryLog();
+
+Route::post('test/php', function () {
+    phpinfo();
+});
+
+
 
 
 Route::get('payment','PaypalController@paymentTest');
