@@ -210,7 +210,7 @@ footer { padding: 30px 0;}
   </div>
 
 
-  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: lane;"> 
+  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: Futura, 'Trebuchet MS', Arial, sans-serif;"> 
 
     <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="150" id="cartContainer">
       <h4 style="margin:0; color: #fe602c;">Your Order</h4>
