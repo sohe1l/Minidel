@@ -86,7 +86,7 @@
       <button type="submit" class="btn btn-primary">Login</button>
       <a href="/auth/register/" class="btn btn-default">Register</a>
       <div style="padding-top:10px">
-        <a href="/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
       </div>
     </form>
 

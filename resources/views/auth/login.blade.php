@@ -56,7 +56,7 @@
                                 <hr>
                             </div>
                             <div class="col-md-12" style="padding-top:15px; text-align: center">
-                                <a href="/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+                                <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
                             </div>
                         </div>
                     </form>
