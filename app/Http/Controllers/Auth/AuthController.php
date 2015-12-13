@@ -138,7 +138,7 @@ class AuthController extends Controller
 
         $user->name = $data['name'];
         $user->gender = $data['gender'];
-        $user->dob = $data['dob'];
+        //$user->dob = $data['dob'];
         $user->mobile = $data['mobile'];
 
         $user->email = $data['email'];
