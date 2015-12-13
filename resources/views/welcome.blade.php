@@ -2,21 +2,31 @@
 
 @section('head')
 <style type="text/css">
-@media(max-width:767px){
-        .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
-        #loginFormDiv{text-align:center; padding:50px 10px;}
-        .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
-        .service-box h3{font-size:1em;}
-        .bigIcon {font-size: 3em;}
-        #locationsMap {height:250px; width:100%}
+.service-box{padding-bottom: 20px;}
 
+@media(max-width:767px){
+    .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
+    #loginFormDiv{text-align:center; padding:50px 10px;}
+    .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
+    .service-box h3{font-size:1em;}
+    .bigIcon {font-size: 2em;}
+    #locationsMap {height:250px; width:100%}
 }
 @media(min-width:768px){
-        .indexFirst{padding:550px 0 10px 1em; font-size:2.75em;}
-        #loginFormDiv{text-align:center; padding:80px 10px;}
-        .indexText{font-size: 2em; font-family: lane; text-align: center;}
-        .bigIcon {font-size: 4em;}
-        #locationsMap {height:450px; width:90%;}
+    .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
+    #loginFormDiv{text-align:center; padding:50px 10px;}
+    .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
+    .service-box h3{font-size:1.2em;}
+    .bigIcon {font-size: 3em;}
+    #locationsMap {height:250px; width:100%}
+}
+
+@media(min-width:992px){
+    .indexFirst{padding:550px 0 10px 1em; font-size:2.75em;}
+    #loginFormDiv{text-align:center; padding:80px 10px;}
+    .indexText{font-size: 2em; font-family: lane; text-align: center;}
+    .bigIcon {font-size: 4em;}
+    #locationsMap {height:450px; width:90%;}
 }
 
   .indexFirst{
@@ -49,10 +59,12 @@
 
 
         <div class="row" style="padding:35px 10px;">
-            <div class="col-xs-12">
+
+            <div class="col-xs-12" style="padding:35px 10px;">
                 <div style="color:#fe602c; font-family: lane; text-align: center; font-size:3em">What is minidel?</div>
                 <div class="indexText">Minidel (Mini + deliveries) is a ordering service that let you order from stores that are close to you with <b>No Delivery Charge</b> and <b>No Minimum Delivery Amount</b>. You can order anything as small as a cup of coffee or your grocories.</div>
-            
+            </div>
+        
 
 
  @if (\Auth::user())
@@ -93,28 +105,34 @@
 
     </div>
 @endif
-            <div class="col-lg-3 col-xs-6 text-center">
+
+
+
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
-                    <i class="glyphicon glyphicon-apple reddish bigIcon"></i>
-                    <h3>Easy To Use</h3>
-                    <p class="text-muted">You will have live update about your order anytime.</p>
+                    <span class="glyphicon glyphicon-usd reddish bigIcon"></span>
+                    <h3>Special Discounts</h3>
+                    <p class="text-muted">Discount targeted to your location!</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-xs-6 text-center">
+
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
-                    <span class="glyphicon glyphicon-glass reddish bigIcon"></span>
-                    <h3>No Minimum Order</h3>
-                    <p class="text-muted">Order a cup of coffee from your nearby stores that offers you no minimum order!</p>
+                    <span class="glyphicon glyphicon-earphone reddish bigIcon"></span>
+                    <h3>No Busy Lines</h3>
+                    <p class="text-muted">Don't waste your time over phone!</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-xs-6 text-center">
+
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
-                    <span class="glyphicon glyphicon-eur reddish bigIcon"></span>
-                    <h3>No Delivery Charges</h3>
-                    <p class="text-muted">Do not pay extra for delivery charges.</p>
+                    <span class="glyphicon glyphicon-random reddish bigIcon"></span>
+                    <h3>No Wrong Order</h3>
+                    <p class="text-muted">No misunderstanding over the phone!</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-xs-6 text-center">
+
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
                     <span class="glyphicon glyphicon-heart reddish bigIcon"></span>
                     <h3>Made with Love</h3>
@@ -123,9 +141,36 @@
             </div>
 
 
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
+                <div class="service-box">
+                    <i class="glyphicon glyphicon-apple reddish bigIcon"></i>
+                    <h3>Easy To Use</h3>
+                    <p class="text-muted">live update about your order!</p>
+                </div>
+            </div>
 
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
+                <div class="service-box">
+                    <span class="glyphicon glyphicon-list-alt reddish bigIcon"></span>
+                    <h3>Thousands of Items</h3>
+                    <p class="text-muted">Order from many stores listed!</p>
+                </div>
+            </div>
 
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
+                <div class="service-box">
+                    <span class="glyphicon glyphicon-glass reddish bigIcon"></span>
+                    <h3>No Minimum Order</h3>
+                    <p class="text-muted">Order as small as cup of coffee!</p>
+                </div>
+            </div>
 
+            <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
+                <div class="service-box">
+                    <span class="glyphicon glyphicon-eur reddish bigIcon"></span>
+                    <h3>No Delivery Charges</h3>
+                    <p class="text-muted">Do not pay extra for delivery!</p>
+                </div>
             </div>
 
 
