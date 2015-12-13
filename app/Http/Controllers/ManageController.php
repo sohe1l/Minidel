@@ -441,10 +441,10 @@ class ManageController extends Controller
         //store the new image
         $photoFileName = time() . '-' . $store->slug . '-' . str_random(2) . '.jpg' ;
         $image = \Image::make($file);
-        $image->fit(960,320)->save($this->coverBase.$photoFileName);
+        $image->fit(1200,390)->save($this->coverBase.$photoFileName);
         //do again for mobile
         $image = \Image::make($file);
-        $image->fit(320,180)->save($this->coverMobileBase.$photoFileName);
+        $image->fit(400,130)->save($this->coverMobileBase.$photoFileName);
 
         //update db
         $store->cover = $photoFileName;

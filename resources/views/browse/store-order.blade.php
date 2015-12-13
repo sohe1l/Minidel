@@ -93,13 +93,18 @@ footer { padding: 30px 0;}
   </small>
 </h3>
 
+<div class="hidden-xs" style="position: relative; margin-bottom: 20px;">
+  <img src="/img/cover/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
+  <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%;">
+</div>
+
 <div class="row row-offcanvas row-offcanvas-right">
 
 
   <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-    <div style="position: relative; margin-bottom: 20px;">
-      <img src="/img/cover/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
-      <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%;">
+    <div class="visible-xs" style="position: relative; margin-bottom: 20px;">
+      <img src="/img/cover-mobile/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
+      <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%; max-height:100px;">
     </div>
 
 
@@ -155,7 +160,7 @@ footer { padding: 30px 0;}
       </div>
       
       @forelse ($store->sections->where('menu_section_id',null)->where('available',1) as $section)              
-        <div class="panel panel-default" style="margin-bottom:0; border:0;">
+        <div class="panel panel-danger" style="margin-bottom:0; border:0;">
           <div class="panel-heading">
           
         <a class="collapsed collapseCnt" role="button" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}" style="font-size:1.2em">
@@ -192,7 +197,7 @@ footer { padding: 30px 0;}
 
   <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: Futura, 'Trebuchet MS', Arial, sans-serif;"> 
 
-    <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="150" id="cartContainer">
+    <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="800" id="cartContainer">
       <h4 style="margin:0; color: #fe602c;">Your Order</h4>
 
       <div v-show="isLogin && !orderComplete">
