@@ -198,9 +198,6 @@
 
     </div>
 
-@{{ selectedIndex }}
-
-
 
   </div>
 </div>

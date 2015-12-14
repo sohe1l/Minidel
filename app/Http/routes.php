@@ -69,6 +69,7 @@ Route::get('pages/contact','PagesController@contact');
 Route::get('pages/privacy','PagesController@privacy');
 Route::get('pages/terms','PagesController@terms');
 Route::get('pages/about','PagesController@about');
+Route::get('pages/faq','PagesController@faq');
 Route::get('pages/test','PagesController@test');
 
 

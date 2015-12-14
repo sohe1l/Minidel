@@ -119,6 +119,9 @@ h1, .h1, h2, .h2, h3, .h3 {
   list-style-type: none;
   font-family: Futura, 'Trebuchet MS', Arial, sans-serif; }
 
+.footerLinks a {
+  color: #8E8E8E !important; }
+
 .footerRow {
   /* background-color: #FAFAFA;
     border-top:1px solid #F0F0F0;  */

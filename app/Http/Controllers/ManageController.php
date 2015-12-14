@@ -1858,7 +1858,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403); // SUPERADMIN
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
 
         return view('manage.zomato.index',compact('store'));
     }
@@ -1890,8 +1890,8 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403); // SUPERADMIN
-
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        
         \DB::beginTransaction();
 
         $this->validate($request, [

@@ -58,56 +58,56 @@
 
 
 
-        <div class="row" style="padding:35px 10px;">
+        <div class="row">
 
             <div class="col-xs-12" style="padding:35px 10px;">
                 <div style="color:#fe602c; font-family: lane; text-align: center; font-size:3em">What is minidel?</div>
-                <div class="indexText">Minidel (Mini + deliveries) is a ordering service that let you order from stores that are close to you with <b>No Delivery Charge</b> and <b>No Minimum Delivery Amount</b>. You can order anything as small as a cup of coffee or your grocories.</div>
+                <div class="indexText">Minidel (Mini + Deliveries) let you order from nearby stores with <b>No Delivery Charge</b> and <b>No Minimum Delivery</b>. You can order anything as small as a cup of coffee or your grocories.</div>
             </div>
         
 
 
- @if (\Auth::user())
-    <div id="loginFormDiv">
-        <a href="/dashboard/" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-home"></span> Go to Dashboard</a>
-    </div>
-@else
-    
-    @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <strong>Whoops!</strong> There were some problems with your input.<br><br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+             @if (\Auth::user())
+                <div id="loginFormDiv">
+                    <a href="/dashboard/" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-home"></span> Go to Dashboard</a>
+                </div>
+            @else
+                
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <div id="loginFormDiv">
+                <form class="form-inline" role="form" method="POST" action="{{ url('/auth/login') }}">
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="redirect" value="dashboard">
+                  <div class="form-group" style="text-align: left">
+                    <label for="login">Login</label>
+                    <input type="text" class="form-control" name="login" id="login" placeholder="Email or Username" value="{{ old('login') }}">
+                  </div>
+                  <div class="form-group" style="text-align: left">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password" id="password">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Login</button>
+                  <a href="/auth/register/" class="btn btn-default">Register</a>
+                  <div style="padding-top:10px">
+                    <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+                  </div>
+                </form>
+
+
+                </div>
+            @endif
+
         </div>
-    @endif
-    <div id="loginFormDiv">
-    <form class="form-inline" role="form" method="POST" action="{{ url('/auth/login') }}">
-      <input type="hidden" name="_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="redirect" value="dashboard">
-      <div class="form-group" style="text-align: left">
-        <label for="login">Login</label>
-        <input type="text" class="form-control" name="login" id="login" placeholder="Email or Username" value="{{ old('login') }}">
-      </div>
-      <div class="form-group" style="text-align: left">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" name="password" id="password">
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-      <a href="/auth/register/" class="btn btn-default">Register</a>
-      <div style="padding-top:10px">
-        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
-      </div>
-    </form>
-
-
-    </div>
-@endif
-
-
-
+        <div class="row hidden-xs">
             <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
                     <span class="glyphicon glyphicon-usd reddish bigIcon"></span>
@@ -176,7 +176,7 @@
 
         </div>
 
-        <div class="row" style="background-color: #f05f40; padding: 40px 10px;">
+        <div class="row hidden-xs" style="background-color: #f05f40; padding: 40px 10px;">
             <div class="col-xs-12" style="">
                 <div style="color:white; text-align: center; font-size:2em; padding:15px; font-family: lane;">Where can you order?</div>
                 <div style="text-align: center; padding:10px;">
@@ -191,7 +191,7 @@
 
 
 
-        <div class="row" style="padding: 80px 10px; background-color: #F3F3F3; margin-bottom: -20px;">
+        <div class="row hidden-xs" style="padding: 80px 10px; background-color: #F3F3F3; margin-bottom: -20px;">
             <div class="col-lg-8 col-lg-offset-2 text-center" style="margin-bottom:40px;">
                 <h2 style=" text-align: center; font-size:2em">Let's Get In Touch!</h2>
                 <hr class="primary">
