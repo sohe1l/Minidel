@@ -751,7 +751,7 @@ class ManageController extends Controller
         //validate request
         $this->validate($request, [
             'menu_section_id' => 'required|integer',
-            'title' => 'required|max:30',
+            'title' => 'required|max:80',
             'info' => 'max:200',
             'price' => 'required|numeric',
             'imagefile' => 'mimes:jpg,jpeg,png,bmp',
@@ -850,7 +850,7 @@ class ManageController extends Controller
         //validate request
         $this->validate($request, [
             'menu_section_id' => 'required|integer',
-            'title' => 'required|max:30',
+            'title' => 'required|max:80',
             'info' => 'max:200',
             'price' => 'required|numeric',
             'imagefile' => 'mimes:jpg,jpeg,png,bmp'
@@ -1043,14 +1043,14 @@ class ManageController extends Controller
 
         //validate request
         $this->validate($request, [
-            'name' => 'required|max:30',
+            'name' => 'required|max:80',
             'min' => 'required|integer',
             'max' => 'required|integer',
 
-            'name1' => 'required|max:30', 'name2' => 'max:30', 'name3' => 'max:30', 'name4' => 'max:30', 'name5' => 'max:30',
-            'name6' => 'max:30', 'name7' => 'max:30', 'name8' => 'max:30', 'name9' => 'max:30', 'name10' => 'max:30',
-            'name11' => 'max:30', 'name12' => 'max:30', 'name13' => 'max:30', 'name14' => 'max:30', 'name15' => 'max:30',
-            'name16' => 'max:30', 'name17' => 'max:30', 'name18' => 'max:30', 'name19' => 'max:30', 'name20' => 'max:30',
+            'name1' => 'required|max:80', 'name2' => 'max:80', 'name3' => 'max:80', 'name4' => 'max:80', 'name5' => 'max:80',
+            'name6' => 'max:80', 'name7' => 'max:80', 'name8' => 'max:80', 'name9' => 'max:80', 'name10' => 'max:80',
+            'name11' => 'max:80', 'name12' => 'max:80', 'name13' => 'max:80', 'name14' => 'max:80', 'name15' => 'max:80',
+            'name16' => 'max:80', 'name17' => 'max:80', 'name18' => 'max:80', 'name19' => 'max:80', 'name20' => 'max:80',
 
             'price1' => 'numeric', 'price2' => 'numeric', 'price3' => 'numeric', 'price4' => 'numeric', 'price5' => 'numeric',
             'price6' => 'numeric', 'price7' => 'numeric', 'price8' => 'numeric', 'price9' => 'numeric', 'price10' => 'numeric',
@@ -1127,14 +1127,14 @@ class ManageController extends Controller
 
         //validate request
         $this->validate($request, [
-            'name' => 'required|max:30',
+            'name' => 'required|max:80',
             'min' => 'required|integer',
             'max' => 'required|integer',
 
-            'name1' => 'required|max:30', 'name2' => 'max:30', 'name3' => 'max:30', 'name4' => 'max:30', 'name5' => 'max:30',
-            'name6' => 'max:30', 'name7' => 'max:30', 'name8' => 'max:30', 'name9' => 'max:30', 'name10' => 'max:30',
-            'name11' => 'max:30', 'name12' => 'max:30', 'name13' => 'max:30', 'name14' => 'max:30', 'name15' => 'max:30',
-            'name16' => 'max:30', 'name17' => 'max:30', 'name18' => 'max:30', 'name19' => 'max:30', 'name20' => 'max:30',
+            'name1' => 'required|max:80', 'name2' => 'max:80', 'name3' => 'max:80', 'name4' => 'max:80', 'name5' => 'max:80',
+            'name6' => 'max:80', 'name7' => 'max:80', 'name8' => 'max:80', 'name9' => 'max:80', 'name10' => 'max:80',
+            'name11' => 'max:80', 'name12' => 'max:80', 'name13' => 'max:80', 'name14' => 'max:80', 'name15' => 'max:80',
+            'name16' => 'max:80', 'name17' => 'max:80', 'name18' => 'max:80', 'name19' => 'max:80', 'name20' => 'max:80',
 
             'price1' => 'numeric', 'price2' => 'numeric', 'price3' => 'numeric', 'price4' => 'numeric', 'price5' => 'numeric',
             'price6' => 'numeric', 'price7' => 'numeric', 'price8' => 'numeric', 'price9' => 'numeric', 'price10' => 'numeric',
