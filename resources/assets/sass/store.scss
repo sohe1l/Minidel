@@ -40,7 +40,7 @@
 
 .cart-row {border-bottom: 1px solid #D0D0D0;     padding: 7px 0;}
 .cart-title, .cart-price {font-weight: bold; font-size: 1.2em; color: #fe602c;}
-.cart-options{ font-size: 1em;}
+.cart-options{ padding: 5px 0;}
 .cart-right {float:right;}
 
 .cart-row .glyphicon{font-size: 90%; color:#545454; }
@@ -48,26 +48,27 @@
 @media(max-width:767px){
   .affix { position: static; }
   #headingSmall {font-size:0.6em;}
-  #cartContainer{ width: 100% }
+  /* #cartContainer{ width: 100% } */
   .container {padding:0;}
 
 }
 @media(min-width:768px){
   #storePhone {float:right}
+  /*
   #cartContainer{ width: 240px }
   .menuSections{ width:100px; float:left; }
   .menuSections table{ width: 100px; font-size:1.1em;}
-  .menuContainer{ width: calc(100% - 100px - 15px); margin-left: 15px; float:left;}
+  .menuContainer{ width: calc(100% - 100px - 15px); margin-left: 15px; float:left;} */
 }
 @media(min-width:992px){
-  #cartContainer{ width: 320px }
+  /* #cartContainer{ width: 320px }
   .menuSections{ width:130px; float:left; }
   .menuSections table{ width: 130px; font-size:1.2em;}
-  .menuContainer{ width: calc(100% - 130px - 15px); margin-left: 15px; float:left;}
+  .menuContainer{ width: calc(100% - 130px - 15px); margin-left: 15px; float:left;} */
 }
 @media(min-width:1200px){
-  #cartContainer{ width: 390px }
+  /* #cartContainer{ width: 390px }
   .menuSections{ width:200px; float:left; }
   .menuSections table{ width: 200px; font-size:1.3em;}
-  .menuContainer{ width: calc(100% - 200px - 15px); margin-left: 15px; float:left;}
+  .menuContainer{ width: calc(100% - 200px - 15px); margin-left: 15px; float:left;} */
 }

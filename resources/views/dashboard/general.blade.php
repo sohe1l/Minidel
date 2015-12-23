@@ -23,6 +23,8 @@
 
   @include('errors.list')
 
+<?php if(\Session::get('newuser_profile', false) == false){ ?>
+
     {!! Form::model($user, ['files' => true, 'class'=>'form-horizontal', 'url'=>'/dashboard/dp' ]) !!}
 
       <h4>Profile Picture</h4>
@@ -47,6 +49,9 @@
     {!! Form::close() !!}
 
     <hr>
+    
+<?php } ?>
+
 
     {!! Form::model($user, ['class'=>'form-horizontal', 'url'=>'/dashboard/general' ]) !!}
 
@@ -70,12 +75,14 @@
             </div>
         </div>
 
+<?php /*
         <div class="form-group">
             <label class="col-md-4 control-label">Date of Birth</label>
             <div class="col-md-6">
               {!! Form::date('dob', null, array('class' => 'form-control')) !!}
             </div>
         </div>
+*/ ?>
 
         <div class="form-group">
             <label class="col-md-4 control-label">Mobile</label>
@@ -114,13 +121,7 @@
     </div>
 </div>
 
-
-
-
-<div id="insert">
-</div>
-
-
+<div id="insert"></div>
 
 @endsection
 

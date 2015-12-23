@@ -29,6 +29,7 @@ footer { padding: 30px 0;}
     font-size: 0.9em;
 }
 
+
 #storeDiv li{
     border-bottom: 1px solid #E4E4E4;
     border-radius: 0 !important;
@@ -94,59 +95,53 @@ footer { padding: 30px 0;}
 </h3>
 
 <div class="hidden-xs" style="position: relative; margin-bottom: 20px;">
-  <img src="/img/cover/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
-  <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%;">
+
+<img src="/img/cover/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
+<?php /*
+  <div style=" background: url(/img/cover/{{ $store->cover}}) no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; height:390px;">
+      </div>  
+  */ ?>
+      <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%;">
 </div>
 
 <div class="row row-offcanvas row-offcanvas-right">
 
+  <div class="hidden-xs hidden-sm col-md-2 col-lg-2" id="menuSectionsParent">
+            <div class="menuSections">
+            <nav data-spy="affix" data-offset-top="420" id="navbar-menu" class="whiteBG">
+            @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
+              <ul class="nav nav-pills nav-stacked">
+                <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}">{{ $section->title }}</a></li>
+              </ul>
 
-  <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+              @foreach ($section->subsections->where('available',1) as $subsection)
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c">{{ $subsection->title }}</a></li>
+                </ul>
+              @endforeach
+            @endforeach
+
+            </nav>
+            <?php /*
+                  <table class="table" data-spy="affix" data-offset-top="310"> 
+                  @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
+                    <tr><td><a href="#section{{$section->id}}">{{ $section->title }}</a></td></tr>
+                    @foreach ($section->subsections->where('available',1) as $subsection)
+                      <tr><td style="font-size:70%;"><a href="#section{{$subsection->id}}">{{ $subsection->title }}</a></td></tr>
+                    @endforeach
+                  @endforeach
+                  </table>
+            */ ?>
+          </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-7 col-md-6 col-lg-6">
     <div class="visible-xs" style="position: relative; margin-bottom: 20px;">
       <img src="/img/cover-mobile/{{ $store->cover}}" class="img-responsive" style="border-radius: 3px;">
       <img src="/img/logo/{{ $store->logo}}" class="img-thumbnail" style="position: absolute; bottom:10px; left:10px; max-width:20%; max-height:100px;">
     </div>
 
-
-
-
-    <div class="hidden-xs menuSections">
-
-
-      <nav data-spy="affix" data-offset-top="420" id="navbar-menu" class="whiteBG">
-        
-
-      @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
-        <ul class="nav nav-pills nav-stacked">
-          <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}">{{ $section->title }}</a></li>
-        </ul>
-
-        @foreach ($section->subsections->where('available',1) as $subsection)
-          <ul class="nav nav-pills nav-stacked">
-            <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c">{{ $subsection->title }}</a></li>
-          </ul>
-        @endforeach
-      @endforeach
-
-      </nav>
-
-
-<?php /*
-      <table class="table" data-spy="affix" data-offset-top="310"> 
-      @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
-        <tr><td><a href="#section{{$section->id}}">{{ $section->title }}</a></td></tr>
-        @foreach ($section->subsections->where('available',1) as $subsection)
-          <tr><td style="font-size:70%;"><a href="#section{{$subsection->id}}">{{ $subsection->title }}</a></td></tr>
-        @endforeach
-      @endforeach
-      </table>
-*/ ?>
-
-      <hr>
-      <small></small>
-
-
-    </div>
+    
     <div class="menuContainer" id="menuContainer">
 
       <div v-show="!isLogin" class="alert alert-danger" role="alert">Please login to be able to place orders.</div>
@@ -195,7 +190,7 @@ footer { padding: 30px 0;}
   </div>
 
 
-  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: Futura, 'Trebuchet MS', Arial, sans-serif;"> 
+  <div class="col-xs-12 col-sm-5 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: Futura, 'Trebuchet MS', Arial, sans-serif;"> 
 
     <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="800" id="cartContainer">
       <h4 style="margin:0; color: #fe602c;">Your Order</h4>
@@ -447,6 +442,7 @@ footer { padding: 30px 0;}
           </table>
  */ ?>
 
+
         <div class="btn-group" role="group">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-success" v-on="click: addItemModal">Add Item</button>
@@ -499,7 +495,7 @@ footer { padding: 30px 0;}
 
 
   //  $(window).bind('resize load', function() {
-    if ($(this).width() < 767) {
+    if ($(this).width() < 992) {
         $('.panel-collapse').removeClass('in');
         $('.panel-collapse').addClass('out');
     } else {
@@ -545,6 +541,8 @@ footer { padding: 30px 0;}
     },
     ready: function(){
       if(this.hasAddresses) this.dorp = "delivery";
+      window.addEventListener('resize', this.handleResize)
+      this.handleResize();
     },
 
 
@@ -632,6 +630,10 @@ footer { padding: 30px 0;}
 
 
     methods:{
+      handleResize: function(){
+        $('#navbar-menu').width( $('#menuSectionsParent').width()  );
+        $('#cartContainer').width( $('#sidebar').width()-30  ); 
+      },
       addIsSelected: function(item){
         var newitem = (JSON.parse(JSON.stringify(item)));
 

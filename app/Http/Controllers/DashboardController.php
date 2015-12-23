@@ -251,7 +251,7 @@ class DashboardController extends Controller
             'name' => 'required|max:255',
             'mobile' => 'required|max:255',
             'gender' => 'size:1',
-            'dob' => 'required|date',
+            'dob' => 'date',
         ]);
 
         if($user->username != $request->username){
