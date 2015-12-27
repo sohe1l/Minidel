@@ -40,7 +40,30 @@
                 <img src="/img/cover/{{ $store->cover or 'placeholder.svg' }}" class="img-responsive visible-xs">
             </div>
             <div class="col-sm-10">
-              <div><h3>{{$store->name}}</h3></div>
+              <div class="clearfix">
+              
+                <h3 style="margin:0px 10px 0px 0;" class="pull-left">{{$store->name}}</h3>
+
+                <div style="margin:5px 0; font-size:85%" class="pull-left">
+                  @if($store->status_listing != 'published')
+                    <span class="label label-warning">{{ $store->status_listing }}</span>
+                  @endif
+
+                  @if($store->status_working != 'open')
+                    <span class="label label-danger">{{ $store->status_working }}</span>
+                  @endif
+
+                  @if($store->accept_order != 1)
+                    <span class="label label-info">Online Orders Closed</span>
+                  @endif
+                </div>
+              </div>
+
+              <div style="margin:5px 0; font-size:85%">
+              {{ $store->city->name or '------' }} - {{ $store->area->name or '------' }} - {{ $store->building->name or '------' }}
+              </div>
+
+
               <div style="font-size:1.1em">
                 <a href="/manage/{{$store->slug}}">Incoming Orders</a> &nbsp;&nbsp;&nbsp;
                 <a href="/manage/{{$store->slug}}/reports/">Reports</a> &nbsp;&nbsp;&nbsp;
