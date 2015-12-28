@@ -57,8 +57,8 @@
                     </a>
 
                     <ul class="dropdown-menu hidden-xs" role="menu">
-                        <li><a href="/{{ \Auth::user()->username }}/">Profile</a></li>
-                        <li class="divider"></li>
+           <?php /*             <li><a href="/{{ \Auth::user()->username }}/">Profile</a></li>
+                        <li class="divider"></li>   */ ?>
                         <li><a href="/dashboard/">Dashboard</a></li>
                         <li class="divider"></li>
                         <li><a href="/dashboard/orders">Orders</a></li>

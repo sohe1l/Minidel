@@ -18,6 +18,7 @@
     .cart-right {float:right;}
     .btn-warning a {color:white !important;}
     #orderLabels h3{ display: inline-block;}
+    .nav-stacked li {background-color: white;}
   </style>
 @endsection
 
@@ -69,6 +70,8 @@
     </ul>
   </div>
   <div class="col-md-9">
+    
+    <div class="alert alert-danger" v-show="error_message != ''" role="alert">@{{error_message}}</div>
 
     <div v-show="!orders[selectedIndex]">
       <h2><small>Here you will recieve incoming orders!</small></h2>
@@ -252,7 +255,8 @@
     data:{
       orders:[],
       selectedId:0,
-      status_working : ''
+      status_working : '',
+      error_message : "",
     },
     ready: function(){
       this.updateOrders();
@@ -287,12 +291,19 @@
           dataType: 'json'
         })
         .done(function(data) { //update orders
-          that.orders = data['orders'];
-          that.status_working = data['status_working'];
-          that.checkPending();
+          that.error_network = 0;
+          that.error_message = "";
+
+          if(data["error"] == 1){
+            that.error_message = data["error_message"];
+          }else{
+            that.orders = data['orders'];
+            that.status_working = data['status_working'];
+            that.checkPending();
+          }
         })
         .fail( function(xhr, status, error) {
-          alert("Error Occured");
+          that.error_message = "Network Error! Make sure you are connected to the internet.";
         })
         .always(function() {
           

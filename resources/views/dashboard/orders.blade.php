@@ -13,6 +13,7 @@
     .cart-right {float:right;}
     .btn-warning a {color:white !important;}
     #orderLabels h3{ display: inline-block;}
+    .nav-stacked li {background-color: white;}
   </style>
 @endsection
 
@@ -42,6 +43,10 @@
     <hr>
   </div>
   <div class="col-md-9">
+
+    <div class="alert alert-danger" v-show="error_network == 1" role="alert">Conection Error! Please make sure you are connected to the internet.</div>
+
+    <div class="alert alert-danger" v-show="error_message != ''" role="alert">@{{error_message}}</div>
 
     <div v-show="!orders[selectedIndex]">
 
@@ -227,6 +232,8 @@
       orders:[],
       selectedId:0,
       loadedFirstTime:true,
+      error_message : "",
+      error_network : 0,
     },
     ready: function(){
       this.updateOrders();
@@ -253,21 +260,29 @@
         $.ajax({
           type: "POST",
           url: "/dashboard/orders/getorders",
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
           data: {
           
           },
-          timeout: 15000,
+          timeout: 20000,
           dataType: 'json'
         })
         .done(function(data) { //update orders
-          that.orders = data['orders'];
-          that.checkPending();
-          if(that.loadedFirstTime) that.selectedId = that.orders[that.orders.length - 1]['id'];
-          that.loadedFirstTime = false;
+          that.error_network = 0;
+          that.error_message = "";
+
+          if(data["error"] == 1){
+            that.error_message = data["error_message"];
+          }else{
+            that.orders = data['orders'];
+            that.checkPending();
+            if(that.loadedFirstTime) that.selectedId = that.orders[that.orders.length - 1]['id'];
+            that.loadedFirstTime = false;
+          }
+
         })
         .fail( function(xhr, status, error) {
-          alert("Error Occured");
+          that.error_network = 1;
         })
         .always(function() {
           
@@ -306,14 +321,21 @@
               hide:hide,
               reason:reason
             },
-            timeout: 15000,
+            timeout: 20000,
             dataType: 'json'
           })
           .done(function(data) { //update orders
-            if(data["error"]==0){ that.orders = data['orders']; that.checkPending();}
+            that.error_network = 0;
+            that.error_message = "";
+
+            if(data["error"]==0){
+              that.orders = data['orders']; that.checkPending();
+            }else{
+              that.error_message = data["error_message"];
+            }
           })
           .fail( function(xhr, status, error) {
-            alert("Error Occured");
+            that.error_network = 1;
           });
 
       },

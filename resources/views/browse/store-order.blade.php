@@ -1,4 +1,4 @@
-@extends('layouts.default')
+<?php $extends = (isset($inline))?'layouts.inline':'layouts.default'; ?>@extends($extends)
 
 @section('bodyProp')data-spy="scroll" data-target="#navbar-menu" style="position: relative"@endsection
 
@@ -344,6 +344,7 @@ footer { padding: 30px 0;}
 
   </div>
 
+  <div style="line-height: 20px; font-size: 80%">Store Last Online: {{ \Carbon\Carbon::parse($store->last_check)->diffForHumans() }}</div>
 
   <div style="line-height: 30px;" v-show="dorp == 'delivery'">
     <span v-if="addressObj.min && addressObj.min!=0" class="label label-info">Minimum Delivery @{{ addressObj.min }}</span>&nbsp;
@@ -800,14 +801,14 @@ footer { padding: 30px 0;}
         })
         .done(function(data) {
           if(data["error"]==1){
-            alert(data["message"]);
+            alert(data["error_message"]);
           }else{
             that.orderComplete = true;
             setTimeout(function(){location.href="/dashboard/orders/"} , 100);   
           }
         })
         .fail( function(xhr, status, error) {
-          alert("Some Error Occured!");
+          alert("Network Error Occured!");
         });
       } // place order
     }, //methods

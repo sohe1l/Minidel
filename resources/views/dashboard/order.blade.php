@@ -247,6 +247,7 @@
         userAddresses: {!! json_encode($user->listAddresses()) !!},
         selected:{'type':'mini', 'address':'', 'time':'now', 'cusine':'', 'city':'', 'area':''},
         stores: [],
+        error_network : 0,
         error_message : '',
         loading : false,
     },
@@ -326,7 +327,7 @@
             if(data["error"]==0){
                 that.stores = data['stores'];
             }else{
-              that.error_message = data['message'];
+              that.error_message = data['error_message'];
             }
             that.loading = false;
         })

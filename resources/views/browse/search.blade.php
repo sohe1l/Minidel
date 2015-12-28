@@ -55,7 +55,9 @@
         </div>
     </div>
 
-    <div style="padding: 2em;font-style: italic;" v-show="stores.length == 0">No stores matches your criteria.</div>
+    <div class="alert alert-danger" v-show="networkErr == 1" role="alert">Conection Error! Please make sure you are connected to the internet.</div>
+
+    <div class="alert alert-warning" v-show="stores.length == 0" role="alert">No stores matches your criteria</div>
 
     <div style="padding-top: 4em; text-align: center" v-show="loading"><img src="/img/ajax-loader.gif"></div>
 
@@ -110,6 +112,7 @@
         stores: {!! json_encode($stores) !!},
         searchQuery: '{{ $searchQuery }}',
         loading : false,
+        networkErr: 0,
     },
 
     ready: function(){
@@ -144,12 +147,17 @@
         })
         .done(function(data) { //update orders
             that.loading = false;
+            that.networkErr = 0;
 
             if(data["error"]==0){
                 that.stores = data['stores'];
             }else{
-                alert(data['message']);
+                alert(data['error_message']);
             }
+        })
+        .fail(function(data){
+          that.loading = false;
+          that.networkErr = 1;
         });
 
       },

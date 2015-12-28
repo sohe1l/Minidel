@@ -2,7 +2,7 @@
     function jsonOut($error, $msg){
         $returnData = array(
             'error' => $error,
-            'message' => $msg
+            'error_message' => $msg
         );
         return response()->json($returnData);
     }
