@@ -1,4 +1,4 @@
-if service mysql status | grep -q “is running“; then
+if service mysql status | grep -q "is running"; then
   echo "OK"
 else
   service mysql restart
