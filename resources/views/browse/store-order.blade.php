@@ -74,6 +74,9 @@ footer { padding: 30px 0;}
     width: 100%; /* 6 columns */
   }
 }
+
+.panel-danger > .panel-heading { background-color: #F9F6F6 }
+
 </style>
 
 
@@ -82,7 +85,7 @@ footer { padding: 30px 0;}
 <div id="storeDiv">
 
 
-<button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button>
+<!-- <button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button> -->
 
 <h3 style="margin-top: 0;">{{ $store->name }} 
 
@@ -473,12 +476,21 @@ footer { padding: 30px 0;}
 </div>
 <!-- Modal Options -->
 
-<button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button>
+<!-- <button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button> -->
+
+<nav class="navbar navbar-default navbar-fixed-bottom visible-xs" style="min-height: 30px; background-color:#FE602C">
+  <div class="container">
+    <button style="width:100%; border-width:0" type="button" class="visible-xs-block btn btn-primary" data-toggle="offcanvas">@{{toggleText}}</button>
+  </div>
+</nav>
+
 
 
 </div>
 
 </div>
+
+
 
 @endsection
 @section('footer')

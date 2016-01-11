@@ -25,15 +25,22 @@ class MakeStoresTable extends Migration
             $table->string('phone');
             $table->string('email');
             $table->integer('comission')->default(10);
+            
             $table->enum('status_listing', ['published', 'draft', 'review'])->default('draft');
             $table->enum('status_working', ['open', 'close', 'busy'])->default('open');
+            $table->timestamp('status_working_expire')->default('2015-01-01 12:00:00');
+
             $table->boolean('accept_orders')->default(1);
             $table->text('info')->nullable();
             $table->text('coordinate')->nullable();
             $table->string('logo')->nullable();
             $table->string('cover')->nullable();
             $table->integer('chain_id')->nullable();
-            $table->timestamp('last_check')->default(0);
+            
+
+
+
+            $table->timestamp('last_check')->default('2015-01-01 12:00:00');
             $table->timestamps();
 
             //$table->unique( array('slug','area_id') );

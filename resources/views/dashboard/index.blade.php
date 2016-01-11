@@ -56,11 +56,38 @@
 */ ?>
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-3">
 
 
-    <h4 class="hidden-xs">Make New Order</h4>
+    <h3 class="hidden">Make New Order</h3>
 
+    <div style="text-align: center">
+      <div><a href="/dashboard/order/?type=mini" class="btn btn-danger btn-lg btn-block">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Room Service
+      </a></div>
+      <div><small>Fast - No Min Order - No Delivery Fee</small></div>
+    </div>
+
+    <hr>
+
+    <div style="text-align: center">
+      <div><a href="/dashboard/order/?type=delivery" class="btn btn-danger btn-lg btn-block">
+        <span class="glyphicon glyphicon-road"></span> Delivery
+      </a></div>
+      <div><small>All stores delivering to your area</small></div>
+    </div>
+
+    <hr>
+
+    <div style="text-align: center">
+      <div><a href="/dashboard/order/?type=pickup" class="btn btn-danger btn-lg btn-block">
+        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
+      </a></div>
+      <div><small>Any Store</small></div>
+    </div>
+
+
+<?php /*
     <div class="btn-group" role="group" style="width: 100%;">
 
         <a href="/dashboard/order/?type=mini" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
@@ -70,75 +97,15 @@
         <a href="/dashboard/order/?type=delivery" class="btn btn-default btn-block btn-lg">
           <span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Delivery
         </a>
-        */ ?>
+        * / ?>
         <a href="/dashboard/order/?type=pickup" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
           <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
         </a>
     </div>
-
-
-    <br><br>
-
-
-    <div class="hidden-xs">
-      <h4>Recent Resturants</h4>
-
-      <form method="GET" action="/search/">
-      <div id="custom-search-input">
-          <div class="input-group col-md-12">
-              <input type="text" class="search-query form-control" name="q" placeholder="Search" />
-              <span class="input-group-btn">
-                  <button class="btn btn-danger" type="button">
-                      <span class=" glyphicon glyphicon-search"></span>
-                  </button>
-              </span>
-          </div>
-      </div>
-    </form>
-
-      @foreach($recent as $order)
-        
-
-        <div class="media">
-          <div class="media-left">
-            <a href="/{{ $order->store->slug }}/order/">
-              <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
-            </a>
-          </div>
-          <div class="media-body">
-            <h4 class="media-heading">
-              <a href="/{{ $order->store->slug }}/order/">
-                {{ $order->store->name }}
-              </a>
-            </h4>
-
-            <div>
-                <span class="label label-success">{{ $order->store->is_open == 'true'?'Open Now':''  }}</span>
-                <span class="label label-danger">{{ $order->store->is_open == 'false'?'Closed Now':''  }}</span>
-              <span class="label label-success">{{ ($order->store->is_deliver_building == 'true' || $order->store->is_deliver_area == 'true')?'Deliveres Now':''  }}</span>
-            </div>
-
-          </div>
-        </div>
-
-      @endforeach
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/ ?>
 
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-6">
 
 
 
@@ -192,6 +159,52 @@
   </div>
   <div class="col-sm-3 hidden-xs">
 
+
+    <div class="hidden-xs">
+      <h4>Recent Resturants</h4>
+
+      <form method="GET" action="/search/">
+      <div id="custom-search-input">
+          <div class="input-group col-md-12">
+              <input type="text" class="search-query form-control" name="q" placeholder="Search" />
+              <span class="input-group-btn">
+                  <button class="btn btn-danger" type="button">
+                      <span class=" glyphicon glyphicon-search"></span>
+                  </button>
+              </span>
+          </div>
+      </div>
+    </form>
+
+      @foreach($recent as $order)
+        
+
+        <div class="media">
+          <div class="media-left">
+            <a href="/{{ $order->store->slug }}/order/">
+              <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">
+              <a href="/{{ $order->store->slug }}/order/">
+                {{ $order->store->name }}
+              </a>
+            </h4>
+
+            <div>
+                <span class="label label-success">{{ $order->store->is_open == 'true'?'Open Now':''  }}</span>
+                <span class="label label-danger">{{ $order->store->is_open == 'false'?'Closed Now':''  }}</span>
+              <span class="label label-success">{{ ($order->store->is_deliver_building == 'true' || $order->store->is_deliver_area == 'true')?'Deliveres Now':''  }}</span>
+            </div>
+
+          </div>
+        </div>
+
+      @endforeach
+    </div>
+
+<br>
     <h4>Your Addresses <a style="float:right" href="/dashboard/address/"><span class="glyphicon glyphicon-edit"></span></a></h4>
 
 

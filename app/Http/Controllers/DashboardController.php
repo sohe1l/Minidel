@@ -100,10 +100,10 @@ class DashboardController extends Controller
         $error = 0;
         $user = \Auth::user();
         
-        if(!in_array($request->type,['mini','pickup'])) //,'delivery'
+        if(!in_array($request->type,['mini','delivery','pickup'])) 
             return jsonOut(1,'Invalid order type.');
 
-        if(in_array($request->type,['mini'])){ // check address //,'delivery'
+        if(in_array($request->type,['mini','delivery'])){ // check address 
             $address = \App\UserAddress::find($request->address);
             if(!$address || $address->user_id != $user->id)
                 return jsonOut(1,'You need to have an address to order delivery.');
@@ -140,6 +140,36 @@ class DashboardController extends Controller
 
 
             case 'delivery': // this will never happen until adding the delivery for all areas
+
+
+                if($address->building){
+                    $stores_building = $address->building->coverageStores()->acceptOrders()->with('city','area')->get();
+                    if($request->time == 'now')
+                        $stores_building = $stores_building->where('is_deliver_building','true');
+                }else{
+                    $stores_building = new \Illuminate\Database\Eloquent\Collection;
+                }
+                
+
+                $stores_area = $address->area->coverageStores()->acceptOrders()->with('city','area')->get();
+
+                if($request->time == 'now')
+                    $stores_area = $stores_area->where('is_deliver_area','true');
+                
+                $stores = $stores_area->merge($stores_building); // building will override area
+
+                if($request->time == 'now')
+                    $stores = $stores->where('status_working','open');
+
+
+                break;
+
+
+
+
+
+
+/*
                 $stores = $address->building->coverageStores()->with('city','area')->get();
                 $stores = $stores->merge($address->area->coverageStores()->with('city','area')->get());
 
@@ -149,6 +179,7 @@ class DashboardController extends Controller
                     });
                 }
                 break;
+*/
 
 
             case 'pickup':

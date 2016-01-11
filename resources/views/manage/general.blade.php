@@ -122,6 +122,7 @@
                 </div>
             </div>
 
+<?php /*
             <div class="form-group clearfix">
                 <label class="col-md-4 control-label">Current Status</label>
                 <div class="col-md-8">
@@ -136,7 +137,7 @@
                         </label>
                 </div>
             </div>
-
+*/ ?>
             
             <div class="form-group">
                 <div class="col-md-8 col-md-offset-4">

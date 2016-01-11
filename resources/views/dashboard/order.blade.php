@@ -48,17 +48,15 @@
 
 
 <div class="btn-group" data-toggle="buttons" style="width: 100%">
-  <label class="btn btn-default" v-class="active: selected.type=='mini'" style="width: 49.5%" v-on="click: selected.type='mini'">
-    <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='mini'"> Mini
+  <label class="btn btn-default" v-class="active: selected.type=='mini'" style="width: 44%" v-on="click: selected.type='mini'">
+    <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='mini'"> Room Service
   </label>
   
-<?php /*
-  <label class="btn btn-default" v-class="active: selected.type=='delivery'" style="width: 33%" v-on="click: selected.type='delivery'">
+  <label class="btn btn-default" v-class="active: selected.type=='delivery'" style="width: 28%" v-on="click: selected.type='delivery'">
     <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='delivery'"> Delivery
   </label>
-*/ ?>
   
-  <label class="btn btn-default" v-class="active: selected.type=='pickup'" style="width: 49.5%" v-on="click: selected.type='pickup'">
+  <label class="btn btn-default" v-class="active: selected.type=='pickup'" style="width: 28%" v-on="click: selected.type='pickup'">
     <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='pickup'"> Pickup
   </label>
 

@@ -49,9 +49,15 @@
                         spinner:"spinner5"
             });
 
+            $("#globalSearch").on("show.bs.collapse shown.bs.collapse",function(event){
+                $("#globalSearch input").focus();
+            });
+
 
             
         });
+
+
 
     </script>
 

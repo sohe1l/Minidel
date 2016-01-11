@@ -17,8 +17,16 @@
     .cart-title, .cart-price {font-weight: bold; font-size: 1.1em;}
     .cart-right {float:right;}
     .btn-warning a {color:white !important;}
+    #orderLabels {margin-bottom: 5px;}
     #orderLabels h3{ display: inline-block;}
     .nav-stacked li {background-color: white;}
+
+    @media print{
+      body{ padding-top:0;}
+      .col-md-9 {padding:0;}
+      blockquote {margin-bottom: 5px;}
+      .table {margin-bottom: 5px;}
+    }
   </style>
 @endsection
 
@@ -50,6 +58,9 @@
         <input type="radio" name="type" autocomplete="off" v-attr="checked: status_working=='busy'"> Busy
       </label>
     </div>
+
+
+
   </div>
 </div>
 
@@ -57,14 +68,34 @@
 
 
 
-
-
-
+<div class="modal" tabindex="-1" role="dialog" id="status_working_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Update Sotre Working Status</h4>
+      </div>
+      <div class="modal-body">
+        <h5>How long the store will be @{{status_working_set}}?</h5>
+        <div>
+              {!! Form::select('status_working_expire',
+                        [
+                          '15' => '15 Minutes', '30' => '30 Minutes', '60' => '1 Hour', '120' => '2 Hours',
+                          '180' => '3 Hours', '240' => '4 Hours', '300' => '5 Hours', '360' => '6 Hours',
+                          '480' => '8 Hours', '720' => '12 Hours', '1440' => '24 Hours', '2880' => '48 Hours',
+                        ], 30, ['class'=>'form-control', 'v-model'=>'working_status_expiry_select']); !!}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" v-on="click: setStatusWorkingPost()">Update</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="row" id="ordersDiv">
   <div class="col-md-3 hidden-print">
-    <div style="height:20px">&nbsp;</div>
-
     <ul class="nav nav-pills nav-stacked">
       <li v-repeat="orders" role="presentation" v-class="btn-warning:callback==1, btn-warning:status == 'pending', active: selectedId==id"><a v-on="click: selectedId=id">@{{ user.name }}</a></li>
     </ul>
@@ -82,13 +113,11 @@
           <h2>@{{ orders[selectedIndex].user.name }}  <small>@{{ orders[selectedIndex].user.mobile }}</small></h2>
 
           <div id="orderLabels">
-          <h3><span class="label label-primary">@{{ orders[selectedIndex].type }}</span></h3>
-          <h3><span class="label label-primary">@{{ orders[selectedIndex].payment_type.name }}</span></h3>
-          <h3><span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span></h3>
+            <h3><span class="label label-primary">@{{ orders[selectedIndex].type }}</span></h3>
+            <h3><span class="label label-primary">@{{ orders[selectedIndex].payment_type.name }}</span></h3>
+            <h3><span class="label label-warning" v-show="orders[selectedIndex].schedule">@{{ 'Schedule: ' + orders[selectedIndex].schedule }}</span></h3>
           </div>
-
-          <br>
-
+          
           <table class="table">
             <tr>
               <th>Item</th>
@@ -256,6 +285,8 @@
       orders:[],
       selectedId:0,
       status_working : '',
+      status_working_set : '',
+      working_status_expiry_select : 30,
       error_message : "",
     },
     ready: function(){
@@ -322,13 +353,33 @@
       },
 
       setStatusWorking: function(status){
-          this.status_working = status;
+
+          this.status_working_set = status;
+
+          if(this.status_working_set != 'open'){
+            $('#status_working_modal').modal('show');
+          }else{
+           this.setStatusWorkingPost(); 
+          }
+
+          
+      },
+
+      setStatusWorkingPost: function(){
+          
+          if(this.status_working_set == '') return 0;
+
+          $('#status_working_modal').modal('hide')
+
+          this.status_working = this.status_working_set;
+
           $.ajax({
             type: "POST",
             url: "/manage/{{$store->slug}}/updateStatusWorking/",
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             data: {
-              status_working:status,
+              status_working:this.status_working,
+              working_status_expiry_select:this.working_status_expiry_select,
             },
             timeout: 15000,
             dataType: 'json'

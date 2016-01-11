@@ -23,6 +23,19 @@ class Store extends Model
         return $query->where('accept_orders', 1);
     }
 
+    //used in MaintainStores Command
+    public function scopeIsNotOpen($query)
+    {
+        return $query->where('status_working', '!=', 'open');
+    }
+
+    public function scopeStatusWorkingIsExpired($query)
+    {
+        return $query->where('status_working_expire', '<', \Carbon\Carbon::now());
+    }
+
+
+
     // not working ?
     public function userRole($user_id){
         if( in_array($user_id, \Config::get('vars.superAdmins') ) ) {

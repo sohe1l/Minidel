@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\MakeCalls::class,
+        \App\Console\Commands\MaintainStores::class,
     ];
 
     /**
@@ -31,6 +32,8 @@ class Kernel extends ConsoleKernel
         */
 
         $schedule->command('minidel:makecalls')->everyMinute();
+
+        $schedule->command('minidel:maintainstores')->everyMinute();
 
 
     }

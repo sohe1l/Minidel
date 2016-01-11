@@ -320,7 +320,7 @@ class ManageController extends Controller
             'phone' => 'required|max:100',
             'email' => 'required|email',
             'info' => 'string',
-            'status_working' => 'required|in:open,close,busy',
+            // 'status_working' => 'required|in:open,close,busy',
             'accept_orders' => 'required|boolean',
         ]);
 
@@ -329,7 +329,7 @@ class ManageController extends Controller
         $store->phone = $request->phone;
         $store->email = $request->email;
         $store->info = $request->info;
-        $store->status_working = $request->status_working;
+        // $store->status_working = $request->status_working;
         $store->accept_orders = $request->accept_orders;
         $store->save();
 
@@ -2130,6 +2130,11 @@ class ManageController extends Controller
 
         if(!in_array($request->status_working, ['open','busy','close']))
             return jsonOut(1,'Invalid status');
+
+        if($request->status_working != 'open'){
+            $expiry_minutes = (int) $request->working_status_expiry_select;
+            $store->status_working_expire = \Carbon\Carbon::now()->addMinutes($expiry_minutes);
+        }
 
         $store->status_working = $request->status_working;
         $store->save();
