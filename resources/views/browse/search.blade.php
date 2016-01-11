@@ -108,7 +108,7 @@
           'dish': {!! json_encode(\App\Tag::tagList2('dish')) !!},
           'feature': {!! json_encode(\App\Tag::tagList2('feature')) !!}
         },
-        selected:{'store':'', 'cuisine':'', 'dish':'', 'feature':''},
+        selected:{'type':'pickup', 'store':'', 'cuisine':'', 'dish':'', 'feature':''}, //type is used for _store.blade
         stores: {!! json_encode($stores) !!},
         searchQuery: '{{ $searchQuery }}',
         loading : false,
