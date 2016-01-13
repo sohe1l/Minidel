@@ -30,6 +30,7 @@ footer { padding: 30px 0;}
 }
 
 
+
 #storeDiv li{
     border-bottom: 1px solid #E4E4E4;
     border-radius: 0 !important;
@@ -42,6 +43,18 @@ footer { padding: 30px 0;}
     font-size: 1.2em;
 
 }
+
+
+
+
+@media(max-width:767px){
+
+    body { padding-bottom: 40px; }
+
+}
+
+
+
 
 /*
  * Off Canvas
@@ -88,12 +101,9 @@ footer { padding: 30px 0;}
 <!-- <button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button> -->
 
 <h3 style="margin-top: 0;">{{ $store->name }} 
-
-  <span v-show="{{ $store->status_working!='open'?'true':'false' }}" class="label label-danger">{{ $store->status_working  }}</span>&nbsp;
-
   <small id="headingSmall">
+    <span v-show="{{ $store->status_working!='open'?'true':'false' }}" class="label label-danger">{{ $store->status_working  }}</span>
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
-    <div>{{ ($store->building)?$store->building->name:'' }} - {{ $store->area->name }}</div>
   </small>
 </h3>
 
@@ -114,15 +124,19 @@ footer { padding: 30px 0;}
             <nav data-spy="affix" data-offset-top="420" id="navbar-menu" class="whiteBG">
             @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
               <ul class="nav nav-pills nav-stacked">
-                <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}">{{ $section->title }}</a></li>
+                <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}" v-on="click: menuClicked()">{{ $section->title }}</a></li>
               </ul>
 
               @foreach ($section->subsections->where('available',1) as $subsection)
                 <ul class="nav nav-pills nav-stacked">
-                  <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c">{{ $subsection->title }}</a></li>
+                  <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c" v-on="click: menuClicked()">{{ $subsection->title }}</a></li>
                 </ul>
               @endforeach
             @endforeach
+
+
+
+
 
             </nav>
             <?php /*
@@ -147,7 +161,8 @@ footer { padding: 30px 0;}
     
     <div class="menuContainer" id="menuContainer">
 
-      <div v-show="!isLogin" class="alert alert-danger" role="alert">Please login to be able to place orders.</div>
+      <div v-show="!isLogin" class="alert alert-danger" role="alert">
+        Please login to be able to place orders. <a href="/auth/login/?redirect={{ \Request::path() }}"><b>Click here to login now.</b></a></div>
 
       <div v-show="isLogin && !hasAddresses" class="alert alert-warning" role="alert">
         None of your delivery addresses matches the delivery coverage of this resturant. You can still place orders for pickup.<br>
@@ -469,7 +484,7 @@ footer { padding: 30px 0;}
         Please login to be able to place an order !
       </div>
       <div class="modal-footer" style="padding: 10px">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok!</button>
+        <a href="/auth/login/?redirect={{ \Request::path() }}" class="btn btn-primary">Ok!</a>
       </div>
     </div>
   </div>
@@ -643,6 +658,13 @@ footer { padding: 30px 0;}
 
 
     methods:{
+      menuClicked: function(){
+          setTimeout(function () {
+            var y = $(window).scrollTop();  //your current y position on the page
+            $(window).scrollTop(y-45);
+          }, 100)
+            
+      },
       handleResize: function(){
         $('#navbar-menu').width( $('#menuSectionsParent').width()  );
         $('#cartContainer').width( $('#sidebar').width()-30  ); 
