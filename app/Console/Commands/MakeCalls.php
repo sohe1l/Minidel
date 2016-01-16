@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use Services_Twilio;
+
+
 class MakeCalls extends Command
 {
     /**
@@ -60,8 +63,19 @@ class MakeCalls extends Command
 
 
 
+
+//array( 
+                //'Method' => 'GET',  
+                //"StatusCallback" => "https://www.myapp.com/events",
+                //'FallbackMethod' => 'GET',  
+                //'StatusCallbackMethod' => 'POST',
+                //"StatusCallbackEvent" => array("initiated", "ringing", "answered", "completed"),
+                //'Record' => 'false', 
+ //           )
+
+
             //make call
-            require_once('/path/to/twilio-php/Services/Twilio.php'); // Loads the library
+            //require_once('/path/to/twilio-php/Services/Twilio.php'); // Loads the library
              
             // Your Account Sid and Auth Token from twilio.com/user/account
             $sid = "AC04dabc566d94fe6a72690ece9f732d07";
@@ -71,14 +85,7 @@ class MakeCalls extends Command
             $url = "http://twimlets.com/echo?Twiml=%3CResponse%3E%3CSay%20voice=%22alice%22%3EHi.%20You%20have%20an%20order%20on%20Mini%20Del%3C%2FSay%3E%3C%2FResponse%3E";
                          
              
-            $call = $client->account->calls->create('+17077776046', $order->store->phone, $url, array( 
-                //'Method' => 'GET',  
-                //"StatusCallback" => "https://www.myapp.com/events",
-                //'FallbackMethod' => 'GET',  
-                //'StatusCallbackMethod' => 'POST',
-                //"StatusCallbackEvent" => array("initiated", "ringing", "answered", "completed"),
-                //'Record' => 'false', 
-            ));
+            $call = $client->account->calls->create('+17077776046', $order->store->phone, $url);
 
             echo $call->sid;
             
