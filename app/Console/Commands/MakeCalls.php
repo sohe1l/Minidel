@@ -38,13 +38,13 @@ class MakeCalls extends Command
     public function handle()
     {
         $date = new \DateTime;
-        $date->modify('-4 minutes');
+        $date->modify('-3 minutes');
         $timeLimit = $date->format('Y-m-d H:i:s');
 
         $order = \App\Order::where('status','pending')
                            ->where('call_last','<=',$timeLimit)
                            ->where('created_at','<=',$timeLimit)
-                           ->where(function ($query) {
+                           ->where(function ($query) use ($timeLimit) {
                                 $query->whereNull('schedule')
                                       ->orWhere('schedule','<=',$timeLimit);
                             })
