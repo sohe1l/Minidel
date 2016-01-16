@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('minidel:makecalls')->everyMinute();
 
-        $schedule->command('minidel:maintainstores')->everyMinute();
+        $schedule->command('minidel:maintainstores')->everyFiveMinutes();
 
 
     }

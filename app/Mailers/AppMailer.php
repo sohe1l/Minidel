@@ -37,6 +37,15 @@ class AppMailer{
         $this->deliver();
     }
 
+    public function sendContactEmail($inputs)
+    {
+        $this->to = "hello@minidel.com";
+        $this->view = 'emails.contact';
+        $this->subject = 'Minidel Contact';
+        $this->data = $inputs;
+        $this->deliver();
+    }
+
 } 
 
 

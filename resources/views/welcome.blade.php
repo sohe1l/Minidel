@@ -188,7 +188,7 @@
 
 
 
-
+<?php /*
 
 
         <div class="row hidden-xs" style="padding: 80px 10px; background-color: #F3F3F3; margin-bottom: -20px;">
@@ -208,7 +208,7 @@
         </div>
 
 
-
+*/ ?>
 
 
 @endsection

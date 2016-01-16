@@ -61,11 +61,10 @@ Route::group(['prefix' => 'superadmin' , 'middleware' => 'auth.superadmin'], fun
 
 
 
-
-
 /* Pages */
 Route::get('pages/addstore','PagesController@addStore');
 Route::get('pages/contact','PagesController@contact');
+Route::post('pages/contact','PagesController@contactPost');
 Route::get('pages/privacy','PagesController@privacy');
 Route::get('pages/terms','PagesController@terms');
 Route::get('pages/about','PagesController@about');

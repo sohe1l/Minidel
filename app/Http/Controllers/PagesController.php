@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Mailers\AppMailer;
+
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -33,6 +36,14 @@ class PagesController extends Controller
     public function contact()
     {
         return view("pages.contact");
+
+    }
+
+    public function contactPost(Request $request, AppMailer $mailer)
+    {
+        $mailer->sendContactEmail($request->input());
+
+        return view("pages.contact",['done'=>1]);
 
     }
 

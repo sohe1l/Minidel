@@ -38,7 +38,7 @@ class MakeCalls extends Command
     public function handle()
     {
         $date = new \DateTime;
-        $date->modify('-3 minutes');
+        $date->modify('-4 minutes');
         $timeLimit = $date->format('Y-m-d H:i:s');
 
         $order = \App\Order::where('status','pending')
@@ -58,7 +58,8 @@ class MakeCalls extends Command
                 return "Order canceled";
             }
 
-/*
+
+
             //make call
             require_once('/path/to/twilio-php/Services/Twilio.php'); // Loads the library
              
@@ -70,25 +71,23 @@ class MakeCalls extends Command
             $url = "http://twimlets.com/echo?Twiml=%3CResponse%3E%3CSay%20voice=%22alice%22%3EHi.%20You%20have%20an%20order%20on%20Mini%20Del%3C%2FSay%3E%3C%2FResponse%3E";
                          
              
-            $call = $client->account->calls->create('+17077776046', '+97143615376', $url, array( 
-                'Method' => 'GET',  
-                "StatusCallback" => "https://www.myapp.com/events",
-                'FallbackMethod' => 'GET',  
-                'StatusCallbackMethod' => 'POST',
-                "StatusCallbackEvent" => array("initiated", "ringing", "answered", "completed"),
-                'Record' => 'false', 
+            $call = $client->account->calls->create('+17077776046', $order->store->phone, $url, array( 
+                //'Method' => 'GET',  
+                //"StatusCallback" => "https://www.myapp.com/events",
+                //'FallbackMethod' => 'GET',  
+                //'StatusCallbackMethod' => 'POST',
+                //"StatusCallbackEvent" => array("initiated", "ringing", "answered", "completed"),
+                //'Record' => 'false', 
             ));
 
             echo $call->sid;
-*/
-
             
             $order->call_last = date('Y-m-d H:i:s');
             $order->call_count += 1;
             $order->save();
 
-            dd($order);
-            $name = $this->ask($order->id);
+            //dd($order);
+            //$name = $this->ask($order->id);
             // http://twimlets.com/message?Message%5B0%5D=Order Pending on Minidel
         }
         

@@ -2,15 +2,15 @@
 
   <div class="row footerLinks">
 
-    <div class="col-sm-1">
+    <div class="col-sm-2">
       <ul>
-          <li>&nbsp;</li>
+          <li><a href="/pages/about">About</a></li>
       </ul>
     </div>
 
     <div class="col-sm-2">
       <ul>
-          <li><a href="/pages/about">About</a></li>
+          <li><a href="/manage/">Add your Store</a></li>
       </ul>
     </div>
 
@@ -37,12 +37,6 @@
     <div class="col-sm-2">
       <ul>        
           <li><a href="/pages/contact">Contact Us</a></li>
-      </ul>
-    </div>
-
-    <div class="col-sm-1">
-      <ul>
-          <li>&nbsp;</li>
       </ul>
     </div>
 
