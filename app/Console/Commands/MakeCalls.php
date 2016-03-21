@@ -87,7 +87,7 @@ class MakeCalls extends Command
              
             $call = $client->account->calls->create('+17077776046', $order->store->phone, $url);
 
-            echo $call->sid;
+            // echo $call->sid;
             
             $order->call_last = date('Y-m-d H:i:s');
             $order->call_count += 1;

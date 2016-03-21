@@ -51,7 +51,7 @@
               <td>{{$item->title}}
                 @if($item->options)
                 <div>
-                  @foreach($item.options as $option)
+                  @foreach($item->options as $option)
                   <span class="cart-options" v-repeat="item.options">
                     <b>{{$option->name}}:</b>
                     <span class="cart-options" v-repeat="selects">{{$option->name}} </span> 

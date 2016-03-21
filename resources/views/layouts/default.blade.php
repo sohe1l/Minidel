@@ -33,21 +33,21 @@
 
     <script src="/js/all.js"></script>
     <script type="text/javascript">
-        window.onbeforeunload = function(){ 
-            $("#fakeloaderExit").fakeLoader({
-                        timeToHide:1000,
-                        bgColor: "rgba(250, 165, 20, 0.3)",
-                        spinner:"spinner5"
-            });
-        }
+        // window.onbeforeunload = function(){ 
+        //     $("#fakeloaderExit").fakeLoader({
+        //                 timeToHide:1000,
+        //                 bgColor: "rgba(250, 165, 20, 0.3)",
+        //                 spinner:"spinner5"
+        //     });
+        // }
 
         $(document).ready(function(){
 
-            $("#fakeloaderEnter").fakeLoader({
-                        timeToHide:1000,
-                        bgColor: "rgba(250, 165, 20, 0.3)",
-                        spinner:"spinner5"
-            });
+            // $("#fakeloaderEnter").fakeLoader({
+            //             timeToHide:1000,
+            //             bgColor: "rgba(250, 165, 20, 0.3)",
+            //             spinner:"spinner5"
+            // });
 
             $("#globalSearch").on("show.bs.collapse shown.bs.collapse",function(event){
                 $("#globalSearch input").focus();
@@ -58,6 +58,19 @@
         });
 
 
+
+
+
+    </script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-72963025-1', 'auto');
+      ga('send', 'pageview');
 
     </script>
 

@@ -14,7 +14,6 @@ class InsertDubaiAreas extends Migration
     {
 
 
-
 $text = <<<'EOT'
 AbuHail
 Academic City
@@ -89,7 +88,7 @@ Al Twar 3
 Al Waheda
 Al Warqa 1
 Al Warqa 2
-Al Warqa`a
+Al Warqaa
 Al Wasl
 Aleyas
 Arabian Ranches
@@ -123,7 +122,7 @@ Dubai Land
 Dubai Marina
 Dubai Maritime City
 Dubai Media City
-Dubai Metal &amp; Comodities Center
+Dubai Metal Comodities Center
 Dubai Motor City
 Dubai Silicon Oasis
 Dubai Sport City
@@ -176,7 +175,7 @@ Nadd Al Shiba 2
 Nadd Al Shiba 3
 Nadd Al Shiba 4
 Naif
-Naser Sq.
+Naser Sq
 Old Town Areas
 Oud Al Muteena
 Oud Metha

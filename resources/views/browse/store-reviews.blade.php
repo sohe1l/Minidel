@@ -126,33 +126,6 @@
     },
 
     methods:{
-      updateStores: function(){
-        var that = this;
-
-        this.loading = true;
-
-        $.ajax({
-            type: "POST",
-            url: "/search/",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            data: {
-                searchQuery: this.searchQuery,
-                tags: JSON.stringify(this.selected),
-            },
-            timeout: 15000,
-            dataType: 'json'
-        })
-        .done(function(data) { //update orders
-            that.loading = false;
-
-            if(data["error"]==0){
-                that.stores = data['stores'];
-            }else{
-                alert(data['message']);
-            }
-        });
-
-      },
 
     } // methods
 
