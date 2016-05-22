@@ -113,7 +113,7 @@
                 <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; padding:15px; font-family:lane;">
                     Try some new restaurants
                 </div>
-                @foreach( \App\Store::Listed()->orderBy('last_check', 'desc')->get()->chunk(4) as $storeCollection )
+                @foreach( \App\Store::Listed()->orderBy('last_check', 'desc')->take(24)->get()->chunk(4) as $storeCollection )
                     <div class="row">
                     @foreach($storeCollection as $store)
                         <div class="col-xs-6 col-sm-3">
