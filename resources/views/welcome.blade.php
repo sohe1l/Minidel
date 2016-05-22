@@ -107,7 +107,34 @@
             @endif
 
         </div>
-        <div class="row hidden-xs">
+    
+        <div class="row" style="padding: 20px 10px;">
+            <div class="col-xs-12">
+                <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; padding:15px; font-family:lane;">
+                    Try some new restaurants
+                </div>
+                @foreach( \App\Store::Listed()->orderBy('last_check', 'desc')->get()->chunk(4) as $storeCollection )
+                    <div class="row">
+                    @foreach($storeCollection as $store)
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="thumbnail">
+                            <img src="/img/logo/{{$store->logo}}" alt="{{$store->name}}">
+                             <div class="caption" style="text-align:center">
+                                <h4><a href="/{{ $store->slug }}" class="">{{ $store->name }}</a></h4>
+                            </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+
+<?php /*
+
+
+<div class="row hidden-xs">
             <div class="col-lg-3 col-sm-3 col-xs-6 text-center">
                 <div class="service-box">
                     <span class="glyphicon glyphicon-usd reddish bigIcon"></span>
@@ -176,6 +203,8 @@
 
         </div>
 
+
+
         <div class="row hidden-xs" style="background-color: #f05f40; padding: 40px 10px;">
             <div class="col-xs-12" style="">
                 <div style="color:white; text-align: center; font-size:2em; padding:15px; font-family: lane;">Where can you order?</div>
@@ -185,10 +214,6 @@
                 </div>
             </div>
         </div>
-
-
-
-<?php /*
 
 
         <div class="row hidden-xs" style="padding: 80px 10px; background-color: #F3F3F3; margin-bottom: -20px;">

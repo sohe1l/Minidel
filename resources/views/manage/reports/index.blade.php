@@ -15,7 +15,7 @@
 
 <div class="row">
   <div class="col-md-3">
-    @include('manage.reports.nav', array('active'=>'orders'))
+    @include('manage.reports.nav', array('active'=>''))
   </div>
   <div class="col-md-9">
 

@@ -362,7 +362,13 @@ footer { padding: 30px 0;}
 
   </div>
 
-  <div style="line-height: 20px; font-size: 80%">Store Last Online: {{ \Carbon\Carbon::parse($store->last_check)->diffForHumans() }}</div>
+  @if(! $is_online)
+  <div class="alert alert-danger" role="alert">
+    The store is not currenly online, however you may still place an order for a future time.
+  </div>
+  @endif
+
+  <div style="line-height: 20px; font-size: 80%">Store Last Online: {{ $last_online }}</div>
 
   <div style="line-height: 30px;" v-show="dorp == 'delivery'">
     <span v-if="addressObj.min && addressObj.min!=0" class="label label-info">Minimum Delivery @{{ addressObj.min }}</span>&nbsp;

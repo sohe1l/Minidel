@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use \Carbon\Carbon;
 
 class BrowseController extends Controller
 {
@@ -114,10 +115,13 @@ class BrowseController extends Controller
         $daysDelivery = $this->getDays($store, 'Area Delivery');
         $daysPickup = $this->getDays($store, 'Normal Openning');
 
-        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup'));
+        $last_online = Carbon::parse($store->last_check)->diffForHumans();
+        $is_online = Carbon::parse($store->last_check)->gt( Carbon::now()->subMinute() );
+
+        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','last_online','is_online'));
 
         $page_title = $store->name . " Online Order Delivery & Pickup";
-        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','page_title'));
+        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','page_title','last_online','is_online'));
     }
 
 

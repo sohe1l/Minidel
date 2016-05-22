@@ -18,6 +18,7 @@ class Store extends Model
         return $query->where('status_listing', 'published');
     }
 
+    
     public function scopeAcceptOrders($query)
     {
         return $query->where('accept_orders', 1);
