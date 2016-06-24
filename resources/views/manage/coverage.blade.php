@@ -38,8 +38,8 @@
               <td>Min: {{$area->pivot->min}}</td>
               <td>Fee: {{$area->pivot->fee}}</td>
               <td>Below Min Fee: {{$area->pivot->feebelowmin}}</td>
-              <td>Discount: {{$area->pivot->discount}}</td>
-              <td>
+<!--               <td>Discount: {{$area->pivot->discount}}</td>
+ -->              <td>
                 <a href="javascript:deleteArea({{ $area->id }})" title="Delete">
                   <span class="glyphicon glyphicon-remove"></span>
                 </a>
@@ -66,8 +66,8 @@
               <td>Min Delivery: {{$building->pivot->min}}</td>
               <td>Delivery Fee: {{$building->pivot->fee}}</td>
               <td>Below Min Fee: {{$building->pivot->feebelowmin}}</td>
-              <td>Discount: {{$building->pivot->discount}}</td>
-              <td>
+<!--               <td>Discount: {{$building->pivot->discount}}</td>
+ -->              <td>
                 <a href="javascript:deleteBuilding({{ $building->id }})" title="Delete">
                   <span class="glyphicon glyphicon-remove"></span>
                 </a>

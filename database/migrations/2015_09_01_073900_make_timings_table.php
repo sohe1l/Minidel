@@ -19,7 +19,7 @@ class MakeTimingsTable extends Migration
             $table->char('day', 3);
             $table->time('start');
             $table->time('end');
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
         });
@@ -27,7 +27,7 @@ class MakeTimingsTable extends Migration
         Schema::create('workmodes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

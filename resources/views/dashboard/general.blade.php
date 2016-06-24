@@ -101,7 +101,7 @@
               {!! Form::text('username', null, ['class' => 'form-control', 'v-model'=>'username']) !!}  
               <br>
               <div style="font-style: italic">
-                  Your profile will be www.minidel.com/username
+                  Your profile will be www.minidel.com/people/username
               </div>
             </div>
         </div>

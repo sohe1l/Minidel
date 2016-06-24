@@ -86,6 +86,9 @@ class menuItem extends Model
 
 
 
+
+
+
 /*
     //set the order to the last item in that section
     public function setOrderAttribute($order='')
@@ -110,5 +113,77 @@ class menuItem extends Model
         # code...
     }
 */
+
+
+
+
+
+
+
+    public function logoFromForm(UploadedFile $file){
+        $this->saveAs($file->getClientOriginalName(),'logo');
+        $this->logoSaveFile($file->getRealPath());
+    }
+
+    public function logoFromUrl($url){
+        $client = new \GuzzleHttp\Client();
+        $body = (string) $client->request('GET', $url)->getBody();
+
+        $this->saveAs($this->slug . str_random(2) . '.jpg' ,'logo');
+        $this->logoSaveFile($body);
+    }
+
+
+    private function logoSaveFile($imageRef){
+        $image = Image::make($imageRef);
+
+        // prevent possible upsizing
+        $image->resize(150, null, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $canvas = Image::canvas($image->width(), $image->height(), 'ffffff');
+        $canvas->insert($image);
+        $canvas->save($this->logo);
+    }
+
+
+
+
+
+    public function PhotoFromForm(UploadedFile $file){
+        $this->saveAs($file->getClientOriginalName());
+        $this->coverSaveFile($file->getRealPath());
+    }
+    
+    public function coverFromUrl($url){
+        $client = new \GuzzleHttp\Client();
+        $body = (string) $client->request('GET', $url)->getBody();
+
+        $this->saveAs($this->slug . str_random(2) . '.jpg' ,'cover');
+        $this->coverSaveFile($body);
+    }
+
+
+    public function coverSaveFile($imageRef){
+        $image = Image::make($imageRef);
+        $image->fit(1200,300)->save($this->cover);
+
+        $image = Image::make($imageRef);
+        $image->fit(400,100)->save($this->cover_thumb);
+    }
+
+
+    protected function saveAs($name){
+            $file_name = sprintf("%s-%s", time(), substr($name,0,30));
+            $this->cover = sprintf("%s/%s", $this->baseDir, $cover_name);
+            $this->cover_thumb = sprintf("%s/tn-%s", $this->baseDir, $cover_name);
+    }
+
+    public function deleteLogo(){
+        File::delete($this->logo);
+    }
+
 
 }

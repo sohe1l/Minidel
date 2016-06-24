@@ -21,7 +21,7 @@ class CreateChainsTable extends Migration
             $table->string('logo')->nullable();
             $table->string('cover')->nullable();
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
     }
 

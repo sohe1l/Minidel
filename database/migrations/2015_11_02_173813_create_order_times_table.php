@@ -23,7 +23,7 @@ class CreateOrderTimesTable extends Migration
             
             $table->integer('timestamp')->unsigned();
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
     }
 
@@ -34,6 +34,6 @@ class CreateOrderTimesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('times');
+        Schema::drop('order_times');
     }
 }

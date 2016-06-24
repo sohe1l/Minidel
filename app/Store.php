@@ -202,4 +202,11 @@ class Store extends Model
     {
         return $this->morphMany('App\Photo', 'imageable');
     }
+
+
+
+    public function promos(){
+        return $this->hasMany('\App\Promo');
+    }
+
 }

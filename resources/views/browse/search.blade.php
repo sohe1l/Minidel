@@ -19,25 +19,25 @@
 
     <div class="form-group">
       <b>Type of Store:</b>
-      <a v-show="selected.store !=''" v-on="click: selected.store = ''"><span class="glyphicon glyphicon-remove"></span></a>
+      <a v-show="selected.store !=''" v-on:click="selected.store = ''"><span class="glyphicon glyphicon-remove"></span></a>
       <select v-select="selected.store" style="width:100%;" options="selects.store"></select>
     </div>
 
     <div class="form-group">
     <b>Cuisine:</b>
-    <a v-show="selected.cuisine !=''" v-on="click: selected.cuisine = ''"><span class="glyphicon glyphicon-remove"></span></a>
+    <a v-show="selected.cuisine !=''" v-on:click="selected.cuisine = ''"><span class="glyphicon glyphicon-remove"></span></a>
     <select v-select="selected.cuisine" style="width:100%;" options="selects.cuisine"></select>
     </div>
 
     <div class="form-group">
     <b>Dish:</b>
-    <a v-show="selected.dish !=''" v-on="click: selected.dish = ''"><span class="glyphicon glyphicon-remove"></span></a>
+    <a v-show="selected.dish !=''" v-on:click="selected.dish = ''"><span class="glyphicon glyphicon-remove"></span></a>
     <select v-select="selected.dish" style="width:100%;" options="selects.dish"></select>
     </div>
 
     <div class="form-group">
     <b>Feature:</b>
-    <a v-show="selected.feature !=''" v-on="click: selected.feature = ''"><span class="glyphicon glyphicon-remove"></span></a>
+    <a v-show="selected.feature !=''" v-on:click="selected.feature = ''"><span class="glyphicon glyphicon-remove"></span></a>
     <select v-select="selected.feature" style="width:100%;" options="selects.feature"></select>
     </div>
   </div>
@@ -61,7 +61,28 @@
 
     <div style="padding-top: 4em; text-align: center" v-show="loading"><img src="/img/ajax-loader.gif"></div>
 
-    <div v-show="!loading">@include('browse._store', array('vRepeat' => "stores"))</div>
+    <div v-show="!loading">
+      
+
+      <div class="listing storeListing clearfix" v-for="s in stores">
+          <div class="col-sm-2">
+            <a href="/@{{s.slug}}/order">
+              <img v-bind:src="s.logo?'/img/logo/'+s.logo:'/img/logo/placeholder.svg'" class="img-responsive hidden-xs">
+              <img v-bind:src="s.cover?'/img/cover/'+s.cover:'/img/cover/placeholder.svg'" class="img-responsive visible-xs">
+            </a>
+          </div>
+          <div class="col-sm-10">
+              <div class="title"><a href="/@{{s.slug}}/order">@{{ s.name }}</a></div>
+              <div>
+                  <span class="label label-success">@{{ s.is_open == 'true'?'Open Now':''  }}</span>
+              </div>
+              <div v-if="s.info">@{{ s.info.substr(0, 150) }}@{{ (s.info.length>150)?'...':'' }} </div>
+          </div>
+      </div>
+
+
+
+    </div>
 
   </div>
 
@@ -108,7 +129,7 @@
           'dish': {!! json_encode(\App\Tag::tagList2('dish')) !!},
           'feature': {!! json_encode(\App\Tag::tagList2('feature')) !!}
         },
-        selected:{'type':'pickup', 'store':'', 'cuisine':'', 'dish':'', 'feature':''}, //type is used for _store.blade
+        selected:{'store':'', 'cuisine':'', 'dish':'', 'feature':''}, // tags
         stores: {!! json_encode($stores) !!},
         searchQuery: '{{ $searchQuery }}',
         loading : false,
@@ -139,7 +160,7 @@
             url: "/search/",
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             data: {
-                searchQuery: this.searchQuery,
+                q: this.searchQuery,
                 tags: JSON.stringify(this.selected),
             },
             timeout: 15000,

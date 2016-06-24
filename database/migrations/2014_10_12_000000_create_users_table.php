@@ -34,7 +34,7 @@ class CreateUsersTable extends Migration
 
             $table->string('confirmation_code')->nullable();
             $table->rememberToken();
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
     }
 

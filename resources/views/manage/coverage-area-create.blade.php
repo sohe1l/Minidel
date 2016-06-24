@@ -82,13 +82,13 @@
                         </div>
                     </div>
 
-
+<!-- 
                     <div class="form-group">
                         <label class="col-md-4 control-label">Discount %</label>
                         <div class="col-md-6">
                             {!! Form::select('discount', \Config::get('vars.discounts'), 0, $attributes=array('class'=>'form-control')); !!}
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">

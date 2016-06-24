@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Chain extends Model
 {
 
-    public function chain(){
+    public function stores(){
         return $this->hasMany('\App\Store');
     }
 

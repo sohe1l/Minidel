@@ -17,7 +17,7 @@ class MakeBuildingsTable extends Migration
             $table->integer('area_id')->unsigned();
             $table->string('name');
             $table->string('slug')->index();
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');;
         });

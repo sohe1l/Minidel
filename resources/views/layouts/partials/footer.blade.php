@@ -2,15 +2,13 @@
 
   <div class="row footerLinks">
 
-    <div class="col-sm-2">
-      <ul>
-          <li><a href="/pages/about">About</a></li>
-      </ul>
+    <div class="col-sm-1">
+      
     </div>
 
     <div class="col-sm-2">
       <ul>
-          <li><a href="/manage/">Add your Store</a></li>
+          <li><a href="/pages/about">About</a></li>
       </ul>
     </div>
 

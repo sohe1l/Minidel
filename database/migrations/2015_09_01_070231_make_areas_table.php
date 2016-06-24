@@ -17,7 +17,7 @@ class MakeAreasTable extends Migration
             $table->integer('city_id')->unsigned();
             $table->string('name');
             $table->string('slug')->index();
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             $table->unique(array('city_id', 'slug'));
 

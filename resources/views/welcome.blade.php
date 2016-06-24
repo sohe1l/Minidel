@@ -6,15 +6,12 @@
 
 @media(max-width:767px){
     .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
-    #loginFormDiv{text-align:center; padding:50px 10px;}
-    .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
     .service-box h3{font-size:1em;}
     .bigIcon {font-size: 2em;}
     #locationsMap {height:250px; width:100%}
 }
 @media(min-width:768px){
     .indexFirst{padding:200px 0 10px 10px; font-size:1.2em;}
-    #loginFormDiv{text-align:center; padding:50px 10px;}
     .indexText{font-size: 1.5em; font-family: lane; text-align: center;}
     .service-box h3{font-size:1.2em;}
     .bigIcon {font-size: 3em;}
@@ -23,7 +20,6 @@
 
 @media(min-width:992px){
     .indexFirst{padding:550px 0 10px 1em; font-size:2.75em;}
-    #loginFormDiv{text-align:center; padding:80px 10px;}
     .indexText{font-size: 2em; font-family: lane; text-align: center;}
     .bigIcon {font-size: 4em;}
     #locationsMap {height:450px; width:90%;}
@@ -58,59 +54,81 @@
 
 
 
-        <div class="row">
+        <div class="row" style="padding:15px 10px 30px 10px; ">
 
-            <div class="col-xs-12" style="padding:35px 10px;">
-                <div style="color:#fe602c; font-family: lane; text-align: center; font-size:3em">What is minidel?</div>
-                <div class="indexText">Minidel (Mini + Deliveries) let you order from nearby stores with <b>No Delivery Charge</b> and <b>No Minimum Delivery</b>. You can order anything as small as a cup of coffee or your grocories.</div>
+            <div class="col-sm-12" style="text-align:center; margin-bottom:20px;">
+                <div style="color:#fe602c; font-family: lane; font-size:2.5em">Minidel is the easiest way to order Room Service, Deliveries or pickups in Dubai.</div>
             </div>
-        
+            <div class="col-sm-12">
 
 
-             @if (\Auth::user())
-                <div id="loginFormDiv">
-                    <a href="/dashboard/" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-home"></span> Go to Dashboard</a>
-                </div>
-            @else
-                
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                 @if (\Auth::user())
+                    <div id="loginFormDiv">
+                        <a href="/dashboard/" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-home"></span> Go to your Dashboard</a>
+                    </div>
+                @else
+                    
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div id="loginFormDiv">
+
+                        <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-sm-push-3 col-md-6 col-md-push-3" style="background-color:#fae596; padding:40px 50px; border-radius:8px;">
+                        <div><h3 style="margin-bottom:20px;">Login to begin</h3></div>
+                        <form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
+                          <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                          <input type="hidden" name="redirect" value="dashboard">
+                          <input type="hidden" name="remember" value="on">
+
+
+<div class="form-group">
+    <label for="loginInput" class="col-sm-3 control-label">Login</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" name="login" id="loginInput" placeholder="Email" value="{{ old('login') }}">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="passInput" class="col-sm-3 control-label">Password</label>
+    <div class="col-sm-9">
+    <input type="password" class="form-control" name="password" id="passInput" placeholder="Password">
+    </div>
+</div>
+
+<div style="text-align:right"><button type="submit" class="btn btn-primary">Sign In</button></div>
+                        
+                        
+                        </form>
+                        </div>
+                      </div>
+
+                      <div style="padding-top:10px; text-align:center">
+                        <a href="/auth/register/" class="btn btn-default">Register</a>
+                        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+                      </div>
+                    
+
+
                     </div>
                 @endif
-                <div id="loginFormDiv">
-                <form class="form-inline" role="form" method="POST" action="{{ url('/auth/login') }}">
-                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                  <input type="hidden" name="redirect" value="dashboard">
-                  <div class="form-group" style="text-align: left">
-                    <label for="login">Login</label>
-                    <input type="text" class="form-control" name="login" id="login" placeholder="Email or Username" value="{{ old('login') }}">
-                  </div>
-                  <div class="form-group" style="text-align: left">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password" id="password">
-                  </div>
-                  <button type="submit" class="btn btn-primary">Login</button>
-                  <a href="/auth/register/" class="btn btn-default">Register</a>
-                  <div style="padding-top:10px">
-                    <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
-                  </div>
-                </form>
-
-
-                </div>
-            @endif
+            </div>
 
         </div>
-    
-        <div class="row" style="padding: 20px 10px;">
-            <div class="col-xs-12">
-                <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; padding:15px; font-family:lane;">
+
+<?php /*
+        <hr>
+
+        <div class="row">
+            <div class="col-xs-12;">
+                <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; font-family:lane;">
                     Try some new restaurants
                 </div>
                 @foreach( \App\Store::Listed()->orderBy('last_check', 'desc')->take(24)->get()->chunk(4) as $storeCollection )
@@ -131,7 +149,7 @@
         </div>
 
 
-<?php /*
+
 
 
 <div class="row hidden-xs">

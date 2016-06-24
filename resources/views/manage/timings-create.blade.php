@@ -89,24 +89,8 @@
     var vm = new Vue({
     el: '#defaultMainContainer',
     data:{
-        
+        everydayCheck:false
     },
-
-    ready: function(){
-    
-    },
-
-    computed: {
-      percentAddress: function(){
-
-      },
-
-    },
-
-    methods:{
-
-    } // methods
-
   })
 
 </script>

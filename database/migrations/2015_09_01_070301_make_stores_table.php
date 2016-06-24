@@ -41,7 +41,7 @@ class MakeStoresTable extends Migration
 
 
             $table->timestamp('last_check')->default('2015-01-01 12:00:00');
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             //$table->unique( array('slug','area_id') );
 

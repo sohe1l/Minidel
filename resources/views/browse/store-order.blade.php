@@ -100,7 +100,11 @@ footer { padding: 30px 0;}
 
 <!-- <button style="width:100%" type="button" class="visible-xs-block btn btn-info" data-toggle="offcanvas">@{{toggleText}}</button> -->
 
-<h3 style="margin-top: 0;">{{ $store->name }} 
+<h3 style="margin-top: 0;">
+  {{ $store->name }}
+  <span class="label label-success" style="font-size:45%">{{ $store->is_open == 'true'?'Open Now':''  }}</span>&nbsp;
+  <span class="label label-danger" style="font-size:45%">{{ $store->is_open == 'false'?'Closed Now':''  }}</span>&nbsp;
+
   <small id="headingSmall">
     <span v-show="{{ $store->status_working!='open'?'true':'false' }}" class="label label-danger">{{ $store->status_working  }}</span>
     <span id="storePhone" style="padding-top: 8px;"><span class="glyphicon glyphicon-phone-alt"></span> {{ $store->phone }}</span>
@@ -124,12 +128,12 @@ footer { padding: 30px 0;}
             <nav data-spy="affix" data-offset-top="420" id="navbar-menu" class="whiteBG">
             @foreach ($store->sections->where('menu_section_id',null)->where('available',1) as $section)
               <ul class="nav nav-pills nav-stacked">
-                <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}" v-on="click: menuClicked()">{{ $section->title }}</a></li>
+                <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$section->id}}" aria-expanded="false" aria-controls="#section{{$section->id}}" v-on:click="menuClicked()">{{ $section->title }}</a></li>
               </ul>
 
               @foreach ($section->subsections->where('available',1) as $subsection)
                 <ul class="nav nav-pills nav-stacked">
-                  <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c" v-on="click: menuClicked()">{{ $subsection->title }}</a></li>
+                  <li><a class="collapseCntNav" data-toggle="collapse" data-parent="#menuContainer" href="#section{{$subsection->id}}" aria-expanded="false" aria-controls="#section{{$subsection->id}}" style="color: #fe602c" v-on:click="menuClicked()">{{ $subsection->title }}</a></li>
                 </ul>
               @endforeach
             @endforeach
@@ -210,31 +214,40 @@ footer { padding: 30px 0;}
 
   <div class="col-xs-12 col-sm-5 col-md-4 col-lg-4 sidebar-offcanvas" id="sidebar" style="font-family: Futura, 'Trebuchet MS', Arial, sans-serif;"> 
 
+    <div class="alert alert-success" role="alert" v-if="activePromo">
+      Promotion: @{{activePromo.value}}% discount on total bill<br>
+      @{{ activePromo.text }}
+    </div>
+
+
     <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="800" id="cartContainer">
       <h4 style="margin:0; color: #fe602c;">Your Order</h4>
 
       <div v-show="isLogin && !orderComplete">
-        <div class="cart-row" v-repeat="item: cart">
-            <span class="cart-title">@{{item.title}}</span>
-            
-            <div class="cart-options">
-              <span class="glyphicon glyphicon-remove" aria-label="remove" v-on="click:removeItem(item)" ></span>
-              &nbsp; [dhs @{{item.price}}]
-              &nbsp;&nbsp; 
-              <span class="glyphicon glyphicon-minus" aria-label="minus" v-on="click: cartMines(item)"></span>
-              &nbsp; @{{item.quan}} &nbsp;
-              <span class="glyphicon glyphicon-plus" aria-label="plus" v-on="click: cartPlus(item)"></span>
+        <div class="cart-row" v-for="item in cart">
+            <span class="cart-title">@{{item.title}}
 
-              <span class="cart-right">
+            <span class="cart-right">
                 <span class="cart-price">@{{item.quan * item.price}}</span>
               </span>
+            </span>
+            
+            <div class="cart-options">
+              <span class="glyphicon glyphicon-remove" aria-label="remove" v-on:click="removeItem(item)" ></span>
+              &nbsp; [dhs @{{item.price}}]
+              &nbsp;&nbsp; 
+              <span class="glyphicon glyphicon-minus" aria-label="minus" v-on:click="cartMines(item)"></span>
+              &nbsp; @{{item.quan}} &nbsp;
+              <span class="glyphicon glyphicon-plus" aria-label="plus" v-on:click="cartPlus(item)"></span>
+
+              
             </div>
 
             <div class="cart-options">
-              <span class="cart-options" v-repeat="item.options">
-                <b>@{{name}}:</b>
-                <span v-repeat="selects">
-                  @{{name}}
+              <span class="cart-options" v-for="io in item.options">
+                <b>@{{io.name}}:</b>
+                <span v-for="ios in io.selects">
+                  @{{ios.name}}
                 </span>
               </span>
             </div>
@@ -249,17 +262,19 @@ footer { padding: 30px 0;}
 
 
 
-        <div v-show="cart.length > 0">
+        <div> <?php // v-show="cart.length > 0" ?>
           <div style="color: #fe602c; font-size:1.2em">
             <div style="text-align: right" v-show="deliveryFee!=0 && dorp=='delivery'">Delivery Fee: Dhs @{{ deliveryFee }} dhs</div>     
             
             <div style="text-align: right; font-weight: bold">Total: Dhs @{{ totalPrice + deliveryFee  }} dhs</div>   
 
-            <div style="text-align: right; font-weight: bold" v-show="dorp=='delivery' && addressObj.discount!=0">
-            Discount: @{{ discountAmount }} dhs
-              <br>
-            Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
-            </div>
+            <template v-if="discountAmount">
+              <div style="text-align: right; font-weight: bold">
+              Discount: @{{ discountAmount }} dhs
+                <br>
+              Payable: @{{ totalPrice + deliveryFee - discountAmount }} dhs
+              </div>
+            </template>
           </div>
 
 
@@ -270,12 +285,12 @@ footer { padding: 30px 0;}
             <div class="form-group">
               <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Payment</label>
               <div class="col-md-8 col-lg-9">
-                <label class="radio-inline" v-repeat="paymentMethods">
+                <label class="radio-inline" v-for="pm in paymentMethods">
                   <input type="radio" 
                          name="payment"
                          v-model="payment"
-                         v-attr="checked: $index==0"
-                         value="@{{pivot.payment_type_id}}"> @{{name}}
+                         v-bind:checked="$index==0"
+                         value="@{{pm.pivot.payment_type_id}}"> @{{pm.name}}
                 </label>
               </div>
             </div>
@@ -284,7 +299,7 @@ footer { padding: 30px 0;}
               <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Option</label>
               <div class="col-md-8 col-lg-9">
                 <label class="radio-inline">
-                  <input type="radio" name="dorp" v-model="dorp" value="delivery" v-attr="disabled: !hasAddresses"> Delivery
+                  <input type="radio" name="dorp" v-model="dorp" value="delivery" v-bind:disabled="!hasAddresses"> Delivery
                 </label>
                 <label class="radio-inline">
                   <input type="radio" name="dorp" v-model="dorp" value="pickup"> Pickup
@@ -295,31 +310,50 @@ footer { padding: 30px 0;}
             <div class="form-group" v-show="dorp =='delivery'">
               <label class="col-md-4 col-lg-3 control-label" style="margin: 0;">Location</label>
               <div class="col-md-8 col-lg-9">
-                <label class="radio-inline" v-repeat="userAddresses">
+                <label class="radio-inline" v-for="ua in userAddresses">
                   <input type="radio" 
                          name="selectedAddress"
                          v-model="selectedAddress"
-                         v-attr="checked: $index==0"
-                         value="@{{value}}"> @{{text}}
+                         v-bind:checked="$index==0"
+                         value="@{{ua.value}}"> @{{ua.text}}
                 </label>
               </div>
             </div>
 
 
-            <div v-show="!showTimes" v-on="click: showTimes = true" style="font-style: italic">
-                Schedule Delivery
+            <div v-show="!schedule.status" v-on:click="schedule.status = true" style="font-style: italic">
+                Schedule
             </div>
 
-            <div class="form-group" v-show="showTimes">
+            <div class="form-group" v-show="schedule.status">
               <label for="inputPassword3" class="col-md-4 col-lg-3 control-label">Schedule</label>
               <div class="col-md-8 col-lg-9" style="padding-top: 5px;">
-                <select v-model="deliveryDay" options="deliveryDays"></select>
-                <select v-model="deliveryTime" options="deliveryTimes"></select>
-                <span class="glyphicon glyphicon-remove" aria-label="remove" v-on="click:showTimes = false" ></span>
+
+
+                <select v-model="schedule.day">
+                  @for ($c = \Carbon\Carbon::today(); $c < \Carbon\Carbon::now()->addDays(5) ; $c->addDay())
+                  <option value="{{ strtolower($c->format('D')) }}">{{ $c->format('l') }}</option>
+                  @endfor
+                </select>
+
+                <select v-model="schedule.hour">
+                <option v-for="option in availableTimesHours" v-if="option.available" v-bind:value="option.value">
+                  @{{ option.text }}
+                </option>
+                </select>
+                :
+                <select v-model="schedule.min">
+                <option v-for="option in availableTimesMins" v-if="option.available" v-bind:value="option.value">
+                  @{{ option.text }}
+                </option>
+                </select>
+
+
+                <span class="glyphicon glyphicon-remove" aria-label="remove" v-on:click="clearSchedule" ></span>
               </div>
             </div>
 
-            <div v-show="!showInstruction" v-on="click: showInstruction = true" style="font-style: italic">
+            <div v-show="!showInstruction" v-on:click="showInstruction = true" style="font-style: italic">
                 Add Instructions
             </div>
 
@@ -331,7 +365,7 @@ footer { padding: 30px 0;}
 
             <div class="form-group">
               <div class="col-md-offset-4 col-lg-offset-3 col-md-8 col-lg-9" style="text-align: right">
-                <button type="submit" class="btn btn-danger" v-on="click: placeOrder">Place Order</button>
+                <button type="submit" class="btn btn-danger" v-on:click="placeOrder">Place Order</button>
               </div>
             </div>
           </div>
@@ -356,9 +390,21 @@ footer { padding: 30px 0;}
     </pre>
 
 */ ?>
-    
+  </div>
 
+  <div style="line-height: 30px;" v-if="dorp == 'delivery'">
 
+    <template v-if="availableMode.bldg && addressObj.bldg != null">
+
+      <span class="label label-success">Room Service</span>&nbsp;
+      <span class="label label-info">No Minimum Delivery</span>&nbsp;
+    </template>
+    <template v-if="availableMode.area && addressObj.area != null">
+      Area
+      <span class="label label-info">Minimum Delivery @{{ addressObj.area.min }}</span>&nbsp;
+      <span v-if="addressObj.area.fee && addressObj.area.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.area.fee }}</span>&nbsp;
+      <span v-if="addressObj.area.feebelowmin && addressObj.area.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.area.feebelowmin }}</span>
+    </template>
 
   </div>
 
@@ -368,22 +414,17 @@ footer { padding: 30px 0;}
   </div>
   @endif
 
+  <div v-if="!availableMode.area && !availableMode.bldg" class="alert alert-danger" role="alert">
+    <template v-if="schedule.status">
+      The store does not deliver to your selected address in the selected time. Please select a different day/time.
+    </template>
+    <template v-else>
+      The store is currently not delivering to your selected address. Select a future schedule time for your order.
+    </template>
+
+  </div>
+
   <div style="line-height: 20px; font-size: 80%">Store Last Online: {{ $last_online }}</div>
-
-  <div style="line-height: 30px;" v-show="dorp == 'delivery'">
-    <span v-if="addressObj.min && addressObj.min!=0" class="label label-info">Minimum Delivery @{{ addressObj.min }}</span>&nbsp;
-    <span v-if="addressObj.fee && addressObj.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.fee }}</span>&nbsp;
-    <span v-if="addressObj.feebelowmin && addressObj.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.feebelowmin }}</span>
-    <span v-if="addressObj.discount && addressObj.discount!=0" class="label label-info">Discount @{{ addressObj.discount }} %</span>&nbsp;
-  </div>
-
-  <div style="line-height: 30px;">
-      <span class="label label-success">{{ $store->is_open == 'true'?'Open Now':''  }}</span>&nbsp;
-      <span class="label label-danger">{{ $store->is_open == 'false'?'Closed Now':''  }}</span>&nbsp;
-
-      <span class="label label-success" v-show="addressObj.type == 'mini'">{{ $store->is_deliver_building=='true'?'Deliveres Now':''  }}</span>&nbsp;
-      <span class="label label-success" v-show="addressObj.type == 'delivery'">{{ $store->is_deliver_area=='true'?'Deliveres Now':''  }}</span>
-  </div>
 
 <?php /*
   <div v-show="!showStoreTimings" v-on="click: showStoreTimings = true" style="font-style: italic; font-size: 90%">Show Store Timings</div>
@@ -430,20 +471,21 @@ footer { padding: 30px 0;}
       <div class="modal-body">
         <div class="modal-info">@{{ modalItem.info }}</div>
         <p>Price: @{{ modalItem.price }}</p>
-        <div v-repeat="modalItem.options">
+        <div v-for="mio in modalItem.options">
           <optionitem 
-            class="optionitem" 
-            handler="@{{optionsHandler}}"
-            options-data="@{{@ options }}"
-            option-id="@{{ id }}"
-            is-valid="@{{@ isValid }}"
-            min="@{{ min }}"
-            max="@{{ max }}"
-            option-name="@{{name}}">
+            :options-data.sync="mio.options"
+            :option-id="mio.id"
+            :is-valid.sync="mio.isValid"
+            :min="mio.min"
+            :max="mio.max"
+            :option-name="mio.name">
           </optionitem>
         </div>
 
 <?php /*
+
+            <!-- handler="@{{optionsHandler}}" -->
+
           <table class="table table-hover table-condensed" v-repeat="modalItem.options | modifyOptions">
             <thead>
               <tr>
@@ -470,7 +512,7 @@ footer { padding: 30px 0;}
 
         <div class="btn-group" role="group">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-success" v-on="click: addItemModal">Add Item</button>
+          <button type="button" class="btn btn-success" v-on:click="addItemModal">Add Item</button>
         </div>
       </div>
     </div>
@@ -504,8 +546,6 @@ footer { padding: 30px 0;}
     <button style="width:100%; border-width:0" type="button" class="visible-xs-block btn btn-primary" data-toggle="offcanvas">@{{toggleText}}</button>
   </div>
 </nav>
-
-
 
 </div>
 
@@ -548,30 +588,25 @@ footer { padding: 30px 0;}
     el: '#storeDiv',
 
     data:{
+      workmode: {bldg:1, area:2, pickup:5},
       cart: [],
       modalItem: [],
       isLogin: {{ ($user) ?'true':'false' }},
       userAddresses: {!! json_encode($user_addresses) !!},
       items: {!! $store->items !!},
-      deliveryMini: {!! json_encode($daysMini) !!},
-      deliveryDays: {!! json_encode($daysDelivery) !!},
-      pickupDays: {!! json_encode($daysPickup) !!},
       payment: '',
       paymentMethods: {!! json_encode($store->payments) !!},
-      deliveryDay: '',
-      deliveryTimes: '',
-      deliveryTime: '',
+      storeTimings: {!! json_encode($storeTimings) !!},
+      schedule: {'day':'', 'hour':'', 'min':'', 'status':false},
       optionsval: '',
       selectedAddress: '',
       dorp : 'pickup',
       instructions: '',
       showInstruction: false,
-      showTimes: false,
       showStoreTimings: false,
       orderComplete: false,
       toggleText : 'View Your Order', // did not work with computed
-
-
+      activePromo: {!! json_encode($active_promos) !!},
     },
     ready: function(){
       if(this.hasAddresses) this.dorp = "delivery";
@@ -581,10 +616,111 @@ footer { padding: 30px 0;}
 
 
     computed: {
+
+      availableTimesHours: function(){
+        var hours = [
+        {'value':'00', 'text':'12 AM', 'available':0},
+        {'value':'01', 'text':'1 AM', 'available':0},
+        {'value':'02', 'text':'2 AM', 'available':0},
+        {'value':'03', 'text':'3 AM', 'available':0},
+        {'value':'04', 'text':'4 AM', 'available':0},
+        {'value':'05', 'text':'5 AM', 'available':0},
+        {'value':'06', 'text':'6 AM', 'available':0},
+        {'value':'07', 'text':'7 AM', 'available':0},
+        {'value':'08', 'text':'8 AM', 'available':0},
+        {'value':'09', 'text':'9 AM', 'available':0},
+        {'value':'10', 'text':'10 AM', 'available':0},
+        {'value':'11', 'text':'11 AM', 'available':0},
+        {'value':'12', 'text':'12 PM', 'available':0},
+        {'value':'13', 'text':'1 PM', 'available':0},
+        {'value':'14', 'text':'2 PM', 'available':0},
+        {'value':'15', 'text':'3 PM', 'available':0},
+        {'value':'16', 'text':'4 PM', 'available':0},
+        {'value':'17', 'text':'5 PM', 'available':0},
+        {'value':'18', 'text':'6 PM', 'available':0},
+        {'value':'19', 'text':'7 PM', 'available':0},
+        {'value':'20', 'text':'8 PM', 'available':0},
+        {'value':'21', 'text':'9 PM', 'available':0},
+        {'value':'22', 'text':'10 PM', 'available':0},
+        {'value':'23', 'text':'11 PM', 'available':0}
+        ];
+
+        that = this;
+
+        this.storeTimings.forEach(function(item){
+          if(item.day == that.schedule.day){
+            var start_hour = parseInt( item.start.split(":")[0] );
+            var end_hour = parseInt( item.end.split(":")[0] );
+            hours.forEach(function(h){
+              if(h.value >= start_hour &&  h.value <= end_hour) h.available = 1;
+            });
+
+          }
+          //if(that.selectedAddress == item.value ) obj = item
+        })
+
+        return hours;
+
+      },
+
+      availableTimesMins: function(){
+
+        var mins = [
+        {'value':'00', 'text':'00', 'available':0},
+        {'value':'05', 'text':'05', 'available':0},
+        {'value':'10', 'text':'10', 'available':0},
+        {'value':'15', 'text':'15', 'available':0},
+        {'value':'20', 'text':'20', 'available':0},
+        {'value':'25', 'text':'25', 'available':0},
+        {'value':'30', 'text':'30', 'available':0},
+        {'value':'35', 'text':'35', 'available':0},
+        {'value':'40', 'text':'40', 'available':0},
+        {'value':'45', 'text':'45', 'available':0},
+        {'value':'50', 'text':'50', 'available':0},
+        {'value':'55', 'text':'55', 'available':0},
+        ];
+
+        that = this;
+
+        this.storeTimings.forEach(function(item){
+          if(item.day == that.schedule.day){
+            var start_hour = parseInt( item.start.split(":")[0] );
+            var end_hour = parseInt( item.end.split(":")[0] );
+            var start_min = parseInt( item.start.split(":")[1] );
+            var end_min = parseInt( item.end.split(":")[1] );
+            
+            mins.forEach(function(m){
+              if(that.schedule.hour > start_hour && that.schedule.hour  < end_hour){
+                m.available = 1;
+                //alert("case 1");
+              }else if(that.schedule.hour == start_hour){
+                if(m.value >= start_min) m.available = 1;
+                //alert("case 2");
+              }else if(that.schedule.hour == end_hour){
+                if(m.value <= end_min) m.available = 1;
+                //alert("case 3");
+              }
+            });
+
+          }
+          //if(that.selectedAddress == item.value ) obj = item
+        })
+        return mins;
+      },
+
+      availableMode: function(){
+        if(this.schedule.day && this.schedule.hour && this.schedule.min){
+          return this.calAvailableModes(this.schedule.day, this.schedule.hour, this.schedule.min);
+        }else{
+          return this.calAvailableModes({!! strtolower(date("'D',G,i")) !!});
+        }
+      },
+
       hasAddresses: function(){
         if(this.userAddresses.length == 0) return false;
         return true;
       },
+
       addressObj: function(){
         var obj = "";
         var that = this;
@@ -593,20 +729,46 @@ footer { padding: 30px 0;}
         })
         return obj;
       },
-      deliveryFee: function(){
-        if(this.dorp == 'pickup') return 0; 
-        if(this.totalPrice < this.addressObj.min){
-          if(this.addressObj.feebelowmin != 0) return this.addressObj.feebelowmin
-          else return ""
-        }else{
-          return this.addressObj.fee
+
+      currentFees: function(){
+        var res = {'min':0, 'fee':0, 'feebelowmin':0, 'discount':0};
+        if(this.dorp == 'pickup'){
+          return res;
         }
+        if(this.availableMode.bldg && this.addressObj.bldg){
+            res.min = this.addressObj.bldg.min;
+            res.fee = this.addressObj.bldg.fee;
+            res.feebelowmin = this.addressObj.bldg.feebelowmin;
+            res.discount = this.addressObj.bldg.discount;
+            return res; // bldg priority
+        }
+        if(this.availableMode.area && this.addressObj.area){
+            res.min = this.addressObj.area.min;
+            res.fee = this.addressObj.area.fee;
+            res.feebelowmin = this.addressObj.area.feebelowmin;
+            res.discount = this.addressObj.area.discount
+        }
+        return res;
+      },
+      deliveryFee: function(){
+        if(this.totalPrice == 0 ) return 0;
+        if(this.totalPrice < this.currentFees.min && this.currentFees.feebelowmin != 0 ) return this.currentFees.feebelowmin;
+        else return this.currentFees.fee;
+        //if(this.dorp == 'pickup') return 0; 
+        // if(this.totalPrice < this.currentFees.min){
+        //   if(this.currentFees.feebelowmin != 0) return this.currentFees.feebelowmin
+        //   else return ""
+        // }else{
+        //   return this.currentFees.fee
+        // }
       },
       
       discountAmount: function(){
+        if(this.activePromo) return Math.round(this.activePromo.value/100*this.totalPrice*100)/100;
         if(this.dorp == 'pickup') return 0;
-        if(this.addressObj.discount == 0) return 0;
-        return Math.round(this.addressObj.discount/100*this.totalPrice*100)/100
+        if(this.currentFees.discount == 0) return 0;
+        else return Math.round(this.currentFees.discount/100*this.totalPrice*100)/100
+        return 0;
       },
       totalPrice: function(){
         var total = 0;
@@ -615,31 +777,32 @@ footer { padding: 30px 0;}
         });
         return total;
       },
-      deliveryTimes: function(){
-        var that = this;
-        var times;
-        if(this.dorp == 'delivery'){
-          if(this.addressObj.type == "mini"){
-            this.deliveryMini.forEach(function(item){
-              if(item.value == that.deliveryDay) times = item.deliveryTime;
-            });
-          }
-          if(this.addressObj.type == "delivery"){
-            this.deliveryDays.forEach(function(item){
-              if(item.value == that.deliveryDay) times = item.deliveryTime;
-            });
-          }
+      
+      // deliveryTimes: function(){
+      //   var that = this;
+      //   var times;
+      //   if(this.dorp == 'delivery'){
+      //     if(this.addressObj.type == "mini"){
+      //       this.deliveryMini.forEach(function(item){
+      //         if(item.value == that.deliveryDay) times = item.deliveryTime;
+      //       });
+      //     }
+      //     if(this.addressObj.type == "delivery"){
+      //       this.deliveryDays.forEach(function(item){
+      //         if(item.value == that.deliveryDay) times = item.deliveryTime;
+      //       });
+      //     }
 
 
-        }else{
-          this.pickupDays.forEach(function(item){
-            if(item.value == that.deliveryDay) times = item.deliveryTime;
-          });
-        }
+      //   }else{
+      //     this.pickupDays.forEach(function(item){
+      //       if(item.value == that.deliveryDay) times = item.deliveryTime;
+      //     });
+      //   }
 
-        return times;
-      },
-      quans: function(){
+      //   return times;
+      // },
+      quans: function(){ // total quantity of an item 
         var quan = {};
         this.cart.forEach(function (item){
           if(item.id in quan) quan[item.id] = quan[item.id] + item.quan;
@@ -664,6 +827,44 @@ footer { padding: 30px 0;}
 
 
     methods:{
+      clearSchedule: function(){
+        this.schedule.status = false;
+        this.schedule.day = '';
+        this.schedule.hour = '';
+        this.schedule.min = '';
+      },
+
+      calAvailableModes: function(c_day,c_hour,c_min){
+        var res = {'bldg':false, 'area':false, 'pickup':false};
+        that = this;
+
+        this.storeTimings.forEach(function(item){
+          var matching = false;
+
+          if(item.day == c_day){
+
+            var start_hour = parseInt( item.start.split(":")[0] );
+            var end_hour = parseInt( item.end.split(":")[0] );
+            var start_min = parseInt( item.start.split(":")[1] );
+            var end_min = parseInt( item.end.split(":")[1] );
+
+            if(c_hour > start_hour && c_hour  < end_hour){
+              matching = true;
+            }else if(c_hour == start_hour){
+              if(c_min >= start_min) matching = true;
+            }else if(c_hour == end_hour){
+              if(c_min <= end_min) matching = true;
+            }
+
+            if(matching){
+              if(that.workmode.bldg == item.workmode_id) res.bldg = true;
+              if(that.workmode.area == item.workmode_id) res.area = true;
+              if(that.workmode.pickup == item.workmode_id) res.pickup = true;
+            }
+          }
+        })
+        return res;
+      },
       menuClicked: function(){
           setTimeout(function () {
             var y = $(window).scrollTop();  //your current y position on the page
@@ -686,9 +887,9 @@ footer { padding: 30px 0;}
           });
         return newitem;
       },
-      optionsHandler: function(id){
-        alert(id)
-      },
+      // optionsHandler: function(id){
+      //   alert(id)
+      // },
       addItem: function(id){
         if(!this.isLogin){
           $('#modalLogin').modal('show'); 
@@ -767,8 +968,6 @@ footer { padding: 30px 0;}
         $('#modalOptions').modal('hide')
       },
 
-
-
       removeItem: function(item){
         this.cart.$remove(item)
       },
@@ -782,13 +981,6 @@ footer { padding: 30px 0;}
           }
         });
         return(myItem);
-      },
-
-
-      selectOption: function(e){
-            alert(id);
-            alert(type);
-
       },
 
       cartMines: function(item){
@@ -806,7 +998,7 @@ footer { padding: 30px 0;}
           return false;
         }
 
-        if(this.totalPrice < this.addressObj.min && this.addressObj.feebelowmin == 0){
+        if(this.totalPrice < this.currentFees.min && this.currentFees.feebelowmin == 0){
           alert("Cannot order below minimum delivery.");
           return false;
         }
@@ -824,12 +1016,10 @@ footer { padding: 30px 0;}
           url: "/{{$store->slug}}/order",
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           data: {
-            showTimes: this.showTimes,
             cart: JSON.stringify(this.cart),
+            schedule: JSON.stringify(this.schedule),
             dorp:this.dorp,
             instructions:this.instructions,
-            day:this.deliveryDay,
-            time:this.deliveryTime,
             address: this.selectedAddress,
             payment: this.payment,
             totalPrice: this.totalPrice,
@@ -854,7 +1044,7 @@ footer { padding: 30px 0;}
     }, //methods
     components: {
       'optionitem': {
-        props: ['options-data','option-id', 'min', 'max', 'handler', 'is-valid','option-name'],
+        props: ['optionsData','optionId', 'min', 'max', 'handler', 'isValid','optionName'],
         template: '#optiontemplate',
         ready: function () {
           this.validiate();
@@ -922,18 +1112,18 @@ footer { padding: 30px 0;}
 
 
   <script id="optiontemplate" type="x-template">
-    <div v-class="optionError: !isValid" style="font-weight: bold; margin-top:1em;">
+    <div :class="{'optionError': !isValid}" style="font-weight: bold; margin-top:1em;">
       <b>@{{optionName}}</b> [select @{{min}} to @{{max}}]
     </div>
-    <div v-repeat="option: optionsData">
-      <div class="optionItem" v-if="option.available == 1">
-        <div class="itemTitle" style="float:right">@{{option.price}}</div>
+    <div v-for="option in optionsData">
+      <div v-if="option.available == 1">
+        <div style="float:right">@{{option.price}}</div>
         <input
-          v-on="change: selectOption(option,$event)"
+          v-on:change="selectOption(option,$event)"
           type="checkbox" 
           name="@{{option.menu_option_id}}"
           id="el_@{{option.menu_option_id}}_@{{option.id}}"
-          v-attr="checked: option.isSelected"
+          v-bind:checked="option.isSelected"
           >
         <label class="itemName" for="el_@{{option.menu_option_id}}_@{{option.id}}">@{{option.name}}</label>
       </div>

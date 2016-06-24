@@ -11,7 +11,7 @@
     .cart-row {border-bottom: 1px solid #848484;     padding: 7px 0;}
     .cart-title, .cart-price {font-weight: bold; font-size: 1.1em;}
     .cart-right {float:right;}
-    .btn-warning a {color:white !important;}
+    .btn-warning a {color:white !important; background-color: #f0ad4e;}
     #orderLabels h3{ display: inline-block;}
     .nav-stacked li {background-color: white;}
   </style>
@@ -33,7 +33,9 @@
   <div class="col-md-3 hidden-print">
     <h4>Order to view:</h4>
     <ul class="nav nav-pills nav-stacked">
-      <li v-repeat="orders" role="presentation" v-class="btn-warning:status == 'pending', active: selectedId==id"><a v-on="click: selectedId=id">@{{ store.name }}</a></li>
+      <li v-for="o in orders" role="presentation" :class="{'btn-warning':o.status == 'pending', 'active': selectedId==o.id}">
+        <a v-on:click="selectedId=o.id">@{{ o.store.name }}</a>
+      </li>
 
 
 
@@ -56,7 +58,7 @@
 
     </div>
 
-    <div v-show="orders[selectedIndex]">
+    <div v-if="orders[selectedIndex]">
 
       <h2>@{{ orders[selectedIndex].store.name }} <small>@{{ orders[selectedIndex].store.phone }}</small></h2>
 
@@ -75,12 +77,12 @@
           <th>Total Price</th>
         </tr>
 
-        <tr v-repeat="item: cart">
+        <tr v-for="item in cart">
           <td>@{{item.title}}
             <div v-show="item.options">
-              <span class="cart-options" v-repeat="item.options">
-                <b>@{{name}}:</b>
-                <span class="cart-options" v-repeat="selects">@{{name}} </span> 
+              <span class="cart-options" v-for="op in item.options">
+                <b>@{{op.name}}:</b>
+                <span class="cart-options" v-for="ops in op.selects">@{{ops.name}} </span> 
               </span>
             </div>
           </td>
@@ -118,7 +120,7 @@
         @{{ orders[selectedIndex].user_address.name }}
         @{{ orders[selectedIndex].user_address.phone }} -
         @{{ orders[selectedIndex].user_address.area.name }}
-        @{{ orders[selectedIndex].user_address.building.name }} -
+        @{{ (orders[selectedIndex].user_address.building)?orders[selectedIndex].user_address.building.name:'' }} -
         @{{ orders[selectedIndex].user_address.unit }}
         @{{ orders[selectedIndex].user_address.info }}
       </blockquote>                
@@ -135,21 +137,21 @@
 
 
       <div style="font-size: 1.3em">
-        <span v-class="label:true, 
-                      label-default:orders[selectedIndex].status != 'pending', 
-                      label-warning:orders[selectedIndex].status == 'pending'">Pending</span>
+        <span :class="['label',
+                      { 'label-default':orders[selectedIndex].status != 'pending', 
+                      'label-warning':orders[selectedIndex].status == 'pending'}]">Pending</span>
         &nbsp;
-        <span v-class="label:true, 
-                      label-default:orders[selectedIndex].status != 'accepted', 
-                      label-success:orders[selectedIndex].status == 'accepted'">Accepted</span>
+        <span :class="{'label':true, 
+                      'label-default':orders[selectedIndex].status != 'accepted', 
+                      'label-success':orders[selectedIndex].status == 'accepted'}">Accepted</span>
         &nbsp;
-        <span v-class="label:true, 
-                      label-default:orders[selectedIndex].status != 'delivering', 
-                      label-success:orders[selectedIndex].status == 'delivering'">Delivering</span>&nbsp;
+        <span :class="{'label':true, 
+                              'label-default':orders[selectedIndex].status != 'delivering', 
+                              'label-success':orders[selectedIndex].status == 'delivering'}">Delivering</span>&nbsp;
 
-        <span v-class="label:true, 
-                      label-default:orders[selectedIndex].status != 'delivered', 
-                      label-success:orders[selectedIndex].status == 'delivered'">Delivered</span>&nbsp;
+        <span :class="{'label':true, 
+                              'label-default':orders[selectedIndex].status != 'delivered', 
+                              'label-success':orders[selectedIndex].status == 'delivered'}">Delivered</span>&nbsp;
 
         <span v-show="orders[selectedIndex].status == 'canceled'" class="label label-danger">Canceled</span>&nbsp;
         <span v-show="orders[selectedIndex].status == 'rejected'" class="label label-danger">Rejected</span>&nbsp;
@@ -175,27 +177,27 @@
 
 
         <span v-show="orders[selectedIndex].status == 'pending'">
-          <button v-on="click: setStatus('canceled',0)" type="button" class="btn btn-danger">Cancel Order</button>
+          <button v-on:click="setStatus('canceled',0)" type="button" class="btn btn-danger">Cancel Order</button>
         </span>
 
         <span v-show="orders[selectedIndex].status == 'accepted'">
-          <button v-on="click: setStatus('callback',0)" type="button" class="btn btn-info">Request Call Back</button>
+          <button v-on:click="setStatus('callback',0)" type="button" class="btn btn-info">Request Call Back</button>
         </span>
 
         <span v-show="orders[selectedIndex].status == 'delivering'">
-          <button v-on="click: setStatus('callback',0)" type="button" class="btn btn-info">Request Call Back</button>
+          <button v-on:click="setStatus('callback',0)" type="button" class="btn btn-info">Request Call Back</button>
         </span>
 
         <span v-show="orders[selectedIndex].status == 'delivered'">
-          <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+          <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
         </span>
 
         <span v-show="orders[selectedIndex].status == 'canceled'">
-          <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+          <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
         </span>
 
         <span v-show="orders[selectedIndex].status == 'rejected'">
-          <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+          <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
         </span>
       </div>
 
@@ -249,7 +251,10 @@
         return index;
       },
       cart: function(){
-        return JSON.parse(this.orders[this.selectedIndex].cart);
+        if(this.orders[this.selectedIndex]){
+          return JSON.parse(this.orders[this.selectedIndex].cart);
+        }
+        return null;
       },
     },
 
@@ -275,7 +280,7 @@
             that.error_message = data["error_message"];
           }else{
             that.orders = data['orders'];
-            that.checkPending();
+            //that.checkPending();
             if(that.loadedFirstTime) that.selectedId = that.orders[that.orders.length - 1]['id'];
             that.loadedFirstTime = false;
           }
@@ -290,14 +295,15 @@
 
       },
 
-      checkPending: function(){
-        var has = 0;
-        this.orders.forEach(function(item, key){
-          if(item.status == 'pending') has = 1;
-        });
-        if(has == 0) $('#beep').trigger("pause");
-        if(has == 1) $('#beep').trigger("play");
-      },
+      // checkPending: function(){
+      //   alert("sd");
+      //   var has = 0;
+      //   this.orders.forEach(function(item, key){
+      //     if(item.status == 'pending') has = 1;
+      //   });
+      //   if(has == 0) $('#beep').trigger("pause");
+      //   if(has == 1) $('#beep').trigger("play");
+      // },
 
       setStatus: function(status,hide){   // accept / on the way / delivered /
             orderid = this.orders[this.selectedIndex].id;
@@ -329,7 +335,7 @@
             that.error_message = "";
 
             if(data["error"]==0){
-              that.orders = data['orders']; that.checkPending();
+              that.orders = data['orders']; //that.checkPending();
             }else{
               that.error_message = data["error_message"];
             }

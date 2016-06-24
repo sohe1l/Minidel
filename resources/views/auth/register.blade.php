@@ -107,22 +107,23 @@
 
                         <hr>
 
+<?php
 
-                        <h4>Choose username</h4>
+                        // <h4>Choose username</h4>
 
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">Username</label>
-                            <div class="col-md-6">
-                                <input type="username" class="form-control" name="username" value="{{ old('username') }}" v-model="username">
-                                <br>
-                                <div style="font-style: italic">
-                                    Your profile will be www.minidel.com/@{{username}}
-                                </div>
+                        // <div class="form-group">
+                        //     <label class="col-md-4 control-label">Username</label>
+                        //     <div class="col-md-6">
+                        //         <input type="username" class="form-control" name="username" value="{{ old('username') }}" v-model="username">
+                        //         <br>
+                        //         <div style="font-style: italic">
+                        //             Your profile will be www.minidel.com/@{{username}}
+                        //         </div>
                             
-                            </div>
-                        </div>
+                        //     </div>
+                        // </div>
 
-
+?>
 
 
                         <div class="form-group">
@@ -146,25 +147,8 @@
 
     var vm = new Vue({
     el: '#defaultMainContainer',
-    data:{
-        
+    data:{   
     },
-
-    ready: function(){
-    
-    },
-
-    computed: {
-      percentAddress: function(){
-
-      },
-
-    },
-
-    methods:{
-
-    } // methods
-
   })
 
 </script>

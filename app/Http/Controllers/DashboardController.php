@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Carbon\Carbon;
+
 class DashboardController extends Controller
 {
     protected $dpBase = 'img/user/';
@@ -27,18 +29,54 @@ class DashboardController extends Controller
             return redirect('/dashboard/address/create/');  
         } 
         
-        $merged = new \Illuminate\Database\Eloquent\Collection;
+        $recent = $user->orders()->groupby('store_id')->take(5)->get(); // ->where('status','delivered')
 
-        foreach( $user->addresses  as $address){
-            $building = \App\Building::find($address->building_id);
-            if($building)
-                $merged = $merged->merge($building->coverageStores);
+        $user_addresses = $user->addresses()->with('city','area','building')->get();
+
+
+        // $all_promotions = new \Illuminate\Database\Eloquent\Collection;
+        foreach($user_addresses as $ua){
+
+            $promos = $ua->area->coverageStores()->whereHas('promos', function($q){
+                $q->whereDate('start_date', '<=' , Carbon::now())->whereDate('end_date', '>=' , Carbon::now());
+            })->with(['promos' => function($q){
+                $q->whereDate('start_date', '<=' , Carbon::now())->whereDate('end_date', '>=' , Carbon::now()); 
+            }])->get();
+
+
+            if($promos)
+                $ua->promos = $promos;
+                //$all_promotions = $all_promotions->merge($promos);
+            
+            //set has mini
+            $ua->has_mini = false;
+            $building = $ua->building;
+            if($building){
+                $building_stores = $building->coverageStores;
+                if($building_stores->count() > 0) $ua->has_mini = true;
+            }
+
         }
 
 
-        $recent = $user->orders()->groupby('store_id')->take(5)->get(); // ->where('status','delivered')
 
-        return view('dashboard.index', compact('user','merged','recent'));
+
+
+        $all_orders = new \Illuminate\Database\Eloquent\Collection;
+        foreach($user_addresses as $ua){
+
+            $recent_orders = $ua->orders()->with('store')->orderBy('created_at', 'desc')->take(6)->get();
+            //dd($recent_orders);
+            if($recent_orders)
+                $all_orders = $all_orders->merge($recent_orders);
+        }
+        foreach($all_orders as $ao){ // prase the cart for vuejs
+            $ao->cart = json_decode($ao->cart);
+        }
+
+        //dd($all_orders);
+
+        return view('dashboard.index', compact('user','recent','user_addresses','all_orders'));
     }
 
 
@@ -62,7 +100,16 @@ class DashboardController extends Controller
         $store = \App\Store::find($oo->store_id);
         if(!$store) return jsonOut(1,'Store does not exists.');
 
-        $response = saveOrder($store, $user, json_decode($oo->cart), $oo->payment_type_id, $oo->price, $oo->fee, $oo->instructions, $oo->type, $oo->user_address_id, $oo->schedule, $oo->day, $oo->time);
+        
+        //check if discount is same
+        if($oo->discount != 0){
+            $active_promo = $store->promos()->active()->first();
+            if(!$active_promo || $oo->discount != $active_promo->value){
+                return jsonOut(1,"The store promotion has ended or changed. Please order again from the store page.");
+            }
+        }
+        
+        $response = saveOrder($store, $user, json_decode($oo->cart), $oo->payment_type_id, $oo->price, $oo->fee, $oo->instructions, $oo->type, $oo->user_address_id);
 
         if($response == 'ok') return jsonOut(0,'order_saved');
         else return jsonOut(1,$response);  
@@ -253,7 +300,7 @@ class DashboardController extends Controller
 
         $order->save();
 
-        $orders = \App\Order::where('user_id',$user->id)->where('hidden_user',0)->with('store','userAddress','userAddress.area','userAddress.building')->get();
+        $orders = \App\Order::where('user_id',$user->id)->where('hidden_user',0)->with('store','userAddress','userAddress.area','userAddress.building','paymentType')->get();
 
         $returnData = array(
             'error' => 0,

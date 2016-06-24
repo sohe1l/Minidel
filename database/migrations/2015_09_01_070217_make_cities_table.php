@@ -20,7 +20,7 @@ class MakeCitiesTable extends Migration
             $table->string('slug');
             $table->string('currency_name');
             $table->string('currency_sign');
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 
@@ -30,7 +30,7 @@ class MakeCitiesTable extends Migration
             $table->string('country', 2);
             $table->string('name');
             $table->string('slug')->unique()->index();
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

@@ -36,10 +36,12 @@ class MakeOrdersTable extends Migration
             $table->integer('discount')->unsigned();
             $table->enum('discount_type', ['percent', 'amount'])->default('percent');
 
-            $table->integer('call_count')->unsigned();
-            $table->timestamp('call_last');
+            $table->integer('promo_id')->unsigned()->nullable()->index();
 
-            $table->timestamps();
+            $table->integer('call_count')->unsigned();
+            $table->timestamp('call_last')->nullable();
+
+            $table->nullableTimestamps();
         });
     }
 

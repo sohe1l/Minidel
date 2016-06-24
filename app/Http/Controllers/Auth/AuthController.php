@@ -112,7 +112,7 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'username' => 'required|alpha_dash|max:25|unique:users,username|unique:stores,slug|unique:chains,slug',
+            // 'username' => 'required|alpha_dash|max:25|unique:users,username|unique:stores,slug|unique:chains,slug',
             'name' => 'required|max:255',
             'mobile' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
@@ -134,7 +134,7 @@ class AuthController extends Controller
 
         $user = new User;
 
-        $user->username = $data['username'];
+        // $user->username = $data['username'];
 
         $user->name = $data['name'];
         $user->gender = $data['gender'];

@@ -63,7 +63,7 @@
                         </div>
                     </div>
 
-
+<?php /*
                     <div class="form-group">
                         <label class="col-md-4 control-label">Discount %</label>
                         <div class="col-md-6">
@@ -72,7 +72,7 @@
                     </div>
 
 
-<?php /*
+
                     <div class="form-group">
                         <label class="col-md-4 control-label">Min Order</label>
                         <div class="col-md-6">

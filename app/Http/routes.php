@@ -53,9 +53,6 @@ Route::group(['prefix' => 'superadmin' , 'middleware' => 'auth.superadmin'], fun
     Route::get('orders','Superadmin\AdminController@ordersIndex');
     Route::get('orders/pending','Superadmin\AdminController@ordersPendingIndex');
     Route::POST('orders/getPendingOrders','Superadmin\AdminController@ordersGetPending');
-
-
-
 });
 
 
@@ -234,10 +231,25 @@ Route::group(['prefix' => 'manage', 'middleware' => 'auth'], function () {
     Route::get('{store}/zomato','ManageController@zomato');
     Route::post('{store}/zomato/process','ManageController@zomatoProcess');
 
+    Route::get('{store}/promos','ManageController@promos');
+    Route::post('{store}/promos','ManageController@promosStore');
+    Route::delete('{store}/promos/{id}','ManageController@promosDelete');
+
+
 });
 
 
 Route::get('/', function () {
+    $user = \Auth::user();
+    if($user){
+        if ($user->addresses->count() == 0){
+            flash("Please add your address to be able to make an order!");
+            return redirect('/dashboard/address/create/');  
+        }
+        return redirect('/dashboard/');     
+    }
+
+
     $body_class = 'container-fluid';
     return view('welcome', compact('body_class'));
 });
@@ -284,6 +296,9 @@ Route::get('browse/{city}','BrowseController@city');
 Route::get('browse/{city}/{area}','BrowseController@area');
 Route::get('browse/{city}/{area}/{building}','BrowseController@building');
 
+Route::get('promotions','BrowseController@promotions');
+
+
 /*
 
 //store page
@@ -316,5 +331,9 @@ Route::get('{store}/reviews','BrowseController@storeReviews');
 Route::get('search','BrowseController@search');
 Route::post('search','BrowseController@searchPost');
 
+Route::get('chain/{chain_slug}','BrowseController@chain');
 
-Route::get('{usernameOrStore}','BrowseController@profileOrStore');
+Route::get('people/{username}','BrowseController@profile');
+
+
+Route::get('{store}','BrowseController@store');

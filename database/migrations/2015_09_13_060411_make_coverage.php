@@ -29,7 +29,7 @@ class MakeCoverage extends Migration
             $table->integer('discount')->unsigned();
             $table->enum('discount_type', ['percent', 'amount'])->default('percent');
             
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 
@@ -50,7 +50,7 @@ class MakeCoverage extends Migration
             $table->enum('discount_type', ['percent', 'amount'])->default('percent');
 
             
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
     }

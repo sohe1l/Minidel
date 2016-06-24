@@ -16,7 +16,7 @@
     <small>Here you can manage your stores or add new ones.</small>
 </h2>
 
-
+<?php /*
     <div class="row">
       <div class="col-lg-6">
 
@@ -29,7 +29,7 @@
         </a>
       </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
-
+*/ ?>
 
 
 @forelse ( $user->stores()->orderBy('name')->get() as $store)

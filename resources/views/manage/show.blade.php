@@ -16,7 +16,7 @@
     .cart-row {border-bottom: 1px solid #848484;     padding: 7px 0;}
     .cart-title, .cart-price {font-weight: bold; font-size: 1.1em;}
     .cart-right {float:right;}
-    .btn-warning a {color:white !important;}
+    .btn-warning a {color:white !important; background-color: #f0ad4e;}
     #orderLabels {margin-bottom: 5px;}
     #orderLabels h3{ display: inline-block;}
     .nav-stacked li {background-color: white;}
@@ -43,19 +43,19 @@
   </div>
   <div class="col-sm-6 hidden-print" style="text-align: right">
     <div class="btn-group" data-toggle="buttons" style="width: 200px">
-      <label v-class="btn:1, btn-default:status_working!='open', btn-success:status_working=='open' ,active:status_working=='open'"
-        style="width: 33%" v-on="click: setStatusWorking('open')">
-        <input type="radio" name="type" autocomplete="off" v-attr="checked: status_working=='open'"> Open
+      <label :class="{'btn':1, 'btn-default':status_working!='open', 'btn-success':status_working=='open', 'active':status_working=='open'}"
+        style="width: 33%" v-on:click="setStatusWorking('open')">
+        <input type="radio" name="type" autocomplete="off" v-bind:checked="status_working=='open'"> Open
       </label>
       
-      <label v-class="btn:1, btn-default:status_working!='close', btn-warning:status_working=='close' ,active:status_working=='close'"
-        style="width: 33%" v-on="click: setStatusWorking('close')">
-        <input type="radio" name="type" autocomplete="off" v-attr="checked: status_working=='close'"> Close
+      <label :class="{'btn':1, 'btn-default':status_working!='close', 'btn-warning':status_working=='close', 'active':status_working=='close'}"
+        style="width: 33%" v-on:click="setStatusWorking('close')">
+        <input type="radio" name="type" autocomplete="off" v-bind:checked="status_working=='close'"> Close
       </label>
       
-      <label v-class="btn:1, btn-default:status_working!='busy', btn-danger:status_working=='busy' ,active:status_working=='busy'"
-        style="width: 33%" v-on="click: setStatusWorking('busy')">
-        <input type="radio" name="type" autocomplete="off" v-attr="checked: status_working=='busy'"> Busy
+      <label :class="{'btn':1, 'btn-default':status_working!='busy', 'btn-danger':status_working=='busy', 'active':status_working=='busy'}"
+        style="width: 33%" v-on:click="setStatusWorking('busy')">
+        <input type="radio" name="type" autocomplete="off" v-bind:checked="status_working=='busy'"> Busy
       </label>
     </div>
 
@@ -88,7 +88,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" v-on="click: setStatusWorkingPost()">Update</button>
+        <button type="button" class="btn btn-primary" v-on:click="setStatusWorkingPost()">Update</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -97,7 +97,7 @@
 <div class="row" id="ordersDiv">
   <div class="col-md-3 hidden-print">
     <ul class="nav nav-pills nav-stacked">
-      <li v-repeat="orders" role="presentation" v-class="btn-warning:callback==1, btn-warning:status == 'pending', active: selectedId==id"><a v-on="click: selectedId=id">@{{ user.name }}</a></li>
+      <li v-for="o in orders" role="presentation" :class="{'btn-warning': o.callback==1 || o.status == 'pending', 'active': selectedId==o.id}"><a v-on:click="selectedId=o.id">@{{ o.user.name }}</a></li>
     </ul>
   </div>
   <div class="col-md-9">
@@ -108,7 +108,7 @@
       <h2><small>Here you will recieve incoming orders!</small></h2>
     </div>
 
-    <div v-show="orders[selectedIndex]">
+    <div v-if="orders[selectedIndex]">
 
           <h2>@{{ orders[selectedIndex].user.name }}  <small>@{{ orders[selectedIndex].user.mobile }}</small></h2>
 
@@ -125,12 +125,12 @@
               <th>Total Price</th>
             </tr>
 
-            <tr v-repeat="item: cart">
+            <tr v-for="item in cart">
               <td>@{{item.title}}
                 <div v-show="item.options">
-                  <span class="cart-options" v-repeat="item.options">
-                    <b>@{{name}}:</b>
-                    <span class="cart-options" v-repeat="selects">@{{name}} </span> 
+                  <span class="cart-options" v-for="io in item.options">
+                    <b>@{{io.name}}:</b>
+                    <span class="cart-options" v-for="ios in selects">@{{ios.name}} </span> 
                   </span>
                 </div>
               </td>
@@ -178,21 +178,21 @@
 
 
           <div style="font-size: 1.3em" class="hidden-print">
-            <span v-class="label:true, 
-                          label-default:orders[selectedIndex].status != 'pending', 
-                          label-warning:orders[selectedIndex].status == 'pending'">Pending</span>
+            <span :class="{'label':true, 
+                                      'label-default':orders[selectedIndex].status != 'pending', 
+                                      'label-warning':orders[selectedIndex].status == 'pending'}">Pending</span>
             &nbsp;
-            <span v-class="label:true, 
-                          label-default:orders[selectedIndex].status != 'accepted', 
-                          label-success:orders[selectedIndex].status == 'accepted'">Accepted</span>
+            <span :class="{'label':true, 
+                                      'label-default':orders[selectedIndex].status != 'accepted', 
+                                      'label-success':orders[selectedIndex].status == 'accepted'}">Accepted</span>
             &nbsp;
-            <span v-class="label:true, 
-                          label-default:orders[selectedIndex].status != 'delivering', 
-                          label-success:orders[selectedIndex].status == 'delivering'">Delivering</span>&nbsp;
+            <span :class="{'label':true, 
+                                      'label-default':orders[selectedIndex].status != 'delivering', 
+                                      'label-success':orders[selectedIndex].status == 'delivering'}">Delivering</span>&nbsp;
 
-            <span v-class="label:true, 
-                          label-default:orders[selectedIndex].status != 'delivered', 
-                          label-success:orders[selectedIndex].status == 'delivered'">Delivered</span>&nbsp;
+            <span :class="{'label':true, 
+                                      'label-default':orders[selectedIndex].status != 'delivered', 
+                                      'label-success':orders[selectedIndex].status == 'delivered'}">Delivered</span>&nbsp;
 
             <span v-show="orders[selectedIndex].status == 'canceled'" class="label label-danger">Canceled</span>&nbsp;
             <span v-show="orders[selectedIndex].status == 'rejected'" class="label label-danger">Rejected</span>&nbsp;
@@ -214,36 +214,36 @@
             
 
             <span v-show="orders[selectedIndex].callback == 1">
-              <button v-on="click: setStatus('callback',0)" type="button" class="btn btn-warning">Confirm Callback</button>
+              <button v-on:click="setStatus('callback',0)" type="button" class="btn btn-warning">Confirm Callback</button>
             </span>
 
 
             <span v-show="orders[selectedIndex].status == 'pending'">
-              <button v-on="click: setStatus('rejected',0)" type="button" class="btn btn-danger">Reject Order</button>
-              <button v-on="click: setStatus('accepted',0)" type="button" class="btn btn-success">Accept Order</button>
+              <button v-on:click="setStatus('rejected',0)" type="button" class="btn btn-danger">Reject Order</button>
+              <button v-on:click="setStatus('accepted',0)" type="button" class="btn btn-success">Accept Order</button>
             </span>
 
             <span v-show="orders[selectedIndex].status == 'accepted'">
-              <button v-on="click: setStatus('delivering',0)" type="button" class="btn btn-info">On the way</button>
-              <button v-on="click: setStatus('delivered',0)" type="button" class="btn btn-success">Delivered</button>
-              <button v-on="click: setStatus('delivered',01)" type="button" class="btn btn-default">Delivered - Hide</button>
+              <button v-on:click="setStatus('delivering',0)" type="button" class="btn btn-info">On the way</button>
+              <button v-on:click="setStatus('delivered',0)" type="button" class="btn btn-success">Delivered</button>
+              <button v-on:click="setStatus('delivered',01)" type="button" class="btn btn-default">Delivered - Hide</button>
             </span>
 
             <span v-show="orders[selectedIndex].status == 'delivering'">
-              <button v-on="click: setStatus('delivered',0)" type="button" class="btn btn-success">Delivered</button>
-              <button v-on="click: setStatus('delivered',01)" type="button" class="btn btn-default">Delivered - Hide</button>
+              <button v-on:click="setStatus('delivered',0)" type="button" class="btn btn-success">Delivered</button>
+              <button v-on:click="setStatus('delivered',01)" type="button" class="btn btn-default">Delivered - Hide</button>
             </span>
 
             <span v-show="orders[selectedIndex].status == 'delivered'">
-              <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+              <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
             </span>
 
             <span v-show="orders[selectedIndex].status == 'canceled'">
-              <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+              <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
             </span>
 
             <span v-show="orders[selectedIndex].status == 'rejected'">
-              <button v-on="click: setStatus('',1)" type="button" class="btn btn-default">Hide</button>
+              <button v-on:click="setStatus('',1)" type="button" class="btn btn-default">Hide</button>
             </span>
           </div>
 

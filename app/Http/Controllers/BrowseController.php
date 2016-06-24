@@ -61,6 +61,8 @@ class BrowseController extends Controller
         return view('browse.delivery-building', compact('city','area','building','allStores'));
     }
 
+
+/*
     public function store($citySlug, $areaSlug, $storeSlug)
     {
         $city = \App\City::where('slug',$citySlug)->firstOrFail();
@@ -70,6 +72,7 @@ class BrowseController extends Controller
                 
         return view('browse.store', compact('city','area','store','user'));
     }
+*/
 
     public function storeOrderInline($storeSlug){
         return $this->storeOrder($storeSlug, true);
@@ -86,42 +89,49 @@ class BrowseController extends Controller
         $user_addresses = array();
         if($user){
             foreach($user->addresses as $address){
+                $itemBldg = null;
+                $itemArea = null;
                 $type = "";
-                if($store->coverageBuildings->contains('id', $address->building_id)){
-                    $item = $store->coverageBuildings->where('id',$address->building_id)->first();
-                    $type = "mini";
-                }else if($store->coverageAreas->contains('id', $address->area_id)){
-                    $item = $store->coverageAreas->where('id',$address->area_id)->first();
-                    $type = "delivery";
-
+                if($address->building_id && $store->coverageBuildings->contains('id', $address->building_id)){
+                    $itemBldg = $store->coverageBuildings->where('id',$address->building_id)->first()->pivot;
+                }
+                if($store->coverageAreas->contains('id', $address->area_id)){
+                    $itemArea = $store->coverageAreas->where('id',$address->area_id)->first()->pivot;
                 }
 
-                if($type != ""){
-                    $user_addresses[] =  array(
-                        "text"          => $address->name ,
+                if($itemBldg != "" or $itemArea != ""){
+                    $user_addresses[] = [
+                        "text"          => $address->name,
                         "value"         => $address->id,
-                        "fee"           => $item->pivot->fee,
-                        "min"           => $item->pivot->min,
-                        "feebelowmin"   => $item->pivot->feebelowmin,
-                        "discount"      => $item->pivot->discount,
-                        "type"          => $type);
-                    $type = "";
+                        "bldg"          => $itemBldg,
+                        "area"      => $itemArea
+                    ];
                 }
             }
         }
 
+        $storeTimings = $store->timings()->where('workmode_id',1)->orWhere('workmode_id',2)->orWhere('workmode_id',5)->get();
 
-        $daysMini = $this->getDays($store, 'Building Delivery');
-        $daysDelivery = $this->getDays($store, 'Area Delivery');
-        $daysPickup = $this->getDays($store, 'Normal Openning');
+        //dd($storeTimings);
+
+        // $daysMini = $this->getDays($store, 'Building Delivery');
+        // $daysDelivery = $this->getDays($store, 'Area Delivery');
+        // $daysPickup = $this->getDays($store, 'Normal Openning');
+
+        //dd($daysDelivery);
+        //dd(array_unique(array_merge($daysMini[0]['deliveryTime'], $daysDelivery[0]['deliveryTime']),SORT_REGULAR ) );
+
+        //dd($daysMini);
 
         $last_online = Carbon::parse($store->last_check)->diffForHumans();
         $is_online = Carbon::parse($store->last_check)->gt( Carbon::now()->subMinute() );
 
-        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','last_online','is_online'));
+        $active_promos = $store->promos()->active()->first();
+
+        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','last_online','is_online','active_promos'));
 
         $page_title = $store->name . " Online Order Delivery & Pickup";
-        return view('browse.store-order', compact('store','user','user_addresses','daysMini','daysDelivery','daysPickup','page_title','last_online','is_online'));
+        return view('browse.store-order', compact('store','user','user_addresses','page_title','last_online','is_online', 'active_promos','storeTimings'));
     }
 
 
@@ -129,8 +139,10 @@ class BrowseController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->firstOrFail();
         $user = \Auth::user();
+      
+        $schedule = json_decode($request->schedule);
         
-        $response = saveOrder($store, $user, json_decode($request->cart), $request->payment, $request->totalPrice, $request->fee, $request->instructions, $request->dorp, $request->address, $request->showTimes, $request->day, $request->time);
+        $response = saveOrder($store, $user, json_decode($request->cart), $request->payment, $request->totalPrice, $request->fee, $request->instructions, $request->dorp, $request->address, $schedule);
 
         if($response == 'ok') return jsonOut(0,'order_saved');
         else return jsonOut(1,$response);   
@@ -237,10 +249,11 @@ class BrowseController extends Controller
 
     public function searchPost(Request $request)
     {
-        $searchQuery = $request->searchQuery;
+        $searchQuery = $request->q;
 
         $searchTerms = explode(' ', $searchQuery);
         
+
         $arrTags = [];
         foreach(json_decode($request->tags) as $key => $val)
             if($val) $arrTags[] = $val; 
@@ -271,30 +284,54 @@ class BrowseController extends Controller
         return response()->json($returnData);
     }
 
-
-
-
-
-
-    public function profileOrStore($usernameOrSlug)
+    public function store($storeSlug)
     {
-
-        $store = \App\Store::where('slug',$usernameOrSlug)->with('building','sections.subsections.items','sections.items','payments')->first();
+        $store = \App\Store::where('slug',$storeSlug)->with('building','sections.subsections.items','sections.items','payments')->firstOrFail();
         $user = \Auth::user();
-        if($store) return view('browse.store', compact('store','user'));
-
-        unset($user);
-
-        $chain = \App\Chain::where('slug', $usernameOrSlug)->first();
-        if($chain) return view('browse.chain', compact('chain'));
-
-
-        $user = \App\User::where('username', $usernameOrSlug)->first();
-        if($user) return view('browse.profile', compact('user'));
-
-
-        abort(404);        
+        return view('browse.store', compact('store','user'));     
     }
+
+
+    public function chain($chainSlug)
+    {
+        $chain = \App\Chain::where('slug', $chainSlug)->firstOrFail();
+        return view('browse.chain', compact('chain'));      
+    }
+
+
+    public function profile($username)
+    {
+        $user = \App\User::where('username', $username)->firstOrFail();
+        return view('browse.profile', compact('user'));
+    }
+
+
+
+
+
+    public function promotions(){
+        return view('browse.promotions', compact('store','user')); 
+    }
+
+    // public function profileOrStore($usernameOrSlug)
+    // {
+
+    //     $store = \App\Store::where('slug',$usernameOrSlug)->with('building','sections.subsections.items','sections.items','payments')->first();
+    //     $user = \Auth::user();
+    //     if($store) return view('browse.store', compact('store','user'));
+
+    //     unset($user);
+
+    //     $chain = \App\Chain::where('slug', $usernameOrSlug)->first();
+    //     if($chain) return view('browse.chain', compact('chain'));
+
+
+    //     $user = \App\User::where('username', $usernameOrSlug)->first();
+    //     if($user) return view('browse.profile', compact('user'));
+
+
+    //     abort(404);        
+    // }
 
 
 
@@ -325,4 +362,35 @@ class BrowseController extends Controller
         return $days;
     }
    
+
+    private function getDaysCombine($store, $workmode){
+        $days = array();
+        for($day = \Carbon\Carbon::now(); \Carbon\Carbon::now()->addDays(4) > $day; $day=$day->addDay()){
+            $dayLetter = strtolower(date('D',$day->timestamp));
+            $dayText = date('D M j Y',$day->timestamp);
+
+            $timeArray = array();
+            foreach($store->timingsSpecific($workmode,$dayLetter) as $timing){
+                $record = 0;
+                foreach(\Config::get('vars.timeList') as $keyTimelist => $valTimelist){
+                    if($keyTimelist == $timing->start) $record = 1;
+
+                    $loopTs = strtotime("$dayText $keyTimelist");
+                    
+                    if($loopTs  > time()){
+                        //$output[] = ["$dayText $keyTimelist", $loopTs , $keyTimelist];
+                        if($record) $timeArray[] = array("value"=>$keyTimelist, "text"=> $valTimelist);
+                    }
+
+                    if($keyTimelist == $timing->end) $record = 0;
+                }
+            }
+            $days[] = array('value'=>$dayLetter, 'text'=> date('l',$day->timestamp), 'deliveryTime'=> $timeArray); // 
+        }
+        return $days;
+    }
+
+
+
+
 }

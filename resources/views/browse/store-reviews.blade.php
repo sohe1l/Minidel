@@ -79,11 +79,11 @@
 
                   <div class="form-group">
                     <label>Rating</label>
-                    <span v-class="glyphicon:true, glyphicon-star:rating>0, glyphicon-star-empty:rating<1" v-on="click: rating=1"></span>
-                    <span v-class="glyphicon:true, glyphicon-star:rating>1, glyphicon-star-empty:rating<2" v-on="click: rating=2"></span>
-                    <span v-class="glyphicon:true, glyphicon-star:rating>2, glyphicon-star-empty:rating<3" v-on="click: rating=3"></span>
-                    <span v-class="glyphicon:true, glyphicon-star:rating>3, glyphicon-star-empty:rating<4" v-on="click: rating=4"></span>
-                    <span v-class="glyphicon:true, glyphicon-star:rating>4, glyphicon-star-empty:rating<5" v-on="click: rating=5"></span>
+                    <span :class="['glyphicon',{'glyphicon-star':rating>0, 'glyphicon-star-empty':rating<1}]" v-on:click="rating=1"></span>
+                    <span :class="['glyphicon',{'glyphicon-star':rating>1, 'glyphicon-star-empty':rating<2}]" v-on:click="rating=2"></span>
+                    <span :class="['glyphicon',{'glyphicon-star':rating>2, 'glyphicon-star-empty':rating<3}]" v-on:click="rating=3"></span>
+                    <span :class="['glyphicon',{'glyphicon-star':rating>3, 'glyphicon-star-empty':rating<4}]" v-on:click="rating=4"></span>
+                    <span :class="['glyphicon',{'glyphicon-star':rating>4, 'glyphicon-star-empty':rating<5}]" v-on:click="rating=5"></span>
                   </div>
 
                   <input type="hidden" v-model="rating" name="rating">

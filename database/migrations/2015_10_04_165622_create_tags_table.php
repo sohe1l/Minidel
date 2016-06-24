@@ -19,7 +19,7 @@ class CreateTagsTable extends Migration
             $table->enum('type', ['cuisine', 'dish', 'store', 'feature', 'offer', 'event']);
             $table->enum('store_type', ['Food','Groceries','Laundry','Pharmacy','Flower']);
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 
@@ -30,7 +30,7 @@ class CreateTagsTable extends Migration
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->integer('tag_id')->unsigned()->index();
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

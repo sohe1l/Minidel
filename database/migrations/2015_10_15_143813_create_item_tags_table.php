@@ -31,7 +31,7 @@ class CreateItemTagsTable extends Migration
             $table->integer('item_tag_id')->unsigned()->index();
             $table->foreign('item_tag_id')->references('id')->on('item_tags')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

@@ -48,16 +48,16 @@
 
 
 <div class="btn-group" data-toggle="buttons" style="width: 100%">
-  <label class="btn btn-default" v-class="active: selected.type=='mini'" style="width: 44%" v-on="click: selected.type='mini'">
-    <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='mini'"> Room Service
+  <label class="btn btn-default" :class="{'active': selected.type=='mini'}" style="width: 44%" v-on:click="selected.type='mini'">
+    <input type="radio" name="type" autocomplete="off" v-bind:checked="selected.type=='mini'"> Room Service
   </label>
   
-  <label class="btn btn-default" v-class="active: selected.type=='delivery'" style="width: 28%" v-on="click: selected.type='delivery'">
-    <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='delivery'"> Delivery
+  <label class="btn btn-default" :class="{'active': selected.type=='delivery'}" style="width: 28%" v-on:click="selected.type='delivery'">
+    <input type="radio" name="type" autocomplete="off" v-bind:checked="selected.type=='delivery'"> Delivery
   </label>
   
-  <label class="btn btn-default" v-class="active: selected.type=='pickup'" style="width: 28%" v-on="click: selected.type='pickup'">
-    <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.type=='pickup'"> Pickup
+  <label class="btn btn-default" :class="{'active': selected.type=='pickup'}" style="width: 28%" v-on:click="selected.type='pickup'">
+    <input type="radio" name="type" autocomplete="off" v-bind:checked="selected.type=='pickup'"> Pickup
   </label>
 
 
@@ -70,11 +70,12 @@
 
 
       <label class="btn btn-default" 
-             v-repeat="userAddresses" 
-             v-class="active: selected.address==$key"
-             style="width: @{{ percentAddress }}%" 
-             v-on="click: selected.address=$key">
-        <input type="radio" name="type" autocomplete="off" v-attr="checked: selected.address==$index"> @{{ $value }}
+             v-for="ua in userAddresses" 
+             :class="{'active': selected.address==$key}"
+             v-bind:style="{width: percentAddress+'%'}" 
+             v-on:click="selected.address=$key">
+        <input type="radio" name="type" autocomplete="off" v-bind:checked="selected.address==$index"> @{{ ua }}
+
       </label>
 
 </div>
@@ -98,15 +99,14 @@
 
 
 <div class="btn-group" data-toggle="buttons" style="width: 99%">
-  <label class="btn btn-default"
-         v-class="active: selected.time=='now'"
+  <label :class="['btn', 'btn-default',{'active': selected.time=='now'}]"
          style="width: 50%"
-         v-on="click: selected.time='now'">
-    <input type="radio" name="time" autocomplete="off" v-attr="checked: selected.time=='now'">Open Now
+         v-on:click="selected.time='now'">
+    <input type="radio" name="time" autocomplete="off" v-bind:checked="selected.time=='now'">Open Now
   </label>
   
-  <label class="btn btn-default" v-class="active: selected.time=='all'" style="width: 50%" v-on="click: selected.time='all'">
-    <input type="radio" name="time" autocomplete="off" v-attr="checked: selected.time=='all'">All
+  <label :class="['btn', 'btn-default',{'active': selected.time=='all'}]" style="width: 50%" v-on:click="selected.time='all'">
+    <input type="radio" name="time" autocomplete="off" v-bind:checked="selected.time=='all'">All
   </label>
 </div>
 
@@ -133,29 +133,10 @@
 
 
 <div style="text-align: right;">
-    <button type="button" class="btn btn-danger" v-on="click: updateStores">Update</button>
+    <button type="button" class="btn btn-danger" v-on:click="updateStores">Update</button>
 </div>
 
-
-
-
-
-<br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <br>
 
   </div>
   <div class="col-sm-8 col-md-9">
@@ -178,7 +159,7 @@
 
     <div style="padding-top: 4em; text-align: center" v-show="loading"><img src="/img/ajax-loader.gif"></div>
 
-    <div v-show="!loading">@include('browse._store', array('vRepeat' => "stores | filterBy searchText"))</div>
+    <div v-show="!loading">@include('browse._store', array('vRepeat' => "s in stores | filterBy searchText"))</div>
 
 
 
@@ -248,6 +229,7 @@
         error_network : 0,
         error_message : '',
         loading : false,
+        searchText : '',
     },
 
     ready: function(){
@@ -263,20 +245,22 @@
         }
 
         if("type" in vars) this.selected.type = vars["type"];
+        if("address_id" in vars) this.selected.address = vars["address_id"];
 
-        var that = this;
-        //selects the first address
-        Vue.nextTick(function () {
-            var set=0
-            for (var id in that.userAddresses) {
-                if(set==0){
-                    that.selected.address = id;
-                    set = 1;
-                }
-            }
+        if(this.selected.address == ''){
+          var that = this;
+          //selects the first address
+          Vue.nextTick(function () {
+              var set=0
+              for (var id in that.userAddresses) {
+                  if(set==0){
+                      that.selected.address = id;
+                      set = 1;
+                  }
+              }
+          })
+        }
 
-            
-        })
         
         if(this.selected.type == 'pickup') setTimeout(function(){ vm.updateStores(); }, 2000);
         else setTimeout(function(){ vm.updateStores(); }, 1000);

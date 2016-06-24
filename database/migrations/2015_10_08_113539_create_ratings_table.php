@@ -22,7 +22,7 @@ class CreateRatingsTable extends Migration
             $table->text('public_review');
             $table->text('private_review');
 
-            $table->timestamps();
+            $table->nullableTimestamps();
             
         });
     }

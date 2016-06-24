@@ -19,7 +19,7 @@ class MakeMenuOptions extends Migration
             $table->enum('type', ['radio', 'select']);
             $table->integer('min')->unsigned();
             $table->integer('max')->unsigned();
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
         });
@@ -30,7 +30,7 @@ class MakeMenuOptions extends Migration
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->boolean('available')->default(true);
-            $table->timestamps();
+            $table->nullableTimestamps();
 
             $table->foreign('menu_option_id')->references('id')->on('menu_options')->onDelete('cascade');
         });
@@ -44,7 +44,7 @@ class MakeMenuOptions extends Migration
             $table->integer('menu_item_id')->unsigned()->index();
             $table->foreign('menu_item_id')->references('id')->on('menu_items')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

@@ -39,7 +39,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">City</label>
                         <div class="col-md-6">
-                            {!!  Form::select('city_id',['4'=>'Dubai'],4,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
+                            {!! Form::select('city_id', \App\City::listByCountrySelect('AE') ,null,$attributes=array('class'=>'form-control','id'=>'city') ); !!}
                         </div>
                     </div>
 
@@ -170,8 +170,8 @@
             $(input).html(' ');
         }
 
-        //$('#country').select2().on("change", update_city);
-        //$('#city').select2().on("change", update_area);
+        $('#country').select2().on("change", update_city);
+        $('#city').select2().on("change", update_area);
         $('#area').select2().on("change", update_building);
         $('#building').select2();
 

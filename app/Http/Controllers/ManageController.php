@@ -53,18 +53,25 @@ class ManageController extends Controller
      */
     public function create()
     {
+        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
+
         $countries = \Countries::getList('en', 'php', 'cldr');
         return view('manage.create', compact('countries'));
     }
 
     public function store(Request $request)
     {
+        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
+
+
+
+
         //validate request
         $this->validate($request, [
             'name' => 'required|max:100',
             'phone' => 'required|max:100',
             'email' => 'required|email',
-            'store_url' =>  'required|alpha_dash|max:25|unique:users,username|unique:stores,slug|unique:chains,slug',
+            'store_url' =>  'required|alpha_dash|max:25|unique:stores,slug',
             'type' => 'required'
         ]);
 
@@ -101,7 +108,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if($store->userRole($request->user()->id)==null) abort(403);
+        if($store->userRole($request->user()->id)==null) abort(403, 'Unauthorized action.');
 
         return view('manage.show',compact('store'));
     }
@@ -113,7 +120,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403, 'Unauthorized action.');
 
         $store->status_listing = 'review';
         $store->save();
@@ -133,7 +140,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403, 'Unauthorized action.');
         
         //create empty array
         $orders = [];
@@ -172,7 +179,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403, 'Unauthorized action.');
         
         $monthlyBreakdown = $store->orders()
                 ->where('status','delivered')
@@ -194,7 +201,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403, 'Unauthorized action.');
         
         $orders = $store->orders()
                 ->whereMonth('created_at', '=', $month)
@@ -212,7 +219,7 @@ class ManageController extends Controller
     {
         $store = \App\Store::where('slug',$storeSlug)->first();
         if($store == null ) abort(404);
-        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403, 'Unauthorized action.');
         
         $order = $store->orders()->find($orderId);
         if(!$order) abort(404);
@@ -775,6 +782,10 @@ class ManageController extends Controller
         if($file){
             //delete the old picture
             //if($item->photo) \File::delete($this->menuBase.$item->photo);
+            if($item->photo){
+                \File::delete($this->itemBase.$item->photo);
+                \File::delete($this->itemBaseThumb.$item->photo);  
+            }
 
             //store the new image
             $photoFileName = time() . '-menu-' . $store->slug . '-' . str_random(2) . '.jpg' ;
@@ -1246,7 +1257,7 @@ class ManageController extends Controller
             'min' => 'required|integer',
             'fee' => 'required|integer',
             'feebelowmin' => 'required|integer',
-            'discount' => 'required|integer|between:0,100'
+            // 'discount' => 'required|integer|between:0,100'
         ]);
 
         if ($store->coverageAreas->contains($request->area_id)) {
@@ -1255,7 +1266,7 @@ class ManageController extends Controller
         }else{
             flash('Area added successfully.');
         }
-        $store->coverageAreas()->attach($request->area_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin, 'discount' => $request->discount));
+        $store->coverageAreas()->attach($request->area_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin, 'discount' => 0));
 
         return redirect('/manage/' . $storeSlug . '/coverage' );
     }
@@ -1303,7 +1314,7 @@ class ManageController extends Controller
         //    'min' => 'required|integer',
         //    'fee' => 'required|integer',
         //    'feebelowmin' => 'required|integer'
-            'discount' => 'required|integer|between:0,100'
+            // 'discount' => 'required|integer|between:0,100'
         ]);
 
         if ($store->coverageBuildings->contains($request->building_id)) {
@@ -1313,7 +1324,7 @@ class ManageController extends Controller
             flash('Building added successfully.');
         }
         // $store->coverageBuildings()->attach($request->building_id, array('min' => $request->min, 'fee' => $request->fee, 'feebelowmin' => $request->feebelowmin));
-        $store->coverageBuildings()->attach($request->building_id, array('min' => 0, 'fee' => 0, 'feebelowmin' => 0, 'discount' => $request->discount));
+        $store->coverageBuildings()->attach($request->building_id, array('min' => 0, 'fee' => 0, 'feebelowmin' => 0, 'discount' => 0));
 
         return redirect('/manage/' . $storeSlug . '/coverage' );
     }
@@ -1850,6 +1861,108 @@ class ManageController extends Controller
 
 
 
+    //Promos
+    public function promos(Request $request, $storeSlug)
+    {
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        
+        $active_promos = $store->promos()->active()->first();
+
+        return view('manage.promos',compact('store','active_promos'));
+    }
+
+    public function promosStore(Request $request, $storeSlug)
+    {
+        $this->validate($request, [
+            'name' => 'required|string',
+            'text' => 'required|string',
+            'discount_percent' => 'required|integer|between:10,60',
+            'start_date' => 'required|date'
+        ]);
+
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $active_promos = $store->promos()->active()->first();
+        if($active_promos){
+            return back()
+            ->withInput()
+            ->withErrors("You can have a maximum of 1 active promo.")
+            ->withInput();
+        }
+
+        $promo = new \App\Promo;
+        $promo->store_id = $store->id;
+        $promo->name = $request->name;
+        $promo->type = 'discount_percent';
+        $promo->value = $request->discount_percent;
+        $promo->text = $request->text;
+        $promo->start_date = $request->start_date;
+        $promo->end_date = (new Carbon($request->start_date))->addWeeks(1);
+        $promo->save();
+
+        flash('Promo created successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/promos' );
+    }
+
+
+
+public function promosDelete(Request $request, $storeSlug, $promo_id)
+    {
+
+        $store = \App\Store::where('slug',$storeSlug)->first();
+        if($store == null) abort(404);
+        if(!in_array($store->userRole($request->user()->id),['store_owner','store_manager'])) abort(403);
+
+        $promo = $store->promos()->findOrFail($promo_id);
+        
+
+        $promo->delete();
+        flash('Promotion deleted successfully.');
+
+        return redirect('/manage/' . $storeSlug . '/promos' );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2112,7 +2225,7 @@ class ManageController extends Controller
 
         $order->save();
 
-        $orders = \App\Order::where('store_id',$store->id)->where('hidden_store',0)->with('user','userAddress','userAddress.area','userAddress.building')->get();
+        $orders = \App\Order::where('store_id',$store->id)->where('hidden_store',0)->with('user','userAddress','userAddress.area','userAddress.building','paymentType')->get();
 
         $returnData = array(
             'error' => 0,

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class MakeTransactionsTable extends Migration
+class CreatePromosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,21 @@ class MakeTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('promos', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('user_id')->unsigned()->index();
             $table->integer('store_id')->unsigned()->index();
-            $table->integer('amount')->unsigned();
-            $table->enum('type',['debit','credit']);
-            $table->text('reference');
+
+            $table->text('name');
+
+
+            $table->enum('type', ['discount_percent']);
+
+            $table->integer('value');
+            $table->text('text');
+
+            $table->date('start_date');
+            $table->date('end_date');
 
             $table->nullableTimestamps();
         });
@@ -32,6 +39,6 @@ class MakeTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('transactions');
+        Schema::drop('promos');
     }
 }

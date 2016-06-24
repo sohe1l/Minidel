@@ -49,7 +49,7 @@
 
       <div>
         <h3>Photos
-        <small v-if="!showAddPhoto"><a v-on="click: showAddPhoto = true"><span class="glyphicon glyphicon-plus"></span> Add</a></small>
+        <small v-if="!showAddPhoto"><a v-on:click="showAddPhoto = true"><span class="glyphicon glyphicon-plus"></span> Add</a></small>
         </h3>
       </div>
 
@@ -211,14 +211,6 @@
     data:{
         showAddPhoto : false,
     },
-
-    ready: function(){
-    },
-    computed: {
-    },
-    methods:{
-    } // methods
-
   })
 </script>
 @endsection

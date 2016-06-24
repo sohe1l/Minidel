@@ -30,7 +30,7 @@ class CreatePaymentTypes extends Migration
             $table->integer('store_id')->unsigned()->index();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->nullableTimestamps();
         });
 
 

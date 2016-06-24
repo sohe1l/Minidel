@@ -29,7 +29,7 @@ elixir(function(mix) {
         'jquery.js',
         'bootstrap.js',
         'select2.js',
-        'vue.js',
+        'vue-1.0.24.js',
         'fakeLoader.min.js',
         'lity.js'
 

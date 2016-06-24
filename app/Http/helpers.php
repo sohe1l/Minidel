@@ -7,7 +7,7 @@
         return response()->json($returnData);
     }
 
-    function saveOrder($store, $user, $cart, $payment, $totalPrice, $fee, $instructions, $type, $addressId=0, $isSchedule="false", $day="", $time=""){
+    function saveOrder($store, $user, $cart, $payment, $totalPrice, $fee, $instructions, $type, $addressId=0, $scheduleObj=null){
         
         if($payment == '')
             return 'Please select a payment method.';
@@ -36,23 +36,35 @@
         if(preg_match("/(delivery|pickup)/", $type) != 1) return "Please either choose delivery or pickup";
         $order->type = $type;
 
+        //get available mode first
+        if($scheduleObj && $scheduleObj->status == "true"){ //make sure time is in the future
+            if(preg_match("/(sun|mon|tue|wed|thu|fri|sat)/", $scheduleObj->day) != 1) return 'Invalid delivery day';
+            if(preg_match("/(2[0-4]|[01][0-9]):([0-5][0-9])/", "$scheduleObj->hour:$scheduleObj->min") != 1) return 'Invalid delivery time';
+            $schedule_timestamp = strtotime("$scheduleObj->day $scheduleObj->hour:$scheduleObj->min");
+            
+            if($schedule_timestamp < time()) return jsonOut(1,'Scheduled delivery cannot be in the past.');
+        }else{
+            $schedule_timestamp = time();
+        }
 
-        $workmode = ""; // set the work mode for time function
+
+        //check if pickup / bldg / area ?
         if($type == 'delivery'){
             $address = \App\UserAddress::find($addressId);
             if(!$address) return 'Invalid delivery address';
-            
 
-            if($store->coverageBuildings->contains('id', $address->building_id)){
+            if( $store->coverageBuildings->contains('id', $address->building_id)
+                && $store->isOpenAtTimestamp('Building Delivery', $schedule_timestamp) != "false" ){
                 $coverage = $store->coverageBuildings->where('id',$address->building_id)->first();
                 $workmode = "Building Delivery";
-            }else if($store->coverageAreas->contains('id', $address->area_id)){
+
+            }else if( $store->coverageAreas->contains('id', $address->area_id)
+                    && $store->isOpenAtTimestamp('Area Delivery', $schedule_timestamp) != "false" ){
                 $coverage = $store->coverageAreas->where('id',$address->area_id)->first();
                 $workmode = "Area Delivery";
             }
 
             if($workmode=="") return 'Invalid delivery address';
-
 
             // get delivery fee  ($workmode, min,fee,feebelowmin,price)
             //check for minimum delivery and charges
@@ -71,10 +83,15 @@
             $workmode = "Normal Openning";
         }
 
-        if($isSchedule == "true"){ //make sure time is in the future
-            if(preg_match("/(sun|mon|tue|wed|thu|fri|sat)/", $day) != 1) return 'Invalid delivery day';
-            if(preg_match("/(2[0-4]|[01][1-9]|10):([0-5][0-9]:00)/", $time) != 1) return 'Invalid delivery time';
-            $schedule = strtotime($day . " " .  $time);
+
+
+
+
+        if($scheduleObj && $scheduleObj->status == "true"){ //make sure time is in the future
+            if(preg_match("/(sun|mon|tue|wed|thu|fri|sat)/", $scheduleObj->day) != 1) return 'Invalid delivery day';
+            if(preg_match("/(2[0-4]|[01][0-9]):([0-5][0-9])/", "$scheduleObj->hour:$scheduleObj->min") != 1) return 'Invalid delivery time';
+            $schedule = strtotime("$scheduleObj->day $scheduleObj->hour:$scheduleObj->min");
+            
             if($schedule < time()) return jsonOut(1,'Scheduled delivery cannot be in the past.');
             if($store->isOpenAtTimestamp($workmode, $schedule) != "true") return 'Store is not open for '. $type . ' at the specified time';
             $order->schedule = date("Y-m-d H:i:s", $schedule);
@@ -93,6 +110,11 @@
             return 'Total price is not matching system price. Items must have been changed';
 
         $order->price = $totalPrice;
+
+        $active_promo = $store->promos()->active()->first();
+        if($active_promo){
+            $order->discount = $active_promo->value;
+        }
 
         $order->save();
 

@@ -9,6 +9,9 @@
   <li role="presentation" {!! ($active=='coverage')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/coverage/">Delivery Coverage</a></li>
   <li role="presentation" {!! ($active=='timings')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/timings/">Store Timings</a></li>
 
+  <li role="presentation" {!! ($active=='promos')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/promos/">Promotions</a></li>
+
+
   <li role="presentation" {!! ($active=='tags')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/tags/">Tags</a></li>
 
   <li role="presentation" {!! ($active=='payments')?'class="active"':'' !!}><a href="/manage/{{$store->slug}}/payments/">Payments</a></li>

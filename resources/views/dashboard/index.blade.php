@@ -20,6 +20,7 @@
 .quickOrder:first-child{
     padding-top:0em;
 }
+.titleStyled {font-weight: bold; color:#f05f40; font-size:2em; font-family:lane; margin-bottom: 10px;}
 </style>
 
 
@@ -30,197 +31,131 @@
 
 @section('content')
 
-
-
-@if ($user->addresses->count() == 0)
-  <div class="jumbotron visible-xs" style="text-align:center">
-    <h4><a href="/dashboard/address/create/">Add an Address to be able to make orders</a></h4>
-  </div>
-@endif
-
-<?php /* 
-<div class="visible-xs" style="margin-bottom:20px;">
-  <form method="GET" action="/search/">
-    <div id="custom-search-input">
-        <div class="input-group col-md-12">
-            <input type="text" class="search-query form-control" name="q" placeholder="Search" />
-            <span class="input-group-btn">
-                <button class="btn btn-danger" type="button">
-                    <span class=" glyphicon glyphicon-search"></span>
-                </button>
-            </span>
-        </div>
+<div v-show="selected_address_id == 0">
+<div class="titleStyled">Please select your location</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-lg-4" v-for="address in addresses">
+  <div class="panel panel-primary" style="margin:10px 0" v-on:click="selected_address_id = address.id">
+    <div class="panel-body">
+      <div style="font-size:150%; font-weight:bold">@{{ address.name }}</div>
+      @{{ address.city.name }} - @{{ address.area.name }} - @{{ (address.building)?address.building.name+' - ':'' }} @{{ address.unit }}<br>
+      @{{ address.info }}
     </div>
-  </form>
+  </div>
+  </div>
 </div>
-*/ ?>
+</div>
+
+<div v-if="selected_address_id != 0">
 
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-sm-8 col-lg-9">
+
+  <div class="titleStyled">Quick Order</div>
+
+    <h4>@{{ selected_address.name }} 
+    <small>
+      @{{ selected_address.city.name }} - @{{ selected_address.area.name }} - @{{ (selected_address.building)?selected_address.building.name+' - ':'' }} @{{ selected_address.unit }} -  @{{ selected_address.info }}
+    </small>
+    <div class="pull-right">
+      <a  class="btn btn-default btn-xs" v-on:click="selected_address_id = 0"><i class="glyphicon glyphicon-random"></i> &nbsp; Change Location</a>
+    </div>
+
+    </h4>
 
 
-    <h3 class="hidden">Make New Order</h3>
+  <div v-show="orderComplete" class="alert alert-success" role="alert" style="margin-top:10px;">
+    Order recieved successfully.
+  </div>
+  <div v-show="!orderComplete">
 
-    <div style="text-align: center">
-      <div><a href="/dashboard/order/?type=mini" class="btn btn-danger btn-lg btn-block">
+
+
+  <div class="row">
+    <div class="col-sm-12" v-for="ro in recent_orders">
+      
+      <div class="panel panel-default" style="padding:10px;">
+      <div class="row">
+        <div class="col-xs-4 text-center" style="font-size: 1.5em;">
+          <img class="img-responsive center-block" v-bind:src="'/img/logo/'+ro.store.logo">
+          <div style="text-transform:capitalize">@{{ ro.type }}</div>
+          <div>@{{ payable(ro.price,ro.fee,ro.discount) }} AED</div>
+          <button type="button" class="btn btn-primary btn-block" v-on:click="placeRegular(ro.id)">Order</button>
+        </div>
+         <div class="col-xs-8">
+        <table class="table table-condensed table-striped">
+        <thead><tr><th>Quick Order</th></tr></thead>
+        <tr v-for="item in ro.cart"><td>
+          @{{item.quan}} <small><b>X</b></small> @{{ item.title }} 
+          <div v-for="option in item.options">
+            [@{{option.name}}:
+              <span style="font-style: italic" v-for="subOption in option.selects">@{{ subOption.name }}</span>
+            ]
+          </div>
+        </td></tr>
+        </table>
+        <div>@{{ ro.instructions }}</div>
+        </div>
+      </div>
+      </div>
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+
+
+  </div>
+
+
+
+  </div>
+  <div class="col-sm-4 col-lg-3">
+    <div class="titleStyled">Browse Stores</div>
+
+    <div style="text-align: center" v-show="selected_address && selected_address.building && selected_address.has_mini">
+      <div><a href="/dashboard/order/?type=mini&address_id=@{{selected_address_id}}" class="btn btn-danger btn-lg btn-block">
         <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Room Service
       </a></div>
-      <div><small>Fast - No Min Order - No Delivery Fee</small></div>
+      <div>Delivery from nearby stores without minimum order amount or delivery fees</div>
     </div>
 
-    <hr>
+    <hr style="margin-top:10px; margin-bottom:10px; border-top: 1px solid #ab7777">
 
     <div style="text-align: center">
-      <div><a href="/dashboard/order/?type=delivery" class="btn btn-danger btn-lg btn-block">
+      <div><a href="/dashboard/order/?type=delivery&address_id=@{{selected_address_id}}" class="btn btn-danger btn-lg btn-block">
         <span class="glyphicon glyphicon-road"></span> Delivery
       </a></div>
-      <div><small>All stores delivering to your area</small></div>
+      <div>Delivery from any stores that delivers to your area</div>
     </div>
 
-    <hr>
+    <hr style="margin-top:10px; margin-bottom:10px; border-top: 1px solid #ab7777">
 
     <div style="text-align: center">
-      <div><a href="/dashboard/order/?type=pickup" class="btn btn-danger btn-lg btn-block">
+      <div><a href="/dashboard/order/?type=pickup&address_id=@{{selected_address_id}}" class="btn btn-danger btn-lg btn-block">
         <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
       </a></div>
-      <div><small>Any Store</small></div>
     </div>
+    <hr style="margin-top:10px; margin-bottom:10px; border-top: 1px solid #ab7777">
 
-
-<?php /*
-    <div class="btn-group" role="group" style="width: 100%;">
-
-        <a href="/dashboard/order/?type=mini" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
-          <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Mini
-        </a>
-        <?php /*
-        <a href="/dashboard/order/?type=delivery" class="btn btn-default btn-block btn-lg">
-          <span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Delivery
-        </a>
-        * / ?>
-        <a href="/dashboard/order/?type=pickup" class="btn btn-default btn-lg" style="width:50%; color: #e12f33;">
-          <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Pickup
-        </a>
-    </div>
-*/ ?>
-
-  </div>
-  <div class="col-sm-6">
-
-
-
-
-
-
-
-
-
-
-
-<h4>Quick Order</h4>
-
-<div v-show="orderComplete" class="alert alert-success" role="alert" style="margin-top:10px;">
-  Order recieved successfully.
-</div>
-<div v-show="!orderComplete">    
-    @forelse($user->orders()->where('status','delivered')->orderBy('id','desc')->take(3)->get() as $order)
-        <div class="quickOrder">
-          [ {{ $order->type }} ]
-          @foreach(json_decode($order->cart) as $item)
-            {{ $item->quan }} <small><b>X</b></small> {{ $item->title }} 
-            
-            @if(property_exists($item,'options') && is_array($item->options) && count($item->options)>0)
-            [
-                @foreach($item->options as $option)
-                    {{ $option->name }}: 
-                    <span style="font-style: italic">
-                        @foreach($option->selects  as $subOption) {{ $subOption->name }} @endforeach
-                    </span>
-                @endforeach
-            ]
-            @endif
-          @endforeach
-
-        <div>from <b>{{ $order->store->name }}</b></div>
-        <div>{{ $order->instructions }}</div>
-        <button type="button" class="btn btn-primary btn-xs" v-on="click: placeRegular({{ $order->id }})">Order</button>
+    <div v-if="selected_address && selected_address.promos.length != 0">
+    <br><br>
+    <div class="titleStyled">Latest Promotions</div>
+      <div v-for="store in selected_address.promos">
+        <a v-bind:href="'/'+store.slug+'/order/'"><img class="img-responsive" v-bind:src="'/img/cover/'+ store.cover"></a>
+        <b>@{{ store.promos[0].text }}</b><br>
+        <small>@{{ store.promos[0].value }}% off from @{{ store.name }}. Promotions ends on @{{ store.promos[0].end_date }}</small>
       </div>
-    @empty
-      <div style="font-style: italic">You did not make any orders yet.</div>
-    @endforelse
-
-</div>
-
-
-
-
-
-
-  </div>
-  <div class="col-sm-3 hidden-xs">
-
-
-    <div class="hidden-xs">
-      <h4>Recent Resturants</h4>
-
-      <form method="GET" action="/search/">
-      <div id="custom-search-input">
-          <div class="input-group col-md-12">
-              <input type="text" class="search-query form-control" name="q" placeholder="Search" />
-              <span class="input-group-btn">
-                  <button class="btn btn-danger" type="button">
-                      <span class=" glyphicon glyphicon-search"></span>
-                  </button>
-              </span>
-          </div>
-      </div>
-    </form>
-
-      @foreach($recent as $order)
-        
-
-        <div class="media">
-          <div class="media-left">
-            <a href="/{{ $order->store->slug }}/order/">
-              <img class="media-object" src="/img/logo/{{ $order->store->logo or 'placeholder.svg' }}" style="width:50px;">
-            </a>
-          </div>
-          <div class="media-body">
-            <h4 class="media-heading">
-              <a href="/{{ $order->store->slug }}/order/">
-                {{ $order->store->name }}
-              </a>
-            </h4>
-
-            <div>
-                <span class="label label-success">{{ $order->store->is_open == 'true'?'Open Now':''  }}</span>
-                <span class="label label-danger">{{ $order->store->is_open == 'false'?'Closed Now':''  }}</span>
-              <span class="label label-success">{{ ($order->store->is_deliver_building == 'true' || $order->store->is_deliver_area == 'true')?'Deliveres Now':''  }}</span>
-            </div>
-
-          </div>
-        </div>
-
-      @endforeach
     </div>
 
-<br>
-    <h4>Your Addresses <a style="float:right" href="/dashboard/address/"><span class="glyphicon glyphicon-edit"></span></a></h4>
-
-
-    @forelse($user->addresses as $address)
-        <div><b>{{ $address->name }}</b></div>
-        <div>{{ $address->city->name }}, {{ $address->area->name }}, {{ ($address->building!=null)?$address->building->name:"" }}</div>
-        <div>{{ $address->unit }}, {{ $address->info }}</div>
-        <div>&nbsp;</div>
-    @empty
-        No address. <a href="/dashboard/address/create">Add Address</a>
-    @endforelse
-
-
-  </div>
+ </div>
 </div>
-
+</div>
 
 
 @stop
@@ -232,8 +167,46 @@
     el: '#defaultMainContainer',
     data:{
       orderComplete : false,
+      selected_address_id : 0,
+      addresses: {!! json_encode($user_addresses) !!},
+      all_orders: {!! json_encode($all_orders) !!}
+    },
+    computed:{
+      selected_address: function(){
+        var address_object = null;
+        that = this;
+
+        this.addresses.forEach(function(ad) {
+          if(that.selected_address_id == ad.id) address_object = ad;
+        });
+
+        return address_object;
+      },
+
+      recent_orders: function(){
+        var recent = [];
+        that = this;
+        this.all_orders.forEach(function(order) {
+          if(that.selected_address_id == order.user_address_id) recent.push(order);
+        });
+        return recent;
+      },
+
     },
     methods:{
+      payable: function(price,fee,discount){
+
+        var payable = Number(price) + Number(fee);
+
+        discount = Number(discount);
+        
+        if(discount != 0){
+          payable = payable - Math.round(discount/100*price*100)/100;
+        }
+
+
+        return payable;
+      },
       placeRegular: function(id){
         var that = this;
         $.ajax({
@@ -248,7 +221,7 @@
         })
         .done(function(data) {
           if(data["error"]==1){
-            alert(data["message"]);
+            alert(data["error_message"]);
           }else if(data["error"]==0){
             that.orderComplete = true;
             setTimeout(function(){location.href="/dashboard/orders/"} , 100); 

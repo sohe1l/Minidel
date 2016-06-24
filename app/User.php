@@ -37,11 +37,25 @@ class User extends Model implements AuthenticatableContract,
      */
     protected $hidden = ['password', 'remember_token'];
 
+
+
     public static function boot()
     {
         parent::boot();
         static::creating(function($user){
             $user->confirmation_code = str_random(30);
+
+            //unique slug
+            $user->username = str_slug($user->name);
+
+            $index = 1;
+
+            while(User::where('username', '=', $user->username)->exists()){
+                $user->username = str_slug($user->name) . '-' . $index++;
+            }
+
+
+
         });
     }
 

@@ -19,7 +19,7 @@ class MakeMenuSectionsTable extends Migration
             $table->integer('order');
             $table->integer('menu_section_id')->nullable();
             $table->boolean('available')->default(true);
-            $table->timestamps();
+            $table->nullableTimestamps();
             
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');;
         });

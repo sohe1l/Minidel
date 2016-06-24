@@ -18,14 +18,15 @@
     <div class="col-xs-8">
         <br><br>
         <h2 style="margin-top: 15px !important;">Browse Chain: {{$chain->name}}</h2>
-        <div>
     </div>
-</div>
 
 <div class="row">
 
     <div class="col-xs-12 col-sm-7 col-md-8 col-lg-8">
 
+    @foreach($chain->stores as $store)
+        {{ $store->name }}
+    @endforeach
 
     </div>
 </div>
