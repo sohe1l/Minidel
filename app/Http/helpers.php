@@ -9,6 +9,9 @@
 
     function saveOrder($store, $user, $cart, $payment, $totalPrice, $fee, $instructions, $type, $addressId=0, $scheduleObj=null){
         
+        //$returnData = ['error' => 0,'error_message' => '','error_type' => ''];
+
+
         if($payment == '')
             return 'Please select a payment method.';
 
@@ -64,7 +67,7 @@
                 $workmode = "Area Delivery";
             }
 
-            if($workmode=="") return 'Invalid delivery address';
+            if(!isset($workmode))  return ['error' => 1,'error_message' => 'The store does not currenly deliver to your address. You can schedule your order.','error_type' => 'NO_WORKMODE', 'store_url'=>"/$store->slug/order"];
 
             // get delivery fee  ($workmode, min,fee,feebelowmin,price)
             //check for minimum delivery and charges
@@ -82,9 +85,6 @@
         }else{
             $workmode = "Normal Openning";
         }
-
-
-
 
 
         if($scheduleObj && $scheduleObj->status == "true"){ //make sure time is in the future
@@ -127,9 +127,7 @@
         $orderTime->timestamp = time();
         $orderTime->save();
     
-
-
-        return 'ok';
+        return ['error' => 0,'error_message' => '','error_type' => ''];
     }
 
 

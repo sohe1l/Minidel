@@ -128,7 +128,7 @@ class BrowseController extends Controller
 
         $active_promos = $store->promos()->active()->first();
 
-        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','last_online','is_online','active_promos'));
+        if($inline) return view('browse.store-order-inline', compact('store','user','user_addresses','page_title','last_online','is_online','active_promos','storeTimings'));
 
         $page_title = $store->name . " Online Order Delivery & Pickup";
         return view('browse.store-order', compact('store','user','user_addresses','page_title','last_online','is_online', 'active_promos','storeTimings'));
@@ -144,8 +144,8 @@ class BrowseController extends Controller
         
         $response = saveOrder($store, $user, json_decode($request->cart), $request->payment, $request->totalPrice, $request->fee, $request->instructions, $request->dorp, $request->address, $schedule);
 
-        if($response == 'ok') return jsonOut(0,'order_saved');
-        else return jsonOut(1,$response);   
+        if(is_array($response)) return response()->json($response);
+        else return jsonOut(1,$response);  
     }
 
 

@@ -19,7 +19,8 @@ elixir(function(mix) {
                 'bootstrap.css',
                 'select2.css',
                 'fakeLoader.css',
-                'lity.css'
+                'lity.css',
+                'sweetalert.css'
 
             ]) // 'bootflat.css',
 
@@ -31,7 +32,9 @@ elixir(function(mix) {
         'select2.js',
         'vue-1.0.24.js',
         'fakeLoader.min.js',
-        'lity.js'
+        'lity.js',
+        'sweetalert.min.js',
+        'helpers.js'
 
 
         ]);

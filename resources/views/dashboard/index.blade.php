@@ -20,7 +20,6 @@
 .quickOrder:first-child{
     padding-top:0em;
 }
-.titleStyled {font-weight: bold; color:#f05f40; font-size:2em; font-family:lane; margin-bottom: 10px;}
 </style>
 
 
@@ -32,7 +31,9 @@
 @section('content')
 
 <div v-show="selected_address_id == 0">
-<div class="titleStyled">Please select your location</div>
+<div class="titleStyled">Please select your location
+<div class="pull-right" style="font-size:50%"><a href="/dashboard/address/create"><i class="glyphicon glyphicon-plus"></i> Add a New Address</a></div>
+</div>
 <div class="row">
   <div class="col-xs-12 col-sm-6 col-lg-4" v-for="address in addresses">
   <div class="panel panel-primary" style="margin:10px 0" v-on:click="selected_address_id = address.id">
@@ -72,6 +73,10 @@
 
 
   <div class="row">
+    <div class="col-sm-12" v-if="recent_orders.length == 0">
+      <small>You don't have any previous orders from this location.</small>
+      <div class="titleStyledGrayed">Browse stores for delivery or pickup to place your first order.</div>
+    </div>
     <div class="col-sm-12" v-for="ro in recent_orders">
       
       <div class="panel panel-default" style="padding:10px;">
@@ -221,20 +226,27 @@
         })
         .done(function(data) {
           if(data["error"]==1){
-            alert(data["error_message"]);
+            if(data["error_type"] && data["error_type"] == "NO_WORKMODE"){
+              swal( {title: "Notice!",   text: data["error_message"],   type: "warning",  showCancelButton: true, confirmButtonText: "Visit Store Page", closeOnConfirm: false },
+                function(){
+                  location.href=data["store_url"];
+                });
+            }else{
+              sweet_error(data["error_message"]);
+            }
           }else if(data["error"]==0){
             that.orderComplete = true;
             setTimeout(function(){location.href="/dashboard/orders/"} , 100); 
           }else{
-            alert("Network Error");
+            sweet_error("Network Error");
           }
         })
         .fail( function(xhr, status, error) {
-          alert("Some Error Occured!");
+          sweet_error("Some Error Occured!");
         });
       } // place order
     }
   });
-
 </script>
+
 @stop

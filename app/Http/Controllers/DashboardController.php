@@ -111,7 +111,7 @@ class DashboardController extends Controller
         
         $response = saveOrder($store, $user, json_decode($oo->cart), $oo->payment_type_id, $oo->price, $oo->fee, $oo->instructions, $oo->type, $oo->user_address_id);
 
-        if($response == 'ok') return jsonOut(0,'order_saved');
+        if(is_array($response)) return response()->json($response);
         else return jsonOut(1,$response);  
 
     }

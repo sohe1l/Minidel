@@ -57,7 +57,7 @@
         <div class="row" style="padding:15px 10px 30px 10px; ">
 
             <div class="col-sm-12" style="text-align:center; margin-bottom:20px;">
-                <div style="color:#fe602c; font-family: lane; font-size:2.5em">Minidel is the easiest way to order Room Service, Deliveries or pickups in Dubai.</div>
+                <div style="color:#fe602c; font-family: lane; font-size:2.5em">Minidel is the easiest way to order Room Service, Deliveries or Pickups in Dubai.</div>
             </div>
             <div class="col-sm-12">
 
@@ -81,7 +81,7 @@
                     <div id="loginFormDiv">
 
                         <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-sm-push-3 col-md-6 col-md-push-3" style="background-color:#fae596; padding:40px 50px; border-radius:8px;">
+                        <div class="col-xs-12 col-sm-6 col-sm-push-3 col-md-6 col-md-push-3" style="border: 2px solid #fae596;background-color:white; padding:40px 50px; border-radius:8px;">
                         <div><h3 style="margin-bottom:20px;">Login to begin</h3></div>
                         <form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
                           <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -103,17 +103,21 @@
     </div>
 </div>
 
+
+
 <div style="text-align:right"><button type="submit" class="btn btn-primary">Sign In</button></div>
                         
-                        
+             
+              <div style="padding-top:10px; text-align:left">
+                        <a href="/auth/register/" class="btn btn-default">Register</a>
+                        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+                      </div>
+                                 
                         </form>
                         </div>
                       </div>
 
-                      <div style="padding-top:10px; text-align:center">
-                        <a href="/auth/register/" class="btn btn-default">Register</a>
-                        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
-                      </div>
+                     
                     
 
 
@@ -260,5 +264,4 @@
 
 
 @section('footer')
-
 @endsection

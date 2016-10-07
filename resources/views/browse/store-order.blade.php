@@ -44,6 +44,7 @@ footer { padding: 30px 0;}
 
 }
 
+.itemPhoto{width:150px; margin-right:10px; padding:0;}
 
 
 
@@ -219,7 +220,12 @@ footer { padding: 30px 0;}
       @{{ activePromo.text }}
     </div>
 
-
+    @if(! $is_online)
+    <div class="alert alert-danger" role="alert">
+      The store is not currenly online, however you may still place an order for a future time.
+    </div>
+    @endif
+    
     <div class="cart-highlight" v-show="isLogin" data-spy="affix" data-offset-top="800" id="cartContainer">
       <h4 style="margin:0; color: #fe602c;">Your Order</h4>
 
@@ -393,26 +399,16 @@ footer { padding: 30px 0;}
   </div>
 
   <div style="line-height: 30px;" v-if="dorp == 'delivery'">
-
     <template v-if="availableMode.bldg && addressObj.bldg != null">
-
-      <span class="label label-success">Room Service</span>&nbsp;
-      <span class="label label-info">No Minimum Delivery</span>&nbsp;
+      <span class="label label-success">Room Service</span> <br>
+      <span class="label label-info">No Minimum Delivery</span>
     </template>
     <template v-if="availableMode.area && addressObj.area != null">
-      Area
-      <span class="label label-info">Minimum Delivery @{{ addressObj.area.min }}</span>&nbsp;
-      <span v-if="addressObj.area.fee && addressObj.area.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.area.fee }}</span>&nbsp;
+      <span class="label label-info">Minimum Delivery @{{ addressObj.area.min }}</span> <br>
+      <span v-if="addressObj.area.fee && addressObj.area.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.area.fee }}</span> <br>
       <span v-if="addressObj.area.feebelowmin && addressObj.area.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.area.feebelowmin }}</span>
     </template>
-
   </div>
-
-  @if(! $is_online)
-  <div class="alert alert-danger" role="alert">
-    The store is not currenly online, however you may still place an order for a future time.
-  </div>
-  @endif
 
   <div v-if="!availableMode.area && !availableMode.bldg" class="alert alert-danger" role="alert">
     <template v-if="schedule.status">
@@ -936,7 +932,7 @@ footer { padding: 30px 0;}
           }
         });
         if(!valid){
-          alert("Not valid options");
+          sweet_error("Not valid options");
           return false;
         }
 
@@ -994,17 +990,17 @@ footer { padding: 30px 0;}
 
       placeOrder: function(){
         if(this.cart.length < 1){
-          alert("No item in the cart");
+          sweet_error("No item in the cart");
           return false;
         }
 
         if(this.totalPrice < this.currentFees.min && this.currentFees.feebelowmin == 0){
-          alert("Cannot order below minimum delivery.");
+          sweet_error("Cannot order below minimum delivery.");
           return false;
         }
 
         if(this.payment == ''){
-          alert("Please select a payment option.");
+          sweet_error("Please select a payment option.");
           return false;
         }
 
@@ -1031,14 +1027,14 @@ footer { padding: 30px 0;}
         })
         .done(function(data) {
           if(data["error"]==1){
-            alert(data["error_message"]);
+            sweet_error(data["error_message"]);
           }else{
             that.orderComplete = true;
             setTimeout(function(){location.href="/dashboard/orders/"} , 100);   
           }
         })
         .fail( function(xhr, status, error) {
-          alert("Network Error Occured!");
+          sweet_error("Network Error Occured!");
         });
       } // place order
     }, //methods

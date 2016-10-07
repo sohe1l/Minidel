@@ -794,7 +794,7 @@ class ManageController extends Controller
             $image->fit(500,500)->save($this->itemBase.$photoFileName);
 
             $image = \Image::make($file->getRealPath());
-            $image->fit(100,100)->save($this->itemBaseThumb.$photoFileName);
+            $image->fit(150,150)->save($this->itemBaseThumb.$photoFileName);
 
             //update db
             $item->photo = $photoFileName;
@@ -906,10 +906,19 @@ class ManageController extends Controller
             $photoFileName = time() . '-menu-' . $store->slug . '-' . str_random(2) . '.jpg' ;
 
             $image = \Image::make($file->getRealPath());
-            $image->fit(500,500)->save($this->itemBase.$photoFileName);
+            //$image->fit(500,500)->save($this->itemBase.$photoFileName);
+
+            // prevent possible upsizing
+            $image->resize(700, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })->save($this->itemBase.$photoFileName);
+
+
+
 
             $image = \Image::make($file->getRealPath());
-            $image->fit(100,100)->save($this->itemBaseThumb.$photoFileName);
+            $image->fit(150,150)->save($this->itemBaseThumb.$photoFileName);
 
                         //update db
             $item->photo = $photoFileName;

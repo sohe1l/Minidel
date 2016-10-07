@@ -38,6 +38,8 @@
 
 
 
+<div class="titleStyled">Find a store</div>
+
 
 <div class="row">
   <div class="col-sm-4 col-md-3">
