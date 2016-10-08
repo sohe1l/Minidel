@@ -220,6 +220,12 @@ footer { padding: 30px 0;}
       @{{ activePromo.text }}
     </div>
 
+    <div class="alert alert-success" role="alert" v-if="!activePromo && currentFees.discount>0">
+      Discount: @{{currentFees.discount}}% discount on total bill
+    </div>
+
+
+
     @if(! $is_online)
     <div class="alert alert-danger" role="alert">
       The store is not currenly online, however you may still place an order for a future time.
@@ -401,12 +407,15 @@ footer { padding: 30px 0;}
   <div style="line-height: 30px;" v-if="dorp == 'delivery'">
     <template v-if="availableMode.bldg && addressObj.bldg != null">
       <span class="label label-success">Room Service</span> <br>
-      <span class="label label-info">No Minimum Delivery</span>
     </template>
-    <template v-if="availableMode.area && addressObj.area != null">
-      <span class="label label-info">Minimum Delivery @{{ addressObj.area.min }}</span> <br>
-      <span v-if="addressObj.area.fee && addressObj.area.fee!=0" class="label label-info">Delivery Fee @{{ addressObj.area.fee }}</span> <br>
-      <span v-if="addressObj.area.feebelowmin && addressObj.area.feebelowmin!=0" class="label label-info">Delivery Fee (below minimum) @{{ addressObj.area.feebelowmin }}</span>
+    <template v-if="currentFees.min != 0">
+      <span class="label label-info">@{{ currentFees.min }} dhs Minimum Delivery</span> <br>
+    </template>
+    <template v-if="currentFees.fee != 0">
+      <span class="label label-info">@{{ currentFees.fee }} dhs Delivery Fee</span> <br>
+    </template>
+    <template v-if="currentFees.feebelowmin != 0">
+      <span class="label label-info">@{{ currentFees.feebelowmin }} dhs Delivery Fee (below min)</span> <br>
     </template>
   </div>
 
@@ -609,6 +618,7 @@ footer { padding: 30px 0;}
       window.addEventListener('resize', this.handleResize)
       this.handleResize();
     },
+
 
 
     computed: {

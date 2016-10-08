@@ -18,7 +18,9 @@ class Promo extends Model
 
     public function scopeActive($query)
     {
-        return $query->whereDate('start_date', '<=' , Carbon::now())->whereDate('end_date', '>=' , Carbon::now());
+        return $query->whereDate('start_date', '<=' , Carbon::now())
+                     ->whereDate('end_date', '>=' , Carbon::now())
+                     ->whereStatus('approved');
     }
 
 

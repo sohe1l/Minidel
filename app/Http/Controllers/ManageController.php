@@ -918,7 +918,12 @@ class ManageController extends Controller
 
 
             $image = \Image::make($file->getRealPath());
-            $image->fit(150,150)->save($this->itemBaseThumb.$photoFileName);
+
+            $image->resize(150, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($this->itemBaseThumb.$photoFileName);
+
+            //$image->fit(150,150)->save($this->itemBaseThumb.$photoFileName);
 
                         //update db
             $item->photo = $photoFileName;
