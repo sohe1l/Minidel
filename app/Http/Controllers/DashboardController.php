@@ -159,6 +159,9 @@ class DashboardController extends Controller
         if(!in_array($request->time,['now','all']))
             return jsonOut(1,'Invalid order time.');
 
+        //remove this
+        if($request->type == "mini") $request->type = "delivery";
+
         switch($request->type){
             case 'mini':
                 if($address->building){

@@ -23,8 +23,7 @@
 
 <h4>For Store Managers</h4>
 <div>
-    Minidel will create an online ordering service for stores. It will dedicate a personal page for each store and it will include different information such as operating hours, menu, location and photos. Cusomers can view the store information and place orders directly.
-    <a href="/manage/">Click here to create your store</a>.
+    Minidel will create an online ordering service for stores. It will dedicate a personal page for each store and it will include different information such as operating hours, menu, location and photos. Cusomers can view the store information and place orders directly. <a href="/pages/contact/">Contact us</a> to send your store information, so we will create your store page and give you more infmormation about using the ordering system. You can use this service free of charge.
 </div>
 
 
