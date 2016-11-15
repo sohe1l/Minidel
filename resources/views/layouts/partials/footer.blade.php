@@ -8,7 +8,7 @@
 
     <div class="col-sm-2">
       <ul>
-          <li><a href="/pages/about">About</a></li>
+          <li><a href="/pages/addstore">Add your store</a></li>
       </ul>
     </div>
 

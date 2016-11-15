@@ -52,6 +52,39 @@
 
 
 
+        <div class="row" style="padding:15px 30px 30px 30px; ">
+            <div class="col-xs-12;">
+                <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; font-family:lane;">
+                    Select a store to make an order
+                </div>
+                @foreach( \App\Store::Listed()->where('accept_orders',1)->orderBy('last_check', 'desc')->take(24)->get()->chunk(4) as $storeCollection )
+                    <div class="row">
+                    @foreach($storeCollection as $store)
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="thumbnail" style="padding:20px 0;">
+                            <img src="/img/logo/{{$store->logo}}" alt="{{$store->name}}">
+                             <div class="caption" style="text-align:center">
+                                <h4><a href="/{{ $store->slug }}/order/" class="">{{ $store->name }}</a></h4>
+                            </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+<?php /*
+
+
 
 
         <div class="row" style="padding:15px 10px 30px 10px; ">
@@ -105,14 +138,12 @@
 
 
 
-<div style="text-align:right"><button type="submit" class="btn btn-primary">Sign In</button></div>
-                        
+    <div style="text-align:right"><button type="submit" class="btn btn-primary">Sign In</button></div>
+    <div style="padding-top:10px; text-align:left">
+    <a href="/auth/register/" class="btn btn-default">Register</a>
+    <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
+    </div>
              
-              <div style="padding-top:10px; text-align:left">
-                        <a href="/auth/register/" class="btn btn-default">Register</a>
-                        <a href="http://www.minidel.com/auth/facebook/" class="btn btn-info" style="background:#3b5998">Login with Facebook</a>
-                      </div>
-                                 
                         </form>
                         </div>
                       </div>
@@ -127,7 +158,16 @@
 
         </div>
 
-<?php /*
+
+
+
+
+
+
+
+
+
+
         <hr>
 
         <div class="row">
