@@ -177,7 +177,7 @@ footer { padding: 30px 0;}
         */ ?>
       </div>
       
-      @forelse ($store->sections->where('menu_section_id',null)->where('available',1) as $section)              
+      @forelse ($store->sections->where('menu_section_id',null)->sortBy('order')->where('available',1) as $section)              
         <div class="panel panel-danger" style="margin-bottom:0; border:0;">
           <div class="panel-heading">
           
