@@ -286,10 +286,11 @@ class BrowseController extends Controller
 
     public function store($storeSlug)
     {
-        $store = \App\Store::where('slug',$storeSlug)->with('building','sections.subsections.items','sections.items','payments')->firstOrFail();
+        $store = \App\Store::where('slug',$storeSlug)->where('status_listing', 'published')->with('building','sections.subsections.items','sections.items','payments')->firstOrFail();
         $user = \Auth::user();
         return view('browse.store', compact('store','user'));     
     }
+
 
 
     public function chain($chainSlug)
