@@ -53,6 +53,8 @@ class MakeCalls extends Command
                             })
                            ->first();
 
+        dd($order);
+
         if($order){
             if($order->call_count == 2){ // already two attemps... cancel order
                 $order->status = 'rejected';
