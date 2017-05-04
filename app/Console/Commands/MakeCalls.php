@@ -45,15 +45,16 @@ class MakeCalls extends Command
         $timeLimit = $date->format('Y-m-d H:i:s');
 
         $order = \App\Order::where('status','pending')
-                           ->where('call_last','<=',$timeLimit)
-                           ->where('created_at','<=',$timeLimit)
+                           ->where(function ($query) use ($timeLimit) {
+                                $query->where('call_last','<=',$timeLimit)
+                                        ->orWhereNull('call_last');
+                           })
                            ->where(function ($query) use ($timeLimit) {
                                 $query->whereNull('schedule')
                                       ->orWhere('schedule','<=',$timeLimit);
                             })
+                           ->where('created_at','<=',$timeLimit)
                            ->first();
-
-        dd($order);
 
         if($order){
             if($order->call_count == 2){ // already two attemps... cancel order
