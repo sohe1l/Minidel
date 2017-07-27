@@ -19,11 +19,27 @@ class StoresController extends Controller
 
     public function mmm(){
 
-        echo("<h1>TALABAT</h1>");
+
+
+
+
+        ?>
+
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.min.css">
+</head>
+<body>
+
+
+
+        <?php
+        echo("<h1 class='title is-1'>TALABAT</h1> <table class='table is-striped'> ");
 
 
         //Guzzle
-        $client = new Client();
+        $client = new Client(['verify' => false ]);
 
         $jar = new \GuzzleHttp\Cookie\CookieJar;
 
@@ -70,28 +86,40 @@ class StoresController extends Controller
             echo("Error reading talabat.");
           }
           
-          echo(date("m/d/Y D",$carbon->timestamp) . " : $talabat_sum <br><br>");
+          echo("<tr><td>" . date("m/d/Y D",$carbon->timestamp) . "</td><td>$talabat_sum</td></tr>");
 
           $carbon->subDay();
         }
 
+        echo("</table>");
+        //die;
 
-        die;
+
+        echo("<h1 class='title is-1'>ZOMATO</h1>");
 
 
-        echo("<h1>ZOMATO</h1>");
+// use GuzzleHttp\Psr7;
+// use GuzzleHttp\Exception\RequestException;
 
+// try {
+//     $client->request('GET', 'https://github.com/_abc_123_404');
+// } catch (RequestException $e) {
+//     echo Psr7\str($e->getRequest());
+//     if ($e->hasResponse()) {
+//         echo Psr7\str($e->getResponse());
+//     }
+// }
 
 
         //Guzzle
-        $client = new Client();
-
+        $client = new Client(['verify' => false ]);
 
         $jar = new \GuzzleHttp\Cookie\CookieJar;
         $headers = [
                         'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
                         'accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
                         'accept-encoding' =>  'gzip, deflate, br',
+                        'accept-charset' =>  'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
                         'max-age' => 0 ,
                         'cache-control' => 'max-age=0' ,
                         'accept-language' => 'en-US,en;q=0.8',
@@ -105,11 +133,11 @@ class StoresController extends Controller
                     'headers' => $headers,
                 ]);
 
-        dd($response);
-        
-        $body = $response->getBody();
-        $file = (string) $body;
-        dd($file);
+        // //dd($response);
+
+        // $body = $response->getBody();
+        // $file = (string) $body;
+        // dd($file);
 
         $response = $client->request('POST', 'https://www.zomato.com/php/asyncLogin.php?', [
             'form_params' => [
@@ -142,7 +170,7 @@ class StoresController extends Controller
         $body = $response->getBody();
         $zomato = json_decode($body);
 
-        echo("<table>". $zomato->data->html ."</table>");
+        echo("<table class='table is-striped'>". $zomato->data->html ."</table>");
 
 
 
