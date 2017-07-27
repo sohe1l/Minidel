@@ -133,6 +133,7 @@ class StoresController extends Controller
                 [
                     'cookies' => $jar,
                     'headers' => $headers,
+                    'verify' => false
                 ]);
 
         // //dd($response);
@@ -149,6 +150,7 @@ class StoresController extends Controller
             ],
             'cookies' => $jar,
             'headers' => $headers,
+            'verify' => false
         ]);
 
         // $body = $response->getBody();
@@ -167,6 +169,7 @@ class StoresController extends Controller
             ],
             'cookies' => $jar,
             'headers' => $headers,
+            'verify' => false
         ]);
 
         $body = $response->getBody();
