@@ -93,18 +93,20 @@ class StoresController extends Controller
                         'accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
                         'accept-encoding' =>  'gzip, deflate, br',
                         'max-age' => 0 ,
-
+                        'cache-control' => 'max-age=0' ,
                         'accept-language' => 'en-US,en;q=0.8',
 
                     ];
 
 
-        $response = $client->request('GET', "https://www.zomato.com/dubai", 
+        $response = $client->request('GET', "https://www.zomato.com/dubai/mensch-cafe-jumeirah-lake-towers", 
                 [
                     'cookies' => $jar,
                     'headers' => $headers,
                 ]);
 
+        dd($response);
+        
         $body = $response->getBody();
         $file = (string) $body;
         dd($file);
