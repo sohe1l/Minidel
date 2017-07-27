@@ -76,7 +76,7 @@ class StoresController extends Controller
         }
 
 
-        die;
+        //die;
 
 
         echo("<h1>ZOMATO</h1>");
@@ -105,9 +105,9 @@ class StoresController extends Controller
                     'headers' => $headers,
                 ]);
 
-        // $body = $response->getBody();
-        // $file = (string) $body;
-        // dd($file);
+        $body = $response->getBody();
+        $file = (string) $body;
+        dd($file);
 
         $response = $client->request('POST', 'https://www.zomato.com/php/asyncLogin.php?', [
             'form_params' => [
