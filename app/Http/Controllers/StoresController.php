@@ -65,7 +65,7 @@ class StoresController extends Controller
 
         $carbon = new Carbon();
 
-        for($i=0; $i<4; $i++){
+        for($i=0; $i<8; $i++){
 
           $talabat_date = date("m/d/Y",$carbon->timestamp);
 
@@ -92,7 +92,7 @@ class StoresController extends Controller
         }
 
         echo("</table>");
-        //die;
+        die;
 
 
         echo("<h1 class='title is-1'>ZOMATO</h1>");
