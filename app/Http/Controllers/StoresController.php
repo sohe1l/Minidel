@@ -92,7 +92,7 @@ class StoresController extends Controller
         }
 
         echo("</table>");
-        //die;
+        die;
 
 
         echo("<h1 class='title is-1'>ZOMATO</h1>");
