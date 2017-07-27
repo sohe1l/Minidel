@@ -19,7 +19,7 @@ class StoresController extends Controller
 
     public function mmm(){
 
-        echo("<h1>talabat</h1>");
+        echo("<h1>TALABAT</h1>");
 
 
         //Guzzle
@@ -76,7 +76,7 @@ class StoresController extends Controller
         }
 
 
-
+        die;
 
 
         echo("<h1>ZOMATO</h1>");
