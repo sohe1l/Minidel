@@ -76,7 +76,7 @@ class StoresController extends Controller
         }
 
 
-        //die;
+        die;
 
 
         echo("<h1>ZOMATO</h1>");
