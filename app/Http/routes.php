@@ -27,6 +27,11 @@ Route::get('payment','PaypalController@paymentTest');
 
 
 
+Route::get('mmm','StoresController@mmm');
+
+
+
+
 /* Super Admin */
 Route::group(['prefix' => 'superadmin' , 'middleware' => 'auth.superadmin'], function () {
     Route::get('/','Superadmin\AdminController@index');
