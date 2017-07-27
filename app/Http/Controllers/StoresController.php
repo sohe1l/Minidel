@@ -65,7 +65,7 @@ class StoresController extends Controller
 
         $carbon = new Carbon();
 
-        for($i=0; $i<8; $i++){
+        for($i=0; $i<4; $i++){
 
           $talabat_date = date("m/d/Y",$carbon->timestamp);
 
@@ -116,15 +116,17 @@ class StoresController extends Controller
 
         $jar = new \GuzzleHttp\Cookie\CookieJar;
         $headers = [
-                        'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
-                        'accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                        'accept-encoding' =>  'gzip, deflate, br',
-                        'accept-charset' =>  'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-                        'max-age' => 0 ,
-                        'cache-control' => 'max-age=0' ,
-                        'accept-language' => 'en-US,en;q=0.8',
-
+'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+'accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+'accept-encoding' =>  'gzip, deflate',
+'accept-charset' =>  'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+'max-age' => 0 ,
+'cache-control' => 'max-age=0' ,
+'referer' => 'http://www.google.com/',
+'connection' => 'keep-alive',
+'accept-language' => 'en-US,en;q=0.8',
                     ];
+
 
 
         $response = $client->request('GET', "https://www.zomato.com/dubai/mensch-cafe-jumeirah-lake-towers", 
