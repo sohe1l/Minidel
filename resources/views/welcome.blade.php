@@ -51,7 +51,6 @@
         </div>
 
 
-
         <div class="row" style="padding:15px 30px 30px 30px; ">
             <div class="col-xs-12;">
                 <div style=" font-weight: bold; color:#f05f40; text-align: center; font-size:2em; font-family:lane;">
@@ -77,7 +76,15 @@
 
 
 
+<div style="color: #fe602c; font-family: lane; text-align: center; font-size: 2em; padding:50px 0;">
 
+    <b>Do you deliver? We offer a free online ordering system for your restaurant or shop!</b>
+
+    <div>
+        Create an account now and send your shop detail through the contact page.
+    </div>
+
+</div>
 
 
 
