@@ -163,6 +163,15 @@
 </div>
 
 
+
+<div style="color: #fe602c; font-family: lane; text-align: center; font-size: 2em; padding:50px 0;">
+    <a href="/manage/create/">
+    <b>Do you deliver? We offer free online ordering system for your restaurant or shop!</b>
+    </a>
+</div>
+
+
+
 @stop
 
 @section('footer')

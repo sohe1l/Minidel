@@ -53,7 +53,7 @@ class ManageController extends Controller
      */
     public function create()
     {
-        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
+        //if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
 
         $countries = \Countries::getList('en', 'php', 'cldr');
         return view('manage.create', compact('countries'));
@@ -61,7 +61,7 @@ class ManageController extends Controller
 
     public function store(Request $request)
     {
-        if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
+        //if(!in_array(\Auth::user()->id, \Config::get('vars.superAdmins'))) abort(403, 'Unauthorized action.'); // SUPERADMIN
 
 
 

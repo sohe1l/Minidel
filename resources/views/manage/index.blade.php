@@ -80,8 +80,4 @@
 
 
 
-<div style="color: #fe602c; font-family: lane; text-align: center; font-size: 2em; padding:50px 0;">
-Our goal is to create the <b>most advanced</b> and <b>transparent</b> ordering system for the stores!
-</div>
-
 @endsection
