@@ -25,6 +25,6 @@ Online ordering platform for restaurants with the ability to define complex menu
 
   ### Screen Shots
 
-  <img src="graphic/mobile_sc.png.png">
-  <img src="graphic/web_sc.png.png">
-  <img src="graphic/dash_sc.png.png">
+  <img src="graphic/mobile_sc.png">
+  <img src="graphic/web_sc.png">
+  <img src="graphic/dash_sc.png">
